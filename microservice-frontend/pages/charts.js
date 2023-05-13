@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import React , {useState} from 'react';
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from 'highcharts';
-const charts = () => {
+const Charts = () => {
     const router = useRouter();
     const {data, status} = useSession();
     const [chartIndex, setChartIndex] = useState(0);
@@ -80,18 +80,18 @@ const charts = () => {
                     options = {chartsList[chartIndex]}
                 />
             </div>
-            <button onClick={() => handleChartChange(0)}>line</button>
-            <button onClick={() => handleChartChange(1)}>area</button>
-            <button onClick={() => handleChartChange(2)}>bar</button>
-            <button onClick={ () => router.push('/')}>back to reality</button>
+            <button className="button" onClick={() => handleChartChange(0)}>line</button>
+            <button className="button" onClick={() => handleChartChange(1)}>area</button>
+            <button className="button" onClick={() => handleChartChange(2)}>bar</button>
+            <button className="button" onClick={ () => router.push('/')}>back to reality</button>
         </div>)
 
     } else {
         return (<div>
             <h1>Not authorized</h1>
-            <button onClick={ () => router.push('/')}>back to reality</button>
+            <button className="button" onClick={ () => router.push('/')}>back to reality</button>
         </div>)
     }
 }
 
-export default charts
+export default Charts
