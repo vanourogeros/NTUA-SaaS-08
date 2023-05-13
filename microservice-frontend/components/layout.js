@@ -26,6 +26,7 @@ const Layout = ({ children }) => {
                 <div className="flex items-center space-x-4">
                     <span className="cursor-pointer" onClick={() => router.push('/')}>Home</span>
                     <span className="cursor-pointer" onClick={() => router.push('/charts')}>Charts</span>
+                    <span className="cursor-pointer" onClick={() => router.push('/upload')}>Upload Data</span>
                 </div>
                 <div className="flex items-center space-x-4">
                     {status === 'authenticated' ? (

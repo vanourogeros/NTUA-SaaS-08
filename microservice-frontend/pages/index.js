@@ -11,6 +11,7 @@ export default function IndexPage() {
           <h1> hi {data.user.name}</h1>
           <img src={data.user.image} alt={data.user.name + ' photo'} />
           <br></br>
+          <button className="button" onClick={() => { router.push('/upload'); }}>Upload Data</button>
           <button className="button" onClick={() => { router.push('/charts'); }}>Charts</button>
           <button className="button" onClick={signOut}>sign out</button>
         </div>
