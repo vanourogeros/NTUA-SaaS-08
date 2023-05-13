@@ -5,15 +5,17 @@
   "description": "",
   "main": "index.mjs",
   "scripts": {
-    "highcharter": "node index.mjs"
+    "highcharter": "nodemon index.mjs"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "fs": "^0.0.1-security",
     "highcharts": "^11.0.1",
+    "nodemon": "^2.0.22",
     "puppeteer": "^20.1.2"
   }
 }
