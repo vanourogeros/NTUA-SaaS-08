@@ -5,7 +5,8 @@
   "description": "",
   "main": "index.mjs",
   "scripts": {
-    "highcharter": "nodemon index.mjs"
+    "build:dev": "nodemon index.mjs",
+    "build:prod": "node index.mjs"
   },
   "keywords": [],
   "author": "",
@@ -15,7 +16,9 @@
     "express": "^4.18.2",
     "fs": "^0.0.1-security",
     "highcharts": "^11.0.1",
-    "nodemon": "^2.0.22",
     "puppeteer": "^20.1.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
   }
 }

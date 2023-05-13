@@ -18,6 +18,7 @@ import * as fs from 'fs';
 
 async function charter(options) {
     const rootDir = process.env?.ROOT_DIR ?? '..';  // some directory magic, perhaps I'll explain this in the future.
+    const chromiumDir = process.env?.CHROMIUM_DIR;
 
     const highchartsDir = `${rootDir}/node_modules/highcharts`;
     const modulesDir = `${highchartsDir}/modules`;
@@ -36,8 +37,14 @@ async function charter(options) {
         </html>`;
 
     const browser = await puppeteer.launch({
-        headless: 'new'
+        executablePath: chromiumDir,
+        headless: 'new',
+        args: ['--no-sandbox']
     });
+
+    //const browser = await puppeteer.launch({
+    //    headless: 'new',
+    //});
 
     const page = await browser.newPage();
     page.on("console", msg => console.log(`Page Console: ${msg.text()}`));
@@ -94,5 +101,4 @@ const options = {
     }]
 };
 
-charter(options);
-*/
+charter(options); */
