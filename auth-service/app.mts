@@ -2,6 +2,7 @@ import express from "express";
 import { OAuth2Client } from "google-auth-library";
 import { getUserPayload } from "./utils.mjs";
 
+// only load from .env file if environment is "development"
 if (process.env.NODE_ENV !== "production") {
     (await import("dotenv")).config();
     console.log("Loaded the .env variables");
@@ -29,6 +30,8 @@ if (!GOOGLE_CLIENT_ID) {
 const authClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 const app = express();
 
+// payload contains various info about the user
+// the most (only?) important one for this app is payload.email
 app.use(async (req, res, next) => {
     try {
         const token = req.body.token;
@@ -36,7 +39,7 @@ app.use(async (req, res, next) => {
         if (payload) {
             res.locals.payload = payload;
         } else {
-            // ?
+            // TODO (George): handle payload not existing
         }
     } catch (err) {
         console.error("Error in authentication middleware:", err);
