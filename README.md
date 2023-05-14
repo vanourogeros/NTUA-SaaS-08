@@ -1,11 +1,10 @@
 # NTUA ECE SAAS 2023 PROJECT
-  
-## TEAM (XX)
-  
-  
-Περιγραφή - οδηγίες
-  
-Περιέχονται φάκελοι για 15 microservices. Ο αριθμός είναι εντελώς ενδεικτικός. Δημιουργήστε ακριβώς όσα απαιτούνται από τη λύση σας.
-  
-  
-  
+
+## TEAM 08
+
+..* Evaggelos Froudakis, el?????
+..* Dimitrios Georgousis, el19005
+..* Georgios-Alexios Kapetanakis, el19062
+..* Ioannis Protogeros, el19008
+..* Kostantinos Siskos, el?????
+..* Nikolaos Sfakianakis, el?????
