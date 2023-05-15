@@ -1,6 +1,8 @@
-.env*
+dist
 node_modules
-docker-compose.yml
+.dockerignore
+.env*
+.gitignore
+compose.yaml
 Dockerfile
 README.md
-CHANGELOG.md
