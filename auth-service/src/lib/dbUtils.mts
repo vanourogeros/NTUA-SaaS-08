@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 async function connectToDB(URI: string, maxRetries: number) {
     try {
         await mongoose.connect(URI);
+        console.log("Connected to the database");
     } catch {
         console.error("Failed to connect to the database");
         console.error(`Retries remaining: ${maxRetries}`);
