@@ -14,16 +14,8 @@
  * */
 
 import * as puppeteer from 'puppeteer';
-import * as fs from 'fs';
 
 async function charter(options) {
-    const rootDir = process.env?.ROOT_DIR ?? '..';  // some directory magic, perhaps I'll explain this in the future.
-    const chromiumDir = process.env?.CHROMIUM_DIR;
-
-    const highchartsDir = `${rootDir}/node_modules/highcharts`;
-    const modulesDir = `${highchartsDir}/modules`;
-    //const outputDir = `${rootDir}/output`;
-
     const html =
         `<!DOCTYPE html>
         <html lang="en">
@@ -37,14 +29,9 @@ async function charter(options) {
         </html>`;
 
     const browser = await puppeteer.launch({
-        executablePath: chromiumDir,
         headless: 'new',
         args: ['--no-sandbox']
     });
-
-    //const browser = await puppeteer.launch({
-    //    headless: 'new',
-    //});
 
     const page = await browser.newPage();
     page.on("console", msg => console.log(`Page Console: ${msg.text()}`));
@@ -57,9 +44,9 @@ async function charter(options) {
     await loaded;
 
     async function loadChart() {
-        page.evaluate(fs.readFileSync(`${highchartsDir}/highcharts.js`, 'utf8')); // basic highcharts module
-        page.evaluate(fs.readFileSync(`${modulesDir}/exporting.js`, 'utf8'));     // this module contains the getSVG function/method
-        page.evaluate(fs.readFileSync(`${modulesDir}/accessibility.js`,'utf8'));  // no comments
+        await page.addScriptTag({ url: 'https://code.highcharts.com/highcharts.js' });
+        await page.addScriptTag({ url: 'https://code.highcharts.com/modules/exporting.js' });
+        await page.addScriptTag({ url: 'https://code.highcharts.com/modules/networkgraph.js' });
 
         return await page.evaluate(async function (options) {
             const myChart = new Highcharts.Chart('chart-container', options);
@@ -70,35 +57,7 @@ async function charter(options) {
     const mySVG = await loadChart();
     await browser.close();
 
-    //fs.writeFileSync(`${outputDir}/${options?.title?.text ?? 'chart'}.svg`, mySVG);
     return mySVG;
 }
 
 export default charter;
-
-/*
-const options = {
-    chart: {
-        type: 'bar'
-    },
-    title: {
-        text: 'Fruit Consumption'
-    },
-    xAxis: {
-        categories: ['Apples', 'Bananas', 'Oranges']
-    },
-    yAxis: {
-        title: {
-            text: 'Fruit eaten'
-        }
-    },
-    series: [{
-        name: 'Jane',
-        data: [1, 0, 4]
-    }, {
-        name: 'John',
-        data: [5, 7, 3]
-    }]
-};
-
-charter(options); */
