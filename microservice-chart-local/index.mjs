@@ -26,6 +26,7 @@ async function handlePostRequest(req, res) {
     // highcharts accepts as input.
     const options = req?.body;
     if (options) {
+        console.log(`Request for '${options?.title?.text ?? 'chart'}' is being processed`);
         const chartSVG = await charter(options);
 
         // returns the chart only in SVG format, someone else will turn it into other formats and will be responsible to save it
@@ -35,5 +36,8 @@ async function handlePostRequest(req, res) {
         // I'm really bad at writing console logs that help with finding problems in the code, this is an attempt to salvage my
         // failures...
         console.log(`Request for '${options?.title?.text ?? 'chart'}' was served`);
+    }
+    else {
+        console.log('Something went wrong with the supplied options');
     }
 }
