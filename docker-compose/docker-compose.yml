@@ -7,18 +7,34 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
 
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
   mycharts-parser:
     build:
-      context: ../microservice-parser
-      dockerfile: ../microservice-parser/Dockerfile
+      context: ../microservice-data-uploader
+      dockerfile: Dockerfile
     volumes:
-      - ../microservice-parser:/app
+      - ../microservice-data-uploader:/app
     ports:
       - "3001:3001"
 
   mycharts-frontend:
     build:
       context: ../microservice-frontend
-      dockerfile: ../microservice-frontend/Dockerfile
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
