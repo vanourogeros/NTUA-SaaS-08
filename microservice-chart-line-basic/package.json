@@ -1,0 +1,17 @@
+{
+  "name": "microservice-chart-line-basic",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "csv-parser": "^3.0.0",
+    "highcharts-export-server": "^2.1.0",
+    "kafka-node": "^5.0.0",
+    "kafka-node-avro": "^4.3.0"
+  }
+}
