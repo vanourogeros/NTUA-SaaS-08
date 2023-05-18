@@ -14,7 +14,7 @@
  * */
 
 import * as puppeteer from 'puppeteer';
-import * as fs from 'fs';
+import { writeFileSync } from 'fs';
 
 async function charter(options) {
     const rootDir = process.env?.ROOT_DIR ?? '..';  // some directory magic, perhaps I'll explain this in the future.
@@ -50,12 +50,12 @@ async function charter(options) {
     await loaded;
 
     async function loadChart() {
-        page.evaluate(fs.readFileSync(`${highchartsDir}/highcharts.js`, 'utf8')); // basic highcharts module
-        page.evaluate(fs.readFileSync(`${modulesDir}/accessibility.js`, 'utf8')); // probably don't need this
-        page.evaluate(fs.readFileSync(`${modulesDir}/exporting.js`, 'utf8'));     // this module contains the getSVG function/method
-        page.evaluate(fs.readFileSync(`${modulesDir}/networkgraph.js`,'utf8'));  // no comments
+        await page.addScriptTag({ path: `${highchartsDir}/highcharts.js` }); // basic highcharts module
+        await page.addScriptTag({ path: `${modulesDir}/accessibility.js` }); // probably don't need this
+        await page.addScriptTag({ path: `${modulesDir}/exporting.js` });     // this module contains the getSVG function/method
+        await page.addScriptTag({ path: `${modulesDir}/networkgraph.js` });  // no comments
 
-        await page.evaluate(async function (options) {
+        return page.evaluate((options) => {
             const extraOptions = {
                 plotOptions: {
                     series: {
@@ -75,7 +75,7 @@ async function charter(options) {
 
     // save locally for testing
     //const outputDir = `${rootDir}/output`;
-    //fs.writeFileSync(`${outputDir}/${options?.title?.text ?? 'chart'}.svg`, mySVG);
+    //writeFileSync(`${outputDir}/${options?.title?.text ?? 'chart'}.svg`, mySVG);
     await browser.close();
 
     return mySVG;
@@ -83,7 +83,7 @@ async function charter(options) {
 
 export default charter;
 
-/*
+
 const options = {
     chart: {
         type: 'bar'
@@ -294,4 +294,3 @@ const options3 = {
 };
 
 charter(options3);
-*/
