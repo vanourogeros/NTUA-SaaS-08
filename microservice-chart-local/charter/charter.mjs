@@ -55,7 +55,7 @@ async function charter(options) {
         page.evaluate(fs.readFileSync(`${modulesDir}/exporting.js`, 'utf8'));     // this module contains the getSVG function/method
         page.evaluate(fs.readFileSync(`${modulesDir}/networkgraph.js`,'utf8'));  // no comments
 
-        return await page.evaluate(async function (options) {
+        await page.evaluate(async function (options) {
             const extraOptions = {
                 plotOptions: {
                     series: {
