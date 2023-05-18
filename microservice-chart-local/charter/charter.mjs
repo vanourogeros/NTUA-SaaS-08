@@ -14,13 +14,22 @@
  * */
 
 import * as puppeteer from 'puppeteer';
-import { writeFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+// import { writeFileSync } from 'fs';
+
+// get path of this file
+const thisPath = fileURLToPath(import.meta.url);
+// get directory of this file
+const thisDir = path.dirname(thisPath);
+// get parent directory which is the root directory of this project
+const rootDir = path.dirname(thisDir);
+
+const highchartsDir = path.join(rootDir, 'node_modules', 'highcharts');
+const modulesDir = path.join(highchartsDir, 'modules');
 
 async function charter(options) {
-    const rootDir = process.env?.ROOT_DIR ?? '..';  // some directory magic, perhaps I'll explain this in the future.
-
-    const highchartsDir = `${rootDir}/node_modules/highcharts`;
-    const modulesDir = `${highchartsDir}/modules`;
 
     const html =
         `<!DOCTYPE html>
@@ -50,10 +59,10 @@ async function charter(options) {
     await loaded;
 
     async function loadChart() {
-        await page.addScriptTag({ path: `${highchartsDir}/highcharts.js` }); // basic highcharts module
-        await page.addScriptTag({ path: `${modulesDir}/accessibility.js` }); // probably don't need this
-        await page.addScriptTag({ path: `${modulesDir}/exporting.js` });     // this module contains the getSVG function/method
-        await page.addScriptTag({ path: `${modulesDir}/networkgraph.js` });  // no comments
+        await page.addScriptTag({ path: path.join(highchartsDir, 'highcharts.js') }); // basic highcharts module
+        await page.addScriptTag({ path: path.join(modulesDir, 'accessibility.js') }); // probably don't need this
+        await page.addScriptTag({ path: path.join(modulesDir, 'exporting.js') });     // this module contains the getSVG function/method
+        await page.addScriptTag({ path: path.join(modulesDir, 'networkgraph.js') });  // no comments
 
         return page.evaluate((options) => {
             const extraOptions = {
@@ -74,8 +83,8 @@ async function charter(options) {
     const mySVG = await loadChart();
 
     // save locally for testing
-    //const outputDir = `${rootDir}/output`;
-    //writeFileSync(`${outputDir}/${options?.title?.text ?? 'chart'}.svg`, mySVG);
+    //const outputDir = path.join(rootDir, 'output');
+    //writeFileSync(path.join(outputDir, `${options?.title?.text ?? 'chart'}.svg`), mySVG);
     await browser.close();
 
     return mySVG;
@@ -83,7 +92,7 @@ async function charter(options) {
 
 export default charter;
 
-
+/*
 const options = {
     chart: {
         type: 'bar'
@@ -294,3 +303,5 @@ const options3 = {
 };
 
 charter(options3);
+
+*/
