@@ -26,11 +26,13 @@ const thisDir = path.dirname(thisPath);
 // get parent directory which is the root directory of this project
 const rootDir = path.dirname(thisDir);
 
+// directories where our modules/libraries are saved
 const highchartsDir = path.join(rootDir, 'node_modules', 'highcharts');
 const modulesDir = path.join(highchartsDir, 'modules');
 
+// return an SVG format image given options Object options (converted from JSON)
 async function charter(options) {
-
+// a very basic html page, we really only care about the div tag
     const html =
         `<!DOCTYPE html>
         <html lang="en">
@@ -43,11 +45,13 @@ async function charter(options) {
         </body>
         </html>`;
 
+    // create a browser
     const browser = await puppeteer.launch({
         headless: 'new',
         args: ['--no-sandbox']
     });
 
+    // create a page in the browser
     const page = await browser.newPage();
     page.on("console", msg => console.log(`Page Console: ${msg.text()}`));
 
@@ -55,15 +59,18 @@ async function charter(options) {
         waitUntil: 'load'
     });
 
+    // load our html page on the page we created in the browser
     await page.setContent(html);
     await loaded;
 
     async function loadChart() {
+        // add our libraries/modules to the html page
         await page.addScriptTag({ path: path.join(highchartsDir, 'highcharts.js') }); // basic highcharts module
         await page.addScriptTag({ path: path.join(modulesDir, 'accessibility.js') }); // probably don't need this
         await page.addScriptTag({ path: path.join(modulesDir, 'exporting.js') });     // this module contains the getSVG function/method
         await page.addScriptTag({ path: path.join(modulesDir, 'networkgraph.js') });  // no comments
 
+        // create the chart
         return page.evaluate((options) => {
             const extraOptions = {
                 plotOptions: {
@@ -80,6 +87,7 @@ async function charter(options) {
         }, options);
     }
 
+    // get the SVG from the chart
     const mySVG = await loadChart();
 
     // save locally for testing
@@ -87,6 +95,7 @@ async function charter(options) {
     //writeFileSync(path.join(outputDir, `${options?.title?.text ?? 'chart'}.svg`), mySVG);
     await browser.close();
 
+    // return the SVG
     return mySVG;
 }
 

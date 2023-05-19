@@ -25,19 +25,31 @@ async function handlePostRequest(req, res) {
     // a JS object because of express.json() middleware) with the options to our graph. Same type of JSON as what
     // highcharts accepts as input.
     const options = req?.body;
-    if (options) {
+
+
+    // req.body must have an Object with the data (created from a JSON format file)
+    if (!options) {
+        console.log('Something went wrong with the supplied options');
+
+        return;
+    }
+
+    try {
         console.log(`Request for '${options?.title?.text ?? 'chart'}' is being processed`);
         const chartSVG = await charter(options);
-
+    
         // returns the chart only in SVG format, someone else will turn it into other formats and will be responsible to save it
         res.set('Content-Type', 'image/svg+xml');
         res.send(chartSVG);
-
+    
         // I'm really bad at writing console logs that help with finding problems in the code, this is an attempt to salvage my
         // failures...
         console.log(`Request for '${options?.title?.text ?? 'chart'}' was served`);
     }
-    else {
-        console.log('Something went wrong with the supplied options');
+    catch (e) {
+        res.status(400).json({ message: 'Invalid chart options' });
+
+        console.log(`Request for '${options?.title?.text ?? 'chart'}' failed`);
     }
+
 }
