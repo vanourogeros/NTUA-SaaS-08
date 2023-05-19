@@ -7,7 +7,7 @@ function verifyEnv(
 ) {
     // check for undefined environment variables
     for (const [key, val] of Object.entries(env)) {
-        if (typeof val === "undefined") {
+        if (val === undefined) {
             onUndefined(key);
         }
     }
