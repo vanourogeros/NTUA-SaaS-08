@@ -68,5 +68,6 @@ services:
     depends_on:
       - kafka
       - kafka-setup
+      - mycharts-data-uploader
     ports:
       - "3003:3003"

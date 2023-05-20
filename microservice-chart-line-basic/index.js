@@ -1,63 +1,72 @@
-const kafka = require('kafka-node');
-const Highcharts = require('highcharts-export-server');
-const parseCSV = require("./parseCSV");
+import kafka from 'kafka-node';
+import parseCSV from './parseCSV.js';
+import charter from './charter.mjs';
+
 
 const client = new kafka.KafkaClient({ kafkaHost: 'kafka:9092' });
-const topic = 'my-topic';
-const partitions = 1;
-const replicationFactor = 1;
 
-// Initialize the Highcharts Export Server
-//Highcharts.initPool();
+const setupConsumer = () => {
+    try {
+        const consumer = new kafka.Consumer(
+            client,
+            [{ topic: 'my-topic', partition: 0 }],
+            { autoCommit: true }
+        );
 
-const consumer = new kafka.Consumer(
-    client,
-    [{ topic: 'my-topic', partition: 0 }],
-    { autoCommit: true }
-);
+        consumer.on('error', function (err) {
+            console.log('Error:', err);
 
-consumer.on('message', function (message) {
-    console.log('Received message:', message.value);
+            // If the error message indicates that the topic does not exist
+            if (err.message.includes('topic')) {
+                console.log('Topic not found, retrying...');
 
-    // Parse the CSV data
-    const csvData = parseCSV(message.value); // TODO: Implement the parseCSV function
+                // Delay for 5 seconds, then retry setting up the consumer
+                setTimeout(setupConsumer, 5000);
+            }
+        });
 
-    // Create chart options
-    const chartOptions = {
-        chart: {
-            type: 'line'
-        },
-        title: {
-            text: 'Line Chart from CSV'
-        },
-        xAxis: {
-            categories: csvData.categories // Assuming your CSV has categories
-        },
-        series: csvData.series // Assuming your CSV data can be converted into series
-    };
+        consumer.on('message', async function (message) {
+            console.log('Received message:', message.value);
 
-    // Export the chart
-    Highcharts.export({
-        options: JSON.stringify(chartOptions),
-        type: 'png',
-        async: true
-    }, function (err, data) {
-        if (err) {
-            console.log('Error generating chart:', err);
-        } else {
-            const image = data; // This will be a base64 encoded PNG image of the chart
+            // Parse the CSV data
+            const csvData = parseCSV(message.value); // TODO: Implement the parseCSV function
 
-            // TODO: Save image to MongoDB
-        }
-    });
-});
+            // Create chart options
+            const chartOptions = {
+                chart: {
+                    type: 'line'
+                },
+                title: {
+                    text: 'Line Chart from CSV'
+                },
+                xAxis: {
+                    categories: csvData.categories // Assuming your CSV has categories
+                },
+                series: csvData.series // Assuming your CSV data can be converted into series
+            };
 
-consumer.on('error', function (err) {
-    console.log('Error:', err);
-});
+            // Create the chart
+            try {
+                const chartSVG = await charter(chartOptions);
+                console.log(chartSVG);
+                // TODO: Save the chart to mongodb
 
-consumer.on('offsetOutOfRange', function (err) {
-    console.log('OffsetOutOfRange:', err);
-});
+            } catch (e) {
+                console.log('Error creating chart:', e);
+            }
+        });
 
+        consumer.on('error', function (err) {
+            console.log('Error:', err);
+        });
 
+        consumer.on('offsetOutOfRange', function (err) {
+            console.log('OffsetOutOfRange:', err);
+        });
+
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+setupConsumer();
