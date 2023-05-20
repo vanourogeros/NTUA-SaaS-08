@@ -17,4 +17,4 @@ RUN npm --omit=dev install
 USER node
 EXPOSE 3000
 ENV NODE_ENV=production
-ENTRYPOINT ["node", "./dist/app.mjs"]
+ENTRYPOINT ["node", "./dist/app.js"]

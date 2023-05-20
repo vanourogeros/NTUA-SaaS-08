@@ -8,8 +8,8 @@
     "build": "tsc",
     "watch": "tsc -w",
     "clean": "rm -rf dist/*",
-    "dev": "nodemon dist/app.mjs",
-    "start": "node dist/app.mjs"
+    "dev": "nodemon dist/app.js",
+    "start": "node dist/app.js"
   },
   "dependencies": {
     "dotenv": "^16.0.3",
