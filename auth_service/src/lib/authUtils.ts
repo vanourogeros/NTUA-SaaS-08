@@ -1,5 +1,5 @@
-import type { OAuth2Client } from "google-auth-library";
 import type { Request } from "express";
+import type { OAuth2Client } from "google-auth-library";
 
 // copied this from
 // https://developers.google.com/identity/gsi/web/guides/verify-google-id-token#node.js
