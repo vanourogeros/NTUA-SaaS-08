@@ -1,0 +1,9 @@
+dist
+node_modules
+.dockerignore
+.env*
+!.env.production
+.gitignore
+compose.yaml
+Dockerfile*
+README.md
