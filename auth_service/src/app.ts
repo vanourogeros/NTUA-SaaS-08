@@ -1,7 +1,8 @@
 import express from "express";
+import dotenv from "dotenv";
 import { OAuth2Client } from "google-auth-library";
-import { getUserPayload, getJWT } from "./lib/authUtils.mjs";
-import { verifyEnv } from "./lib/envUtils.mjs";
+import { getUserPayload, getJWT } from "./lib/authUtils.js";
+import { verifyEnv } from "./lib/envUtils.js";
 
 // http response codes
 const codes = {
@@ -9,13 +10,16 @@ const codes = {
     UNAUTHORIZED: 401,
 };
 
-// do not load from .env file when in a production environment
-if (process.env.NODE_ENV !== "production") {
-    (await import("dotenv")).config(); // dynamic (runtime) import
-    console.log("Loaded the .env variables");
+// load environment variables
+if (process.env.NODE_ENV === "production") {
+    dotenv.config({ path: "./.env.production" });
+    console.log("Loaded the .env.production variables");
+} else {
+    dotenv.config({ path: "./.env.development" });
+    console.log("Loaded the .env.development variables");
 }
 
-// verify all environment variables exist
+// verify all required environment variables exist
 const env = verifyEnv(
     {
         APP_HOST: process.env.APP_HOST,
@@ -31,8 +35,6 @@ const env = verifyEnv(
 // create the express app and the authentication client
 const authClient = new OAuth2Client(env.GOOGLE_CLIENT_ID);
 const app = express();
-// TODO (George): Change this??
-// app.use(cors());
 
 // authentication route
 // each time the API gateway receives a request that requires authentication

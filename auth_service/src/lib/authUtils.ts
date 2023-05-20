@@ -17,13 +17,13 @@ async function getUserPayload(authClient: OAuth2Client, jwt: string) {
     return payload;
 }
 
-// get the jwt (which should be the Google ID Token) from the HTTP 'Authorization' header
+// get the jwt (which should be the Google ID Token) from the HTTP "Authorization" header
 function getJWT(req: Request) {
     if (!req.headers?.authorization) {
         throw new Error("getJWT(): 'Authorization' HTTP header does not exist");
     }
 
-    // "Authorization": "Bearer <token>""
+    // "Authorization": "Bearer <token>"
     return req.headers.authorization.split(" ")[1];
 }
 
