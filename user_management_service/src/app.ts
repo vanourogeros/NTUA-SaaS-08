@@ -3,7 +3,7 @@ import express from "express";
 import mongoose from "mongoose";
 import { connectToDB } from "./lib/dbUtils.js";
 import { verifyEnv } from "./lib/envUtils.js";
-import { getUserEmail } from "./middleware/auth.js";
+import { getUserId } from "./middleware/auth.js";
 
 // http response codes
 const codes = {
@@ -53,7 +53,7 @@ mongoose.connection.on("disconnected", () =>
 
 // create and set up the express app
 const app = express();
-app.use(getUserEmail);
+app.use(getUserId);
 
 // start listening for incoming requests
 app.listen(parseInt(env.APP_PORT), env.APP_HOST, () => {
