@@ -1,0 +1,13 @@
+services:
+  backend:
+    container_name: user_management_backend
+    build: ./
+    depends_on:
+      - database
+    expose:
+      - '3000'
+  database:
+    container_name: user_management_database
+    image: mongo
+    expose:
+      - '27017'
