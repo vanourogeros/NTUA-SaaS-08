@@ -1,6 +1,9 @@
-FROM node:16.10
-WORKDIR /app/
-COPY . /app
+FROM node:alpine
+WORKDIR /home/node/app
+COPY ./package*.json ./
 RUN npm install
+COPY ./ ./
 RUN npm run build
-ENTRYPOINT npm run start
+USER node
+EXPOSE 3000
+ENTRYPOINT ["npx", "next", "start"]
