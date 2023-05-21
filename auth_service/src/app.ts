@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import { OAuth2Client } from "google-auth-library";
 import { getUserPayload, getJWT } from "./lib/authUtils.js";
-import { verifyEnv } from "./lib/envUtils.js";
+import { EnvError, verifyEnv } from "./lib/envUtils.js";
 
 // http response codes
 const codes = {
@@ -20,17 +20,27 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // verify all required environment variables exist
-const env = verifyEnv(
-    {
+let env: Record<string, string>;
+try {
+    env = verifyEnv({
         APP_HOST: process.env.APP_HOST,
         APP_PORT: process.env.APP_PORT,
         GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
-    },
-    (key) => {
-        console.error(`Environment variable '${key}' is missing`);
-        process.exit(-1);
+    });
+
+    // make env immutable
+    Object.freeze(env);
+} catch (err) {
+    if (err instanceof EnvError) {
+        console.error(`Environment variable '${err.undefinedKey}' is missing`);
+    } else {
+        console.error(
+            "An unexpected error occured while verifying that the environment variables exist:",
+            err
+        );
     }
-);
+    process.exit(-1);
+}
 
 // create the express app and the authentication client
 const authClient = new OAuth2Client(env.GOOGLE_CLIENT_ID);
@@ -43,19 +53,23 @@ const app = express();
 // or any other code if it's unsuccessful
 app.get("/auth", async (req, res) => {
     try {
-        const email = (await getUserPayload(authClient, getJWT(req))).email;
+        const payload = await getUserPayload(authClient, getJWT(req));
+        const userId = payload.sub;
 
-        if (!email) {
-            throw new Error("Could not get user email from Google token");
+        if (!userId) {
+            throw new Error("User ID missing on Google JWT");
         }
 
         console.log("User authenticated successfully");
-        return res.set("X-Email", email).status(codes.NO_CONTENT).send();
+        return res.set("X-User-ID", userId).status(codes.NO_CONTENT).send();
     } catch (err) {
         // getUserPayload() throws an error if the jwt is not correct
         // getJWT() throws an error if the jwt is not present
-        console.error("User authentication failed");
-        console.error("Error in '/auth':\n", err);
+        if (err instanceof Error) {
+            console.error("User authentication failed:", err.message);
+        } else {
+            console.error("Unexpected error during user authorization:", err);
+        }
         return res.sendStatus(codes.UNAUTHORIZED);
     }
 });

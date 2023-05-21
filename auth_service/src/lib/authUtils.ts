@@ -11,7 +11,7 @@ async function getUserPayload(authClient: OAuth2Client, jwt: string) {
 
     const payload = ticket.getPayload();
     if (!payload) {
-        throw new Error("getUserPayload(): User payload does not exist");
+        throw new Error("User payload missing");
     }
 
     return payload;
@@ -20,7 +20,12 @@ async function getUserPayload(authClient: OAuth2Client, jwt: string) {
 // get the jwt (which should be the Google ID Token) from the HTTP "Authorization" header
 function getJWT(req: Request) {
     if (!req.headers?.authorization) {
-        throw new Error("getJWT(): 'Authorization' HTTP header does not exist");
+        throw new Error("Missing Authorization header");
+    }
+
+    const jwtRegex = /^Bearer ([\w-]*\.[\w-]*\.[\w-]*)$/;
+    if (jwtRegex.test(req.headers.authorization)) {
+        throw new Error("Invalid Authorization header");
     }
 
     // "Authorization": "Bearer <token>"
