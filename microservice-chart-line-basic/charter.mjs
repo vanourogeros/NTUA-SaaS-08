@@ -83,6 +83,7 @@ async function charter(options) {
                 }
             };
             const myChart = Highcharts.chart('chart-container', options);
+            console.log(options)
             return myChart.getSVG(extraOptions);
         }, options);
     }

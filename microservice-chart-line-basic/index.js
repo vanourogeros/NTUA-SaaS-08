@@ -1,7 +1,7 @@
 import kafka from 'kafka-node';
 import parseCSV from './parseCSV.js';
 import charter from './charter.mjs';
-
+import fs from 'fs';
 
 const client = new kafka.KafkaClient({ kafkaHost: 'kafka:9092' });
 
@@ -48,7 +48,7 @@ const setupConsumer = () => {
             // Create the chart
             try {
                 const chartSVG = await charter(chartOptions);
-                console.log(chartSVG);
+                fs.writeFileSync('/chart.svg', chartSVG);
                 // TODO: Save the chart to mongodb
 
             } catch (e) {
@@ -70,3 +70,21 @@ const setupConsumer = () => {
 }
 
 setupConsumer();
+
+
+/* The following code is for development purposes,
+ * to check in a browser session if the chart is being
+ * produced as expected. At some point it will be commented
+ * out or removed. */
+
+import express from 'express';
+const app = express();
+import path from 'path';
+
+app.get('/chart.svg', (req, res) => {
+    res.sendFile('/chart.svg');
+});
+
+app.listen(3003, () => {
+    console.log('Server is running on port 8080');
+});
