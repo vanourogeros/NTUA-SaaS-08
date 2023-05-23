@@ -1,6 +1,7 @@
+# Start with the Node.js alpine image
 FROM node:alpine
 
-# Installs latest Chromium (100) package.
+# Install Chromium
 RUN apk add --no-cache \
       chromium \
       nss \
@@ -12,11 +13,25 @@ RUN apk add --no-cache \
 # Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
-# create app directory
-WORKDIR /charter-app
+# App environment variables
+ENV APP_HOST=0.0.0.0
+ENV APP_PORT=6000
+ENV APP_BASE_URL=/charter
 
-# copy everything to the working directory
+# Create app directory
+WORKDIR /app/
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application
 COPY . .
-RUN npm ci --omit=dev
-EXPOSE 6000
-CMD node index.mjs
+
+# Expose the port the app runs on
+EXPOSE 3003
+
+# Run the app
+CMD ["node", "index.js"]

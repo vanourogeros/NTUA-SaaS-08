@@ -1,39 +1,21 @@
-const fs = require('fs');
-const csv = require('csv-parser');
+function parseCSV(data) {
+    const rows = data.trim().split('\n').map(row => row.split(','));
+    const categories = rows.slice(1).map(row => row[0]);
+    const series = [];
 
-const parseCSV = (data) => {
-    const lines = data.split('\n');
-    const result = {
-        title: {
-            text: "My Basic Line Chart"
-        },
-        xAxis: {
-            categories: []
-        },
-        series: []
-    };
-
-    // Initialize series names
-    const seriesNames = lines[0].split(',').slice(1);
-    for (let name of seriesNames) {
-        result.series.push({
-            name: name,
-            data: []
+    for (let i = 1; i < rows[0].length; i++) {
+        const name = rows[0][i];
+        const data = rows.slice(1).map(row => {
+            const value = row[i];
+            return value !== '' ? Number(value) : null;
         });
+        series.push({ name, data });
     }
 
-    // Parse CSV lines
-    for (let line of lines.slice(1)) {
-        const values = line.split(',');
-        result.xAxis.categories.push(values[0]);
-        for (let i = 0; i < seriesNames.length; i++) {
-            let value = values[i+1];
-            result.series[i].data.push(value ? parseInt(value) : null);
-        }
-    }
+    return { categories, series };
+}
 
-    return result;
-};
+export default parseCSV;
 
 
-module.exports = parseCSV;
+

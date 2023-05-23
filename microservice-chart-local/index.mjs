@@ -1,10 +1,6 @@
 import express from 'express';
 import charter from './charter/charter.mjs';
 
-const dotenv = await import('dotenv');
-dotenv.config();
-console.log('Loaded the .env variables');
-
 const APP_HOST = process.env.APP_HOST;
 const APP_PORT = process.env.APP_PORT;
 const APP_BASE_URL = process.env.APP_BASE_URL;
