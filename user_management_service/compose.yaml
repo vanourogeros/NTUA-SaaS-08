@@ -1,13 +1,22 @@
 services:
   backend:
     container_name: user_management_backend
-    build: ./
+    build: .
     depends_on:
       - database
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - HTTP_HOST="0.0.0.0"
+      - MONGO_HOST="0.0.0.0"
     expose:
-      - '3000'
+      - "3000"
+    ports: "3000:3000"
   database:
     container_name: user_management_database
     image: mongo
     expose:
-      - '27017'
+      - "27017"
+    volumes:
+    - user_management_database_volume:/data/db:rw

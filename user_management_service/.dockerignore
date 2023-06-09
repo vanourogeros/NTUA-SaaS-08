@@ -2,7 +2,7 @@ dist
 node_modules
 .dockerignore
 .env*
-!.env.production
+!.env
 .gitignore
 compose.yaml
 Dockerfile*

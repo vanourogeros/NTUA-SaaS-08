@@ -8,26 +8,26 @@ import userRouter from "./routes/user.js";
 
 // http response codes
 const codes = {
+    OK: 200,
+    CREATED: 201,
     UNAUTHORIZED: 401,
+    INTERNAL_SERVER_ERROR: 500,
 };
 
 // load environment variables
-if (process.env.NODE_ENV === "production") {
-    dotenv.config({ path: "./.env.production" });
-    console.log("Loaded the .env.production variables");
-} else {
-    dotenv.config({ path: "./.env.development" });
-    console.log("Loaded the .env.development variables");
+if (process.env.NODE_ENV !== "production") {
+    dotenv.config({ path: ".env" });
+    console.log("Loaded the .env variables");
 }
 
 // verify all required environment variables exist
 const env = verifyEnv(
     {
-        APP_HOST: process.env.APP_HOST,
-        APP_PORT: process.env.APP_PORT,
-        DB_HOST: process.env.DB_HOST,
-        DB_PORT: process.env.DB_PORT,
-        DB_NAME: process.env.DB_NAME,
+        HTTP_HOST: process.env.HTTP_HOST,
+        HTTP_PORT: process.env.HTTP_PORT,
+        MONGO_HOST: process.env.MONGO_HOST,
+        MONGO_PORT: process.env.MONGO_PORT,
+        MONGO_NAME: process.env.MONGO_NAME,
     },
     (key) => {
         console.error(`Environment variable '${key}' is missing`);
@@ -36,7 +36,10 @@ const env = verifyEnv(
 );
 
 // connect to the database and retry up to 3 times if it fails
-await connectToDB(`mongodb://${env.DB_HOST}:${env.DB_PORT}/${env.DB_NAME}`, 3);
+await connectToDB(
+    `mongodb://${env.MONGO_HOST}:${env.MONGO_PORT}/${env.MONGO_NAME}`,
+    3
+);
 
 // add event listeners on the database connection
 // if a diconnection due to an error occurs, mongoose will automatically try to reconnect
@@ -54,13 +57,12 @@ mongoose.connection.on("disconnected", () =>
 
 // create and set up the express app
 const app = express();
-app.use(getUserId);
-app.use("/user", userRouter);
+app.use("/user", getUserId, userRouter);
 
 // start listening for incoming requests
-app.listen(parseInt(env.APP_PORT), env.APP_HOST, () => {
+app.listen(parseInt(env.HTTP_PORT), env.HTTP_HOST, () => {
     console.log(
-        `Auth microservice listening on '${env.APP_HOST}:${env.APP_PORT}'`
+        `Auth microservice listening on '${env.HTTP_HOST}:${env.HTTP_PORT}'`
     );
 });
 
