@@ -1,35 +1,62 @@
-import mongoose from "mongoose";
+import { codes } from "../app.js";
 import User from "../models/user.js";
 
 import type { Request, Response } from "express";
 
-async function postNew(req: Request, res: Response) {
-    const id = res.locals.userId;
-    const tokens = 10; // some default value
-    const user = new User({
-        id: id,
-        totalTokens: tokens,
-        lastSignIn: Date.now(),
-    });
+// POST /user/new
+async function postNew(_req: Request, res: Response) {
+    const userId = res.locals.userId;
 
-    await user.save();
+    try {
+        await new User({
+            id: userId,
+            totalTokens: 3,
+            lastSignIn: Date.now(),
+        }).save();
+
+        return res.status(codes.CREATED).send("User created successfully");
+    } catch (err) {
+        console.error(err);
+        return res
+            .status(codes.INTERNAL_SERVER_ERROR)
+            .send("Internal Server Error");
+    }
 }
 
-function getUser(req: Request, res: Response) {
+// GET /user/:userId
+async function getUser(req: Request, res: Response) {
+    const userId = req.params.userId;
     const fetchTotalTokens: boolean = req.body?.fetchTotalTokens ?? false;
     const fetchTotalCharts: boolean = req.body?.fetchTotalCharts ?? false;
     const fetchLastSignIn: boolean = req.body?.fetchLastSignIn ?? false;
 
-    if (mongoose.connection.readyState !== 1) {
-        throw new Error("Database connection not available");
-    }
+    try {
+        if (userId !== res.locals.userId) {
+            throw new Error(
+                "Value of header 'X-User-ID' does not match value of path parameter ':userId'"
+            );
+        }
 
-    const query = User.findOne()
-        .where({ userId: res.locals.userId })
-        .select({ totalTokens: fetchTotalTokens })
-        .select({ totalCharts: fetchTotalCharts })
-        .select({ lastSignIn: fetchLastSignIn })
-        .lean();
+        const result = await User.findOne()
+            .where({ userId: userId })
+            .select({ totalTokens: fetchTotalTokens })
+            .select({ totalCharts: fetchTotalCharts })
+            .select({ lastSignIn: fetchLastSignIn })
+            .lean();
+
+        console.log(result);
+
+        return res.status(codes.OK).json({
+            totalTokens: result?.totalTokens,
+            totalCharts: result?.totalCharts,
+            lastSignIn: result?.lastSignIn,
+        });
+    } catch (err) {
+        console.error(err);
+        return res
+            .status(codes.INTERNAL_SERVER_ERROR)
+            .send("Internal Server Error");
+    }
 }
 
 export { postNew, getUser };
