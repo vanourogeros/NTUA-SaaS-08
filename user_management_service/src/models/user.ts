@@ -9,7 +9,7 @@ interface User {
 
 const userSchema = new Schema<User>({
     // the user ID will be obtained from Google's API,
-    // so we will assume for simplicity that it will always be valid
+    // so we assume that it will always be valid
     id: { type: String, required: true, unique: true },
     totalCharts: { type: Number, default: 0 },
     totalTokens: { type: Number, required: true },

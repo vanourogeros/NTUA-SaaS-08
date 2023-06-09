@@ -4,8 +4,12 @@ import User from "../models/user.js";
 import type { Request, Response } from "express";
 
 // POST /user/new
-async function postNew(_req: Request, res: Response) {
-    const userId = res.locals.userId;
+export async function postNew(_req: Request, res: Response) {
+    const userId: string = res.locals?.userId;
+
+    if (userId == undefined) {
+        throw new Error(`${postNew.name}: 'userId' missing`);
+    }
 
     try {
         await new User({
@@ -24,16 +28,20 @@ async function postNew(_req: Request, res: Response) {
 }
 
 // GET /user/:userId
-async function getUser(req: Request, res: Response) {
-    const userId = req.params.userId;
+export async function getUser(req: Request, res: Response) {
+    const userId: string = req.params?.userId;
     const fetchTotalTokens: boolean = req.body?.fetchTotalTokens ?? false;
     const fetchTotalCharts: boolean = req.body?.fetchTotalCharts ?? false;
     const fetchLastSignIn: boolean = req.body?.fetchLastSignIn ?? false;
 
+    if (userId == undefined) {
+        throw new Error(`${getUser.name}: 'userId' missing`);
+    }
+
     try {
         if (userId !== res.locals.userId) {
             throw new Error(
-                "Value of header 'X-User-ID' does not match value of path parameter ':userId'"
+                "Value of extracted 'userId' does not match value of path parameter ':userId'"
             );
         }
 
@@ -58,5 +66,3 @@ async function getUser(req: Request, res: Response) {
             .send("Internal Server Error");
     }
 }
-
-export { postNew, getUser };

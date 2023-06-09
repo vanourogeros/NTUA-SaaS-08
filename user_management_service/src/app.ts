@@ -2,14 +2,14 @@ import express from "express";
 import mongoose from "mongoose";
 import { connectToDB } from "./lib/dbUtils.js";
 import { verifyEnv } from "./lib/envUtils.js";
-import { getUserId } from "./middleware/auth.js";
+import { extractUserId } from "./middleware/auth.js";
 import userRouter from "./routes/user.js";
 
 try {
     // load environment variables
     if (process.env.NODE_ENV !== "production") {
         const dotenv = await import("dotenv");
-        dotenv.config({ path: ".env" });
+        dotenv.config();
         console.log("Loaded the .env variables");
     }
 
@@ -44,7 +44,7 @@ try {
 
     // create and set up the express app
     const app = express();
-    app.use("/user", getUserId, userRouter);
+    app.use("/user", extractUserId, userRouter);
 
     // start listening for incoming requests
     app.listen(parseInt(env.HTTP_PORT), env.HTTP_HOST, () => {

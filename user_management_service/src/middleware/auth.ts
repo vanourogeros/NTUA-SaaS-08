@@ -1,16 +1,14 @@
 import { codes } from "../app.js";
 import type { Request, Response, NextFunction } from "express";
 
-function getUserId(req: Request, res: Response, next: NextFunction) {
+export function extractUserId(req: Request, res: Response, next: NextFunction) {
     const userId = req.get("X-User-ID");
 
-    if (!userId) {
+    if (userId == undefined) {
         console.error("Missing X-User-ID header");
-        return res.sendStatus(codes.UNAUTHORIZED);
+        return res.status(codes.UNAUTHORIZED).send("Unauthorized");
     }
 
     res.locals.userId = userId;
     return next();
 }
-
-export { getUserId };

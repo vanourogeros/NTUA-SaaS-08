@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 // function to connect to the database asynchronously
-async function connectToDB(uri: string, maxRetries: number) {
+export async function connectToDB(uri: string, maxRetries: number) {
     try {
         await mongoose.connect(uri);
         console.log("Connected to the database");
@@ -13,9 +13,7 @@ async function connectToDB(uri: string, maxRetries: number) {
             await connectToDB(uri, maxRetries - 1);
         } else {
             console.error("Giving up...");
-            process.exit(-1);
+            throw new Error("Could not connect to the database");
         }
     }
 }
-
-export { connectToDB };
