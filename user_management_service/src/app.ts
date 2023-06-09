@@ -3,14 +3,16 @@ import mongoose from "mongoose";
 import { connectToDB } from "./lib/dbUtils.js";
 import { verifyEnv } from "./lib/envUtils.js";
 import { extractUserId } from "./middleware/auth.js";
+import { errorHandler } from "./middleware/error.js";
 import userRouter from "./routes/user.js";
 
 try {
     // load environment variables
-    if (process.env.NODE_ENV !== "production") {
-        const dotenv = await import("dotenv");
-        dotenv.config();
-        console.log("Loaded the .env variables");
+    if (process.env.NODE_ENV === "production") {
+        console.info("Running in 'production' mode");
+    } else {
+        console.info("Running in 'development' mode");
+        (await import("dotenv")).config();
     }
 
     // verify all required environment variables exist
@@ -22,42 +24,55 @@ try {
         MONGO_NAME: process.env.MONGO_NAME,
     });
 
+    console.log("All environment variables are present");
+
     // connect to the database and retry up to 3 times if it fails
     await connectToDB(
         `mongodb://${env.MONGO_HOST}:${env.MONGO_PORT}/${env.MONGO_NAME}`,
-        3
+        2
     );
+
+    console.log("Connected to the database");
 
     // add event listeners on the database connection
     // if a diconnection due to an error occurs, mongoose will automatically try to reconnect
-    mongoose.connection.on("error", (err) =>
-        console.error("Database connection error:", err)
+    mongoose.connection.on("error", (err) => {
+        console.error("Database connection error:");
+        if (err instanceof Error) {
+            console.error(err.name);
+            console.error(err.message);
+        } else {
+            console.error(err);
+        }
+    });
+
+    mongoose.connection.on("disconnected", () =>
+        console.log("Disconnected from the database")
     );
 
     mongoose.connection.on("connected", () =>
         console.log("Reconnected to the database")
     );
 
-    mongoose.connection.on("disconnected", () =>
-        console.log("Disconnected from the database")
-    );
-
     // create and set up the express app
     const app = express();
-    app.use("/user", extractUserId, userRouter);
+    app.use("/user", extractUserId, userRouter, errorHandler);
 
     // start listening for incoming requests
     app.listen(parseInt(env.HTTP_PORT), env.HTTP_HOST, () => {
         console.log(
-            `Auth microservice listening on '${env.HTTP_HOST}:${env.HTTP_PORT}'`
+            `User management microservice listening on 'http://${env.HTTP_HOST}:${env.HTTP_PORT}'`
         );
     });
 } catch (err) {
+    console.error("Critical error in main app loop:");
     if (err instanceof Error) {
         console.error(err.name);
         console.error(err.message);
+    } else {
+        console.error(err);
     }
-    process.exit(1);
+    process.exit(-1);
 }
 
 // http response codes
@@ -65,5 +80,6 @@ export const codes = {
     OK: 200,
     CREATED: 201,
     UNAUTHORIZED: 401,
+    CONFLICT: 409,
     INTERNAL_SERVER_ERROR: 500,
 };

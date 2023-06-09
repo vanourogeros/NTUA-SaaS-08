@@ -3,7 +3,7 @@
 // if an undefined value is found an error is throws
 export function verifyEnv(env: Readonly<Record<string, string | undefined>>) {
     for (const [key, val] of Object.entries(env)) {
-        if (val === undefined) {
+        if (val == undefined) {
             throw new Error(`Environment variable '${key}' is missing`);
         }
     }
