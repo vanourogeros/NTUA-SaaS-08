@@ -1,5 +1,6 @@
 dist
 node_modules
+user_management_database_volume
 .dockerignore
 .env*
 !.env
