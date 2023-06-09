@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import { connectToDB } from "./lib/dbUtils.js";
 import { verifyEnv } from "./lib/envUtils.js";
 import { getUserId } from "./middleware/auth.js";
+import userRouter from "./routes/user.js";
 
 // http response codes
 const codes = {
@@ -54,6 +55,7 @@ mongoose.connection.on("disconnected", () =>
 // create and set up the express app
 const app = express();
 app.use(getUserId);
+app.use("/user", userRouter);
 
 // start listening for incoming requests
 app.listen(parseInt(env.APP_PORT), env.APP_HOST, () => {
