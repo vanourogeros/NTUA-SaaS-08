@@ -34,7 +34,8 @@ services:
       - kafka
     command: "bash -c 'echo Waiting for Kafka to be ready... && \
                        cub kafka-ready -b kafka:9092 1 20 && \
-                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic my-topic && \
+                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic csv-chart-line-basic && \
+                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic svg-chart-line-basic && \
                        echo Waiting 60 seconds for Connect to be ready... && \
                        sleep 60'"
     environment:
@@ -42,6 +43,7 @@ services:
       # We override the image's `command` anyway, hence this container will not start a broker.
       KAFKA_BROKER_ID: ignored
       KAFKA_ZOOKEEPER_CONNECT: ignored
+
   mycharts-data-uploader:
     build:
       context: ../microservice-data-uploader
@@ -53,7 +55,7 @@ services:
 
   mycharts-frontend:
     build:
-      context: ../microservice-frontend
+      context: ../frontend
       dockerfile: Dockerfile
     depends_on:
       - kafka
@@ -71,3 +73,15 @@ services:
       - mycharts-data-uploader
     ports:
       - "3003:3003"
+
+  store-line-basic:
+    build:
+      context: ../microservice-store-line-basic
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+      - kafka-setup
+      - mycharts-data-uploader
+      - chart-line-basic
+    ports:
+      - "3004:3004"

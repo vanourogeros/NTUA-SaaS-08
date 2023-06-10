@@ -22,8 +22,9 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
 
         console.log('File contents:', data);
         // Create a message to send to Kafka
+        // TODO: The payload should also contain the metadata of the CSV file (mainly the user ID)
         let payloads = [
-            { topic: 'my-topic', messages: data }
+            { topic: 'csv-chart-line-basic', messages: data }
         ];
 
         // Send the message

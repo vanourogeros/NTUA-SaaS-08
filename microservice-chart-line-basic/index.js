@@ -9,9 +9,21 @@ const setupConsumer = () => {
     try {
         const consumer = new kafka.Consumer(
             client,
-            [{ topic: 'my-topic', partition: 0 }],
+            [{ topic: 'csv-chart-line-basic', partition: 0 }],
             { autoCommit: true }
         );
+
+        // Create a producer
+        const producer = new kafka.Producer(client);
+
+        producer.on('ready', function () {
+            console.log('Producer is ready');
+        });
+
+        producer.on('error', function (err) {
+            console.log('Producer is in error state');
+            console.log(err);
+        })
 
         consumer.on('error', function (err) {
             console.log('Error:', err);
@@ -49,7 +61,15 @@ const setupConsumer = () => {
             try {
                 const chartSVG = await charter(chartOptions);
                 fs.writeFileSync('/chart.svg', chartSVG);
-                // TODO: Save the chart to mongodb
+
+                // Send the chart to the "svg-chart-line-basic" topic
+                // TODO: The payload should be an object which also contains the User ID and other metadata (See TODO at data yploader)
+                const payloads = [
+                    { topic: 'svg-chart-line-basic', messages: chartSVG, partition: 0 }
+                ];
+                producer.send(payloads, function (err, data) {
+                    console.log(data);
+                });
 
             } catch (e) {
                 console.log('Error creating chart:', e);
