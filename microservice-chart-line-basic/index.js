@@ -63,7 +63,7 @@ const setupConsumer = () => {
                 fs.writeFileSync('/chart.svg', chartSVG);
 
                 // Send the chart to the "svg-chart-line-basic" topic
-                // TODO: The payload should be an object which also contains the User ID and other metadata (See TODO at data yploader)
+                // TODO: The payload should be an object which also contains the User ID and other metadata (See TODO at data uploader)
                 const payloads = [
                     { topic: 'svg-chart-line-basic', messages: chartSVG, partition: 0 }
                 ];
