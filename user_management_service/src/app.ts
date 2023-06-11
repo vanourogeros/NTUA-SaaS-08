@@ -1,10 +1,19 @@
 import express from "express";
+import { Kafka } from "kafkajs";
 import mongoose from "mongoose";
 import { connectToDB } from "./lib/dbUtils.js";
 import { verifyEnv } from "./lib/envUtils.js";
 import { extractUserId } from "./middleware/auth.js";
 import { errorHandler } from "./middleware/error.js";
 import userRouter from "./routes/user.js";
+
+const codes = {
+    OK: 200,
+    CREATED: 201,
+    UNAUTHORIZED: 401,
+    CONFLICT: 409,
+    INTERNAL_SERVER_ERROR: 500,
+};
 
 try {
     // load environment variables
@@ -54,6 +63,16 @@ try {
         console.log("Reconnected to the database")
     );
 
+    const kafka = new Kafka({
+        clientId: "user_management_service",
+        brokers: ["kafka_broker:9092"],
+    });
+
+    // TODO: finish
+    const consumer = kafka.consumer({ groupId: "grp-1" });
+    await consumer.connect();
+    await consumer.subscribe({ topic: "charts" });
+
     // create and set up the express app
     const app = express();
     app.use("/user", extractUserId, userRouter, errorHandler);
@@ -76,10 +95,4 @@ try {
 }
 
 // http response codes
-export const codes = {
-    OK: 200,
-    CREATED: 201,
-    UNAUTHORIZED: 401,
-    CONFLICT: 409,
-    INTERNAL_SERVER_ERROR: 500,
-};
+export { codes };
