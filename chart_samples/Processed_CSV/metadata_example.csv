@@ -1,0 +1,6 @@
+﻿# lines with hashtag as the first column are comments
+# if there are commas in any values, make sure to escape them (\,)
+#
+#,<enter text, or 'null' if you don't want one>,<left, center, right>,<top, middle, bottom>,<enter text, or 'null' if you don't want one>,<left, center, right>,<top, middle, bottom>,<enter text, or 'null' if you don't want one>,<left, center, right>,<top, middle, bottom>,<true or false>,<left, center, right>,<top, middle, bottom>,<enter text, or 'null' if you don't want one>,<linear, logarithmic, category>,<enter text, or 'null' if you don't want one>,<linear, logarithmic, category>,<inverts the axes, true or false>
+,title/text,title/align,title/verticalAlign,subtitle/text,subtitle/align,subtitle/verticalAlign,caption/text,caption/align,caption/verticalAlign,legend/enabled,legend/align,legend/verticalAlign,xAxis/title,xAxis/type,yAxis/title,yAxis/type,chart/inverted
+,This is the title\, which contains a comma,center,top,This is the subtitle,center,top,This is the caption,center,bottom,1,right,bottom,This is the x-axis title,logarithmic,This is the y-axis title,logarithmic,0
