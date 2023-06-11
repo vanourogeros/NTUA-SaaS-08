@@ -3,6 +3,7 @@ import { MongoClient, ServerApiVersion } from 'mongodb';
 import express from 'express';
 
 const app = express();
+const port = 3004;
 const uri = "mongodb+srv://saas08:saas08@cluster0.zuzcca6.mongodb.net/?retryWrites=true&w=majority";
 
 const client = new kafka.KafkaClient({ kafkaHost: 'kafka:9092' });
@@ -42,7 +43,7 @@ const setupConsumer = () => {
         consumer.on('message', async function (message) {
             console.log('Received message:', message.value);
             // TODO: Save the diagram (SVG) to a MongoDB database, update metadata
-            const diagram = {file: message.value, userID: "giannis"}
+            const diagram = {file: message.value, userID: "giannnis"}
             const result = await db.collection('diagrams_line_basic').insertOne(diagram);
             console.log(`A document was inserted with the _id: ${result.insertedId}`);
         });
@@ -61,3 +62,17 @@ const setupConsumer = () => {
 }
 
 setupConsumer();
+
+// API endpoint
+app.get('/api/diagrams/:userID', async (req, res) => {
+    const userID = req.params.userID;
+
+    // Fetch diagrams from MongoDB
+    const diagrams = await db.collection('diagrams_line_basic').find({ userID }).toArray();
+
+    res.json(diagrams);
+});
+
+app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+});
