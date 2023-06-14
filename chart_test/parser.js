@@ -96,6 +96,7 @@ while (startPos < headers.length) {
 }
 
 const endRes = res[0];
+
 for (let i = 1; i < res.length; ++i) {
     for (const k of Object.keys(res[i])) {
         if (endRes[k]) {
@@ -106,6 +107,11 @@ for (let i = 1; i < res.length; ++i) {
             }
         }
     }
+}
+
+// didn't think about this much
+if (res.length === 1) {
+    endRes.series = [endRes.series];
 }
 
 console.log(endRes);
