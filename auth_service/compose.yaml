@@ -1,4 +1,14 @@
 services:
+  backend:
+    container_name: auth_backend
+    build: ./
+    env_file:
+      - ./.env
+    environment:
+      - NODE_ENV=production
+      - HTTP_HOST=0.0.0.0
+    expose:
+      - "3000"
   gateway:
     container_name: auth_gateway
     build:
@@ -8,10 +18,3 @@ services:
       - backend
     ports:
       - "80:80"
-  backend:
-    container_name: auth_backend
-    build:
-      context: ./
-      dockerfile: Dockerfile.backend
-    expose:
-      - "3000"
