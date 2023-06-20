@@ -1,0 +1,53 @@
+﻿# Rows beginning with a hashtag (#) are ignored;;;;;;;;;;;;
+# If there are commas in any values make sure to escape them (\,);;;;;;;;;;;;
+# The first column of each row is the option name and the rest of the row contains the option value(s);;;;;;;;;;;;
+;;;;;;;;;;;;
+;;;;;;;;;;;;
+;;;;;;;;;;;;
+# -----------------------------------------;;;;;;;;;;;;
+# Options regarding the series of the chart;;;;;;;;;;;;
+# -----------------------------------------;;;;;;;;;;;;
+;;;;;;;;;;;;
+# leave empty if you don't want one;;;;;;;;;;;;
+series/1/name;This is the series 1 name;;;;;;;;;;;
+;;;;;;;;;;;;
+# true, false, number indicating the value of each point on the series line;;;;;;;;;;;;
+series/1/dataLabels/enabled;TRUE;;;;;;;;;;;
+;;;;;;;;;;;;
+# true, false, dots on the series line;;;;;;;;;;;;
+series/1/marker/enabled;TRUE;;;;;;;;;;;
+;;;;;;;;;;;;
+# number, the first x-axis point;;;;;;;;;;;;
+series/1/pointStart;-10;;;;;;;;;;;
+;;;;;;;;;;;;
+# number, the difference between two consecutive x-axis points;;;;;;;;;;;;
+series/1/pointInterval;2;;;;;;;;;;;
+;;;;;;;;;;;;
+# x values;;;;;;;;;;;;
+series/1/data/x;-5;-4;-3;-2;-1;0;1;2;3;4;5;6
+;;;;;;;;;;;;
+# y values;;;;;;;;;;;;
+series/1/data/y;10;15;14;17;46;55;34;22;5;-3;-9;-20
+;;;;;;;;;;;;
+# You can add more series by copy-pasting the above options and changing the number;;;;;;;;;;;;
+;;;;;;;;;;;;
+# leave empty if you don't want one;;;;;;;;;;;;
+series/2/name;This is the series 2 name;;;;;;;;;;;
+;;;;;;;;;;;;
+# true, false, number indicating the value of each point on the series line;;;;;;;;;;;;
+series/2/dataLabels/enabled;FALSE;;;;;;;;;;;
+;;;;;;;;;;;;
+# true, false, dots on the series line;;;;;;;;;;;;
+series/2/marker/enabled;FALSE;;;;;;;;;;;
+;;;;;;;;;;;;
+# number, the first x-axis point;;;;;;;;;;;;
+series/2/pointStart;-15;;;;;;;;;;;
+;;;;;;;;;;;;
+# number, the difference between two consecutive x-axis points;;;;;;;;;;;;
+series/2/pointInterval;1;;;;;;;;;;;
+;;;;;;;;;;;;
+# x values;;;;;;;;;;;;
+series/2/data/x;-10;-9;-7;-6;-5;-3;0;2;3;4;6;10
+;;;;;;;;;;;;
+# y values;;;;;;;;;;;;
+series/2/data/y;2;3;4;5;6;7;8;9;10;12;13;15
