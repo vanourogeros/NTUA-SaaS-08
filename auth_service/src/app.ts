@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import express from "express";
 import { OAuth2Client } from "google-auth-library";
 import { getUserPayload, getJWT } from "./lib/authUtils.js";
@@ -12,11 +11,10 @@ const codes = {
 
 // load environment variables
 if (process.env.NODE_ENV === "production") {
-    dotenv.config({ path: "./.env.production" });
-    console.log("Loaded the .env.production variables");
+    console.info("Running in 'production' mode");
 } else {
-    dotenv.config({ path: "./.env.development" });
-    console.log("Loaded the .env.development variables");
+    console.info("Running in 'development' mode");
+    (await import("dotenv")).config();
 }
 
 // verify all required environment variables exist
@@ -75,8 +73,8 @@ app.get("/auth", async (req, res) => {
 });
 
 // start listening for incoming requests
-app.listen(parseInt(env.APP_PORT), env.APP_HOST, () => {
+app.listen(parseInt(env.HTTP_PORT), env.HTTP_HOST, () => {
     console.log(
-        `Auth microservice listening on '${env.APP_HOST}:${env.APP_PORT}'`
+        `Auth microservice listening on '${env.HTTP_HOST}:${env.HTTP_PORT}'`
     );
 });
