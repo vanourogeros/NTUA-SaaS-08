@@ -36,7 +36,7 @@ export interface Blueprint {
 // its allowed values, etc
 // if a field is an array, it will contain 'isArray: true'
 
-export const metadataBlueprint: Blueprint = {
+export const metadata: Blueprint = {
     title: {
         text: {
             type: "string",
@@ -118,7 +118,7 @@ export const metadataBlueprint: Blueprint = {
     },
 };
 
-export const basicLineBlueprint: Blueprint = {
+export const basicLine: Blueprint = {
     series: [
         {
             name: {
@@ -156,4 +156,18 @@ export const basicLineBlueprint: Blueprint = {
     ],
 };
 
-export const lineWithAnnotationsBlueprint: Blueprint = {};
+export const lineWithAnnotations: Blueprint = {};
+
+export const basicColumn: Blueprint = {};
+
+export const pieChart: Blueprint = {};
+
+export const dependencyWheel: Blueprint = {};
+
+export const networkGraph: Blueprint = {};
+
+export const wordCloud: Blueprint = {};
+
+export const organizationChart: Blueprint = {};
+
+export const polarChart: Blueprint = {};
