@@ -103,7 +103,7 @@ function fillInValues(
     lineNo: number
 ) {
     function fillInStrings() {
-        objectRef[lastField] = values.length > 1 ? [...values] : values[0];
+        objectRef[lastField] = values.length > 1 ? values : values[0];
     }
 
     function fillInNumbers() {
@@ -113,7 +113,10 @@ function fillInValues(
                 expected number`);
             }
         }
-        objectRef[lastField] = values.length > 1 ? [...values] : values[0];
+        objectRef[lastField] =
+            values.length > 1
+                ? values.map((v) => parseInt(v))
+                : parseInt(values[0]);
     }
 
     function fillInBooleans() {
@@ -144,7 +147,7 @@ function fillInValues(
                 );
             }
         }
-        objectRef[lastField] = values.length > 1 ? [...values] : values[0];
+        objectRef[lastField] = values.length > 1 ? values : values[0];
     }
 
     // see comment in 'createFirstFields()' to understand the use of this variable
@@ -199,6 +202,7 @@ async function* enumerate(
 }
 
 // parse a CSV line, returning an array of its values in 3 different 'categories'
+// also trims and unescapes escaped commas
 export function parseCSVLine(
     line: string
 ): [undefined, undefined, undefined] | [string[], string, string[]] {
@@ -215,7 +219,7 @@ export function parseCSVLine(
     }
 
     // 'a/b/c/d,e,f,g' -> ['a/b/c/d', 'e', 'f', 'g']
-    const values = line.split(UNESCAPED_COMMAS).map((v) => v.trim());
+    const values = line.split(UNESCAPED_COMMAS);
     // if less than two values are given, nothing is produced
     if (values.length < 2) {
         return [undefined, undefined, undefined];
@@ -233,7 +237,11 @@ export function parseCSVLine(
     // firstOptionFields might be empty
     // lastOptionField will not be empty
     // values will not be empty
-    return [firstOptionFields, lastOptionField, values];
+    return [
+        firstOptionFields.map((f) => f.trim().replaceAll("\\,", ",")),
+        lastOptionField.trim().replaceAll("\\,", ","),
+        values.map((v) => v.trim().replaceAll("\\,", ",")),
+    ];
 }
 
 export async function parseCSVFile(infile: PathLike, blueprint: Blueprint) {
