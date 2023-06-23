@@ -12,10 +12,10 @@
 series/1/name,This is the series 1 name
 
 # true, false, number indicating the value of each point on the series line
-series/1/dataLabels/enabled,TRUE
+series/1/dataLabels/enabled,false
 
 # true, false, dots on the series line
-series/1/marker/enabled,TRUE
+series/1/marker/enabled,true
 
 # number, the first x-axis point
 series/1/pointStart,-10
@@ -35,10 +35,10 @@ series/1/data/y,10,15,14,17,46,55,34,22,5,-3,-9,-20
 series/2/name,This is the series 2 name
 
 # true, false, number indicating the value of each point on the series line
-series/2/dataLabels/enabled,FALSE
+series/2/dataLabels/enabled,true
 
 # true, false, dots on the series line
-series/2/marker/enabled,FALSE
+series/2/marker/enabled,false
 
 # number, the first x-axis point
 series/2/pointStart,-15

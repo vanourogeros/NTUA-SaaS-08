@@ -54,7 +54,7 @@ caption/verticalAlign,bottom
 # -----------------------------------------
 
 # true, false
-legend/enabled,TRUE
+legend/enabled,true
 
 # left, center, right (ignored if legend is disabled)
 legend/align,right
