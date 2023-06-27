@@ -3,19 +3,12 @@ import { createInterface } from "readline/promises";
 
 import type { PathLike } from "fs";
 import type { Interface } from "readline/promises";
-import type { Blueprint } from "./blueprints.js";
+import type { Blueprint } from "./charts/shared.js";
 
 // object containing string keys and boolean (arrays), number (arrays), string (arrays),
 // or other ParsedCSVs as values
 interface ParsedCSV {
-    [key: string]:
-        | ParsedCSV
-        | boolean
-        | boolean[]
-        | number
-        | number[]
-        | string
-        | string[];
+    [key: string]: ParsedCSV | boolean | boolean[] | number | number[] | string | string[];
 }
 
 // helper function to reduce parseCSVFile's size
@@ -114,9 +107,7 @@ function fillInValues(
             }
         }
         objectRef[lastField] =
-            values.length > 1
-                ? values.map((v) => parseInt(v))
-                : parseInt(values[0]);
+            values.length > 1 ? values.map((v) => parseInt(v)) : parseInt(values[0]);
     }
 
     function fillInBooleans() {
@@ -192,9 +183,7 @@ function fillInValues(
 }
 
 // enumerate over an async iterator
-async function* enumerate(
-    asyncIterable: Interface
-): AsyncGenerator<[number, string]> {
+async function* enumerate(asyncIterable: Interface): AsyncGenerator<[number, string]> {
     let index = 0;
     for await (const item of asyncIterable) {
         yield [index++, item];
@@ -227,9 +216,7 @@ export function parseCSVLine(
 
     // ['a/b/c/d', 'e', 'f', 'g'] -> 'a/b/c/d', ['e', 'f', 'g']
     // 'a/b/c/d' -> ['a', 'b', 'c', 'd']
-    const firstOptionFields = (values.shift() as string).split(
-        FIELDS_SEPARATOR
-    );
+    const firstOptionFields = (values.shift() as string).split(FIELDS_SEPARATOR);
 
     // ['a', 'b', 'c', 'd'] -> ['a', 'b', 'c'], 'd'
     const lastOptionField = firstOptionFields.pop() as string;
@@ -260,8 +247,7 @@ export async function parseCSVFile(infile: PathLike, blueprint: Blueprint) {
         for await (const [i, line] of enumerate(readLineStream)) {
             console.debug(i, line);
 
-            const [firstOptionFields, lastOptionField, fieldValues] =
-                parseCSVLine(line);
+            const [firstOptionFields, lastOptionField, fieldValues] = parseCSVLine(line);
 
             // this means that the line does not contain any useful data
             if (firstOptionFields == undefined) continue;
@@ -283,21 +269,31 @@ export async function parseCSVFile(infile: PathLike, blueprint: Blueprint) {
             }
 
             // fill in the values of the current line following the blueprint
-            fillInValues(
-                fieldValues,
-                lastOptionField,
-                objectRef,
-                blueprintRef,
-                i
-            );
+            fillInValues(fieldValues, lastOptionField, objectRef, blueprintRef, i);
         }
+
+        fixArraysRecursively(object, blueprint);
 
         console.debug(""); // empty line because we printed every line to debug
         return object;
     } catch (err) {
-        console.error(
-            `An error occured while parsing the CSV file '${infile}'`
-        );
+        console.error(`An error occured while parsing the CSV file '${infile}'`);
         throw err;
+    }
+}
+
+function fixArraysRecursively(objectRef: any, blueprintRef: any) {
+    for (const key in objectRef) {
+        if (Array.isArray(blueprintRef[key])) {
+            const arr = [];
+            for (const val of Object.values(objectRef[key])) {
+                arr.push(val);
+            }
+            objectRef[key] = arr;
+        }
+
+        if (typeof blueprintRef[key] === "object") {
+            fixArraysRecursively(objectRef[key], blueprintRef[key]);
+        }
     }
 }

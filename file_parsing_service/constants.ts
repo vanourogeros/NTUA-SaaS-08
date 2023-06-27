@@ -23,7 +23,7 @@ const caption = {
 };
 
 // these should probably just be constant
-export const chart = {
+const chart = {
     borderColor: "black", // always (probably)
     borderWidth: 1, // always (probably)
     displayErrors: true, // set to false to only display errors in the console
@@ -37,7 +37,7 @@ export const chart = {
 };
 
 // hehe
-export const credits = {
+const credits = {
     href: "https://youtube.com/shorts/80Uh5p8llcg?feature=share",
     text: "myCharts.com",
 };
@@ -55,27 +55,6 @@ const legend = {
 
 // the user might be able to alter some of these (optional)
 const plotOptions = {
-    area: {
-        /* object left intentionally blank */
-    },
-    column: {
-        /* object left intentionally blank */
-    },
-    dependencywheel: {
-        /* object left intentionally blank */
-    },
-    line: {
-        /* object left intentionally blank */
-    },
-    networkgraph: {
-        /* object left intentionally blank */
-    },
-    organization: {
-        /* object left intentionally blank */
-    },
-    pie: {
-        /* object left intentionally blank */
-    },
     series: {
         dataLabels: {
             enabled: true, // shows point values next to points when true
@@ -87,9 +66,6 @@ const plotOptions = {
         },
         pointInterval: undefined, // xi+1 - xi
         pointStart: undefined, // first data point x value
-    },
-    wordcloud: {
-        /* object left intentionally blank */
     },
 };
 
@@ -121,7 +97,7 @@ const title = {
 };
 
 // never change this
-export const tooltip = {
+const tooltip = {
     enabled: false,
 };
 
