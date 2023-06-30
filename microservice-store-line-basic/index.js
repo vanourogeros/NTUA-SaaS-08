@@ -74,5 +74,5 @@ app.get('/api/diagrams/:userID', async (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
+    console.log(`Store microservice (line-basic) is running at http://localhost:${port}`);
 });
