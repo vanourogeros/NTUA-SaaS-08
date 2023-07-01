@@ -14,13 +14,4 @@ COPY --from=builder /home/node/app/package*.json ./
 COPY --from=builder /home/node/app/dist ./dist
 RUN npm --omit=dev install
 USER node
-EXPOSE 3000
-ENV NODE_ENV=production
-ENV APP_HOST=0.0.0.0
-ENV APP_PORT=3000
-ENV DB_HOST=auth_database
-ENV DB_PORT=27017
-ENV DB_NAME=myChartsAuth
-ENV GOOGLE_CLIENT_ID=1052495587846-i3c0q2ij2clbd7j1j7v9r3knmqks8iod.apps.googleusercontent.com
-ENV GOOGLE_CLIENT_SECRET=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
-ENTRYPOINT ["node", "./dist/app.mjs"]
+ENTRYPOINT ["node", "./dist/app.js"]
