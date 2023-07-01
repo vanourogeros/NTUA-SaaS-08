@@ -12,7 +12,8 @@ app.get('/api/diagrams/:userID', async (req, res) => {
         const requests = services.map(service => axios.get(`${service}/api/diagrams/${userID}`));
         const responses = await Promise.all(requests);
         const diagrams = responses.map(response => response.data);
-        return res.json({ userID, diagrams: diagrams });
+        const diagrams_flat = diagrams.flat(); // Flatten the array of arrays
+        return res.json({ userID, diagrams: diagrams_flat });
     }
     catch (err) {
         console.error(err);
