@@ -7,7 +7,8 @@ app.get('/api/diagrams/:userID', async (req, res) => {
     const userID = req.params.userID;
     // TODO: Fetch diagrams for the user from all other microservices
 
-    const services = ['http://store-line-basic:3004']; // Add all other store microservices here
+    const services = ['http://store-line-basic:3020', 'http://store-basic-column:3021',
+        'http://store-pie-chart:3022', 'http://store-line-annotations:3023']; // Add all other store microservices here
     try {
         const requests = services.map(service => axios.get(`${service}/api/diagrams/${userID}`));
         const responses = await Promise.all(requests);
