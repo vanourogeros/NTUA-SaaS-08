@@ -85,3 +85,14 @@ services:
       - chart-line-basic
     ports:
       - "3004:3004"
+
+  diagram-fetcher:
+    build:
+      context: ../microservice-diagram-fetcher
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+      - kafka-setup
+      - mycharts-data-uploader
+    ports:
+      - "3030:3030"
