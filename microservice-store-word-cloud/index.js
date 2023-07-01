@@ -3,7 +3,7 @@ import { MongoClient, ServerApiVersion } from 'mongodb';
 import express from 'express';
 
 const app = express();
-const port = 3026;
+const port = 3027;
 const uri = "mongodb+srv://saas08:saas08@cluster0.zuzcca6.mongodb.net/?retryWrites=true&w=majority";
 
 const client = new kafka.KafkaClient({ kafkaHost: 'kafka:9092' });
@@ -18,13 +18,13 @@ const mongo_client = new MongoClient(uri, {
 });
 
 await mongo_client.connect();
-const db = mongo_client.db('diagram_polar_chart');
+const db = mongo_client.db('diagram_word_cloud');
 
 const setupConsumer = () => {
     try {
         const consumer = new kafka.Consumer(
             client,
-            [{ topic: 'svg-chart-polar', partition: 0 }],
+            [{ topic: 'svg-chart-word-cloud', partition: 0 }],
             { autoCommit: true }
         );
 
@@ -49,7 +49,7 @@ const setupConsumer = () => {
                 chartID: message.value["chart_id"],
                 creationDate: Date.now()
             }
-            const result = await db.collection('diagram_polar_chart').insertOne(diagram);
+            const result = await db.collection('diagram_word_cloud').insertOne(diagram);
             console.log(`A document was inserted with the _id: ${result.insertedId}`);
         });
 
@@ -73,11 +73,11 @@ app.get('/api/diagrams/:userID', async (req, res) => {
     const userID = req.params.userID;
 
     // Fetch diagrams from MongoDB
-    const diagrams = await db.collection('diagram_polar_chart').find({ userID }).toArray();
+    const diagrams = await db.collection('diagram_word_cloud').find({ userID }).toArray();
 
     res.json(diagrams);
 });
 
 app.listen(port, () => {
-    console.log(`Store microservice (polar-chart) is running at http://localhost:${port}`);
+    console.log(`Store microservice (word-cloud) is running at http://localhost:${port}`);
 });

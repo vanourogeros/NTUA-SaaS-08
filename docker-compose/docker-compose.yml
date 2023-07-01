@@ -2,6 +2,8 @@ version: '3'
 services:
   nginx:
     image: nginx:latest
+    depends_on:
+      - mycharts-frontend
     ports:
       - '80:80'
     volumes:
@@ -158,6 +160,16 @@ services:
       - kafka-setup
     ports:
       - "3026:3026"
+
+  store-word-cloud:
+    build:
+      context: ../microservice-store-word-cloud
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+      - kafka-setup
+    ports:
+      - "3027:3027"
 
   diagram-fetcher:
     build:
