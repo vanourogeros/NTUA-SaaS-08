@@ -139,6 +139,26 @@ services:
     ports:
       - "3024:3024"
 
+  store-network-graph:
+    build:
+      context: ../microservice-store-network-graph
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+      - kafka-setup
+    ports:
+      - "3025:3025"
+
+  store-polar-chart:
+    build:
+      context: ../microservice-store-polar-chart
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+      - kafka-setup
+    ports:
+      - "3026:3026"
+
   diagram-fetcher:
     build:
       context: ../microservice-diagram-fetcher
