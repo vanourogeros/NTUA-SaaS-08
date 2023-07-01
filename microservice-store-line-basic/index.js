@@ -43,7 +43,12 @@ const setupConsumer = () => {
         consumer.on('message', async function (message) {
             console.log('Received message:', message.value);
             // TODO: Save the diagram (SVG) to a MongoDB database, update metadata
-            const diagram = {file: message.value, userID: "giannnis"}
+            const diagram = {
+                file: message.value["chart_svg"],
+                userID: message.value["user_id"],
+                chartID: message.value["chart_id"],
+                creationDate: Date.now()
+            }
             const result = await db.collection('diagrams_line_basic').insertOne(diagram);
             console.log(`A document was inserted with the _id: ${result.insertedId}`);
         });

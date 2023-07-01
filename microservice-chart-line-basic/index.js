@@ -64,8 +64,9 @@ const setupConsumer = () => {
 
                 // Send the chart to the "svg-chart-line-basic" topic
                 // TODO: The payload should be an object which also contains the User ID and other metadata (See TODO at data uploader)
+                // TODO: (update) change all "giannis" to the actual ID values
                 const payloads = [
-                    { topic: 'svg-chart-line-basic', messages: chartSVG, partition: 0 }
+                    { topic: 'svg-chart-line-basic', messages: {chart_svg: chartSVG, chart_id: "chart_giannis", user_id: "giannis"}, partition: 0 }
                 ];
                 producer.send(payloads, function (err, data) {
                     console.log(data);
