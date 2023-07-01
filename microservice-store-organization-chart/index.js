@@ -3,7 +3,7 @@ import { MongoClient, ServerApiVersion } from 'mongodb';
 import express from 'express';
 
 const app = express();
-const port = 3025;
+const port = 3028;
 const uri = "mongodb+srv://saas08:saas08@cluster0.zuzcca6.mongodb.net/?retryWrites=true&w=majority";
 
 const client = new kafka.KafkaClient({ kafkaHost: 'kafka:9092' });
@@ -18,13 +18,13 @@ const mongo_client = new MongoClient(uri, {
 });
 
 await mongo_client.connect();
-const db = mongo_client.db('diagram_network_graph');
+const db = mongo_client.db('diagram_organization_chart');
 
 const setupConsumer = () => {
     try {
         const consumer = new kafka.Consumer(
             client,
-            [{ topic: 'svg-chart-network-graph', partition: 0 }],
+            [{ topic: 'svg-chart-organization', partition: 0 }],
             { autoCommit: true }
         );
 
@@ -49,7 +49,7 @@ const setupConsumer = () => {
                 chartID: message.value["chart_id"],
                 creationDate: Date.now()
             }
-            const result = await db.collection('diagram_network_graph').insertOne(diagram);
+            const result = await db.collection('diagram_organization_chart').insertOne(diagram);
             console.log(`A document was inserted with the _id: ${result.insertedId}`);
         });
 
@@ -73,11 +73,11 @@ app.get('/api/diagrams/:userID', async (req, res) => {
     const userID = req.params.userID;
 
     // Fetch diagrams from MongoDB
-    const diagrams = await db.collection('diagram_network_graph').find({ userID }).toArray();
+    const diagrams = await db.collection('diagram_organization_chart').find({ userID }).toArray();
 
     res.json(diagrams);
 });
 
 app.listen(port, () => {
-    console.log(`Store microservice (network-graph) is running at http://localhost:${port}`);
+    console.log(`Store microservice (organization-chart) is running at http://localhost:${port}`);
 });

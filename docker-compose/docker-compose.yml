@@ -171,6 +171,16 @@ services:
     ports:
       - "3027:3027"
 
+  store-organization-chart:
+    build:
+      context: ../microservice-store-organization-chart
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+      - kafka-setup
+    ports:
+      - "3028:3028"
+
   diagram-fetcher:
     build:
       context: ../microservice-diagram-fetcher
