@@ -129,6 +129,16 @@ services:
     ports:
       - "3023:3023"
 
+  store-dependency-wheel:
+    build:
+      context: ../microservice-store-dependency-wheel
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+      - kafka-setup
+    ports:
+      - "3024:3024"
+
   diagram-fetcher:
     build:
       context: ../microservice-diagram-fetcher
