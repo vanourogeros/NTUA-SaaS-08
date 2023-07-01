@@ -3,7 +3,7 @@ import { MongoClient, ServerApiVersion } from 'mongodb';
 import express from 'express';
 
 const app = express();
-const port = 3020;
+const port = 3021;
 const uri = "mongodb+srv://saas08:saas08@cluster0.zuzcca6.mongodb.net/?retryWrites=true&w=majority";
 
 const client = new kafka.KafkaClient({ kafkaHost: 'kafka:9092' });
@@ -18,13 +18,13 @@ const mongo_client = new MongoClient(uri, {
 });
 
 await mongo_client.connect();
-const db = mongo_client.db('diagrams_line_basic');
+const db = mongo_client.db('diagrams_basic_column');
 
 const setupConsumer = () => {
     try {
         const consumer = new kafka.Consumer(
             client,
-            [{ topic: 'svg-chart-line-basic', partition: 0 }],
+            [{ topic: 'svg-chart-basic-column', partition: 0 }],
             { autoCommit: true }
         );
 
@@ -73,11 +73,11 @@ app.get('/api/diagrams/:userID', async (req, res) => {
     const userID = req.params.userID;
 
     // Fetch diagrams from MongoDB
-    const diagrams = await db.collection('diagrams_line_basic').find({ userID }).toArray();
+    const diagrams = await db.collection('diagrams_basic_column').find({ userID }).toArray();
 
     res.json(diagrams);
 });
 
 app.listen(port, () => {
-    console.log(`Store microservice (line-basic) is running at http://localhost:${port}`);
+    console.log(`Store microservice (basic-column) is running at http://localhost:${port}`);
 });

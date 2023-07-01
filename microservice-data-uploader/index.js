@@ -7,8 +7,30 @@ const kafka = require('kafka-node');
 const app = express();
 
 // Create Kafka client, producer for the csv files
-const client = new kafka.KafkaClient({kafkaHost: 'kafka:9092'});
-const producer = new kafka.Producer(client);
+let client;
+let producer;
+
+const connectToKafka = () => {
+    try {
+        client = new kafka.KafkaClient({kafkaHost: 'kafka:9092'});
+        producer = new kafka.Producer(client);
+        producer.on('ready', () => {
+            console.log('Kafka Producer is connected and ready.');
+        });
+
+        // If there is an error, log it and retry
+        producer.on('error', (error) => {
+            console.error(`Error occurred: ${error}`);
+            setTimeout(connectToKafka, 10000);
+        });
+    } catch (error) {
+        console.error(`Error occurred: ${error}`);
+        setTimeout(connectToKafka, 10000);
+    }
+};
+
+// Try to connect to Kafka
+connectToKafka();
 
 app.post('/api/upload', upload.single('file'), (req, res) => {
     // req.file is the 'file' object

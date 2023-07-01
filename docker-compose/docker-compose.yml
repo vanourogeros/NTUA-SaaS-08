@@ -36,6 +36,8 @@ services:
                        cub kafka-ready -b kafka:9092 1 20 && \
                        kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic csv-chart-line-basic && \
                        kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic svg-chart-line-basic && \
+                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic csv-chart-basic-column && \
+                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic svg-chart-basic-column && \
                        echo Waiting 60 seconds for Connect to be ready... && \
                        sleep 60'"
     environment:
@@ -59,7 +61,6 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - kafka
-      - kafka-setup
     ports:
       - "3000:3000"
 
@@ -84,7 +85,17 @@ services:
       - mycharts-data-uploader
       - chart-line-basic
     ports:
-      - "3004:3004"
+      - "3020:3020"
+
+  store-basic-column:
+    build:
+      context: ../microservice-store-basic-column
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+      - kafka-setup
+    ports:
+      - "3021:3021"
 
   diagram-fetcher:
     build:
