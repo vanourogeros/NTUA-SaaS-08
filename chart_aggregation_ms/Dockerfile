@@ -4,4 +4,4 @@ COPY ./package*.json ./
 RUN npm --omit=dev install
 COPY ./ ./
 USER node
-ENTRYPOINT ["node", "app.js"]
+ENTRYPOINT ["node", "./src/app.js"]
