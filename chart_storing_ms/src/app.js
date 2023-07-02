@@ -1,16 +1,36 @@
 import kafka from "kafka-node";
 import { MongoClient, ServerApiVersion } from "mongodb";
 import express from "express";
+import { verifyEnv, EnvError } from "./lib/envUtils.js";
+
+// verify all required environment variables exist
+let env;
+try {
+    env = verifyEnv({
+        HTTP_HOST: process.env.HTTP_HOST,
+        HTTP_PORT: process.env.HTTP_PORT,
+        MONGO_DB_URL: process.env.MONGO_DB_URL,
+        MONGO_DB_NAME: process.env.MONGO_DB_NAME,
+        KAFKA_TOPIC: process.env.KAFKA_TOPIC,
+    });
+
+    // make env immutable
+    Object.freeze(env);
+} catch (err) {
+    if (err instanceof EnvError) {
+        console.error(`Environment variable '${err.undefinedKey}' is missing`);
+    } else {
+        console.error(
+            "An unexpected error occured while verifying that the environment variables exist:",
+            err
+        );
+    }
+    process.exit(-1);
+}
 
 const app = express();
-// these parameters are set in the docker-compose
-// file, when we create the storing services...
-const port = Number(process.env.PORT);
-const dbName = process.env.DB_NAME;
-const kafkaTopic = process.env.TOPIC;
 
-const uri =
-    "mongodb+srv://saas08:saas08@cluster0.zuzcca6.mongodb.net/?retryWrites=true&w=majority";
+const uri = "mongodb+srv://saas08:saas08@cluster0.zuzcca6.mongodb.net/?retryWrites=true&w=majority";
 
 const client = new kafka.KafkaClient({ kafkaHost: "kafka:9092" });
 
@@ -24,15 +44,13 @@ const mongo_client = new MongoClient(uri, {
 });
 
 await mongo_client.connect();
-const db = mongo_client.db(dbName);
+const db = mongo_client.db(env.MONGO_DB_NAME);
 
 const setupConsumer = () => {
     try {
-        const consumer = new kafka.Consumer(
-            client,
-            [{ topic: kafkaTopic, partition: 0 }],
-            { autoCommit: true }
-        );
+        const consumer = new kafka.Consumer(client, [{ topic: env.KAFKA_TOPIC, partition: 0 }], {
+            autoCommit: true,
+        });
 
         consumer.on("error", function (err) {
             console.log("Error:", err);
@@ -55,10 +73,8 @@ const setupConsumer = () => {
                 chartID: message.value["chart_id"],
                 creationDate: Date.now(),
             };
-            const result = await db.collection(dbName).insertOne(diagram);
-            console.log(
-                `A document was inserted with the _id: ${result.insertedId}`
-            );
+            const result = await db.collection(env.MONGO_DB_NAME).insertOne(diagram);
+            console.log(`A document was inserted with the _id: ${result.insertedId}`);
         });
 
         consumer.on("error", function (err) {
@@ -76,17 +92,17 @@ const setupConsumer = () => {
 setupConsumer();
 
 // API endpoint
-app.get("/api/diagrams/:userID", async (req, res) => {
-    const userID = req.params.userID;
+app.get("/api/charts/:userId", async (req, res) => {
+    const userId = req.params.userId;
 
-    // Fetch diagrams from MongoDB
-    const diagrams = await db.collection(dbName).find({ userID }).toArray();
+    // Fetch charts from MongoDB
+    const charts = await db.collection(dbName).find({ userId }).toArray();
 
-    res.json(diagrams);
+    res.json(charts);
 });
 
-app.listen(port, () => {
+app.listen(env.HTTP_PORT, env.HTTP_HOST, () => {
     console.log(
-        `Store microservice (${kafkaTopic}) is running at http://localhost:${port}`
+        `Chart storing microservice ('${env.KAFKA_TOPIC}') is listening on 'http://${env.HTTP_HOST}:${env.HTTP_PORT}'`
     );
 });

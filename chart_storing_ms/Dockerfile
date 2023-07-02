@@ -1,7 +1,7 @@
-FROM node:16.10
-WORKDIR /app/
-COPY package*.json ./
-RUN npm install
-COPY . .
-
-CMD ["node", "index.js"]
+FROM node:alpine
+WORKDIR /home/node/app
+COPY ./package*.json ./
+RUN npm --omit=dev install
+COPY ./ ./
+USER node
+ENTRYPOINT ["node", "./src/app.js"]
