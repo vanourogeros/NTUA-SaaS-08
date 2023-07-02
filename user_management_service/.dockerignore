@@ -3,7 +3,6 @@ node_modules
 user_management_database_volume
 .dockerignore
 .env*
-!.env
 .gitignore
 compose.yaml
 Dockerfile*
