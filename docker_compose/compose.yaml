@@ -33,16 +33,28 @@ services:
     expose:
       - "3000"
 
+  user_management:
+    container_name: user_management_ms
+    build: ../user_management_ms
+    env_file: ../user_management_ms/.env
+    environment:
+      NODE_ENV: production
+      HTTP_HOST: "0.0.0.0"
+      HTTP_PORT: "3001"
+    expose:
+      - "3001"
+
   user_authentication:
     container_name: user_authentication_ms
     build: ../user_authentication_ms
     env_file: ../user_authentication_ms/.env
     environment:
+      NODE_ENV: production
       HTTP_HOST: "0.0.0.0"
-      HTTP_PORT: "3001"
+      HTTP_PORT: "3002"
       GOOGLE_CLIENT_ID: ""
     expose:
-      - "3001"
+      - "3002"
 
   nginx:
     image: nginx:latest
