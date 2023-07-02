@@ -1,4 +1,5 @@
-**/.DS_Store
-**/.env
-**/dist
-**/node_modules
+dist
+node_modules
+user_management_database_volume
+.env*
+!.env.sample
