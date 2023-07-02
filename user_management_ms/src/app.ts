@@ -15,15 +15,15 @@ const codes = {
     INTERNAL_SERVER_ERROR: 500,
 };
 
-try {
-    // load environment variables
-    if (process.env.NODE_ENV === "production") {
-        console.info("Running in 'production' mode");
-    } else {
-        console.info("Running in 'development' mode");
-        (await import("dotenv")).config();
-    }
+// load environment variables
+if (process.env.NODE_ENV === "production") {
+    console.info("Running in 'production' mode");
+} else {
+    console.info("Running in 'development' mode");
+    (await import("dotenv")).config();
+}
 
+try {
     // verify all required environment variables exist
     const env = verifyEnv({
         HTTP_HOST: process.env.HTTP_HOST,
@@ -36,10 +36,7 @@ try {
     console.log("All environment variables are present");
 
     // connect to the database and retry up to 3 times if it fails
-    await connectToDB(
-        `mongodb://${env.MONGO_HOST}:${env.MONGO_PORT}/${env.MONGO_NAME}`,
-        2
-    );
+    await connectToDB(`mongodb://${env.MONGO_HOST}:${env.MONGO_PORT}/${env.MONGO_NAME}`, 2);
 
     console.log("Connected to the database");
 
@@ -55,13 +52,9 @@ try {
         }
     });
 
-    mongoose.connection.on("disconnected", () =>
-        console.log("Disconnected from the database")
-    );
+    mongoose.connection.on("disconnected", () => console.log("Disconnected from the database"));
 
-    mongoose.connection.on("connected", () =>
-        console.log("Reconnected to the database")
-    );
+    mongoose.connection.on("connected", () => console.log("Reconnected to the database"));
 
     const kafka = new Kafka({
         clientId: "user_management_service",

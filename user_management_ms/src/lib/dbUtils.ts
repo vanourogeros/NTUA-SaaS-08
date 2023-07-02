@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 // function to connect to the database asynchronously
-export async function connectToDB(uri: string, maxRetries: number) {
+export async function connectToDB(uri: string, maxRetries: number): Promise<void> {
     try {
         console.log(
             `Attempting to connect to the database (${maxRetries + 1} tr${
@@ -9,11 +9,11 @@ export async function connectToDB(uri: string, maxRetries: number) {
             } remaining)`
         );
         await mongoose.connect(uri);
-    } catch {
+    } catch (err) {
         if (maxRetries > 0) {
             await connectToDB(uri, maxRetries - 1);
         } else {
-            throw new Error("Could not connect to the database");
+            throw err;
         }
     }
 }
