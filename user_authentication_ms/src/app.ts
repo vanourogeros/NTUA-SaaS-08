@@ -1,6 +1,6 @@
 import express from "express";
 import { OAuth2Client } from "google-auth-library";
-import { getUserPayload, getJWT } from "./lib/authUtils.js";
+import { getUserPayload, getJWT, PayloadError, AuthorizationError } from "./lib/authUtils.js";
 import { EnvError, verifyEnv } from "./lib/envUtils.js";
 
 // http response codes
@@ -44,12 +44,12 @@ try {
 const authClient = new OAuth2Client(env.GOOGLE_CLIENT_ID);
 const app = express();
 
-// authentication route
+// GET /authenticate
 // each time the API gateway receives a request that requires authentication
 // it will send a request to this route
 // the response must have a code of 2xx if it's successful,
 // or any other code if it's unsuccessful
-app.get("/auth", async (req, res) => {
+app.get("/authenticate", async (req, res) => {
     try {
         const payload = await getUserPayload(authClient, getJWT(req));
         const userId = payload.sub;
@@ -63,10 +63,10 @@ app.get("/auth", async (req, res) => {
     } catch (err) {
         // getUserPayload() throws an error if the jwt is not correct
         // getJWT() throws an error if the jwt is not present
-        if (err instanceof Error) {
+        if (err instanceof PayloadError || err instanceof AuthorizationError) {
             console.error("User authentication failed:", err.message);
         } else {
-            console.error("Unexpected error during user authorization:", err);
+            console.error("Unexpected error during user authentication:", err);
         }
         return res.sendStatus(codes.UNAUTHORIZED);
     }
@@ -74,5 +74,7 @@ app.get("/auth", async (req, res) => {
 
 // start listening for incoming requests
 app.listen(parseInt(env.HTTP_PORT), env.HTTP_HOST, () => {
-    console.log(`Auth microservice listening on '${env.HTTP_HOST}:${env.HTTP_PORT}'`);
+    console.log(
+        `User authentication microservice listening on 'http://${env.HTTP_HOST}:${env.HTTP_PORT}'`
+    );
 });
