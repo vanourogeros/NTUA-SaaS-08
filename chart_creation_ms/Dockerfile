@@ -15,7 +15,7 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 # App environment variables
 ENV APP_HOST=0.0.0.0
-ENV APP_PORT=6000
+ENV APP_PORT=3003
 ENV APP_BASE_URL=/charter
 
 # Create app directory

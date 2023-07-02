@@ -1,19 +1,19 @@
 {
-  "type": "module",
-  "name": "microservice-charter-online",
-  "version": "1.0.0",
-  "description": "(description)",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "express": "^4.18.2",
-    "fs": "^0.0.1-security",
-    "highcharts": "^11.0.1",
-    "puppeteer": "^20.2.1"
-  }
+    "type": "module",
+    "name": "microservice-chart",
+    "version": "1.0.0",
+    "description": "A microservice that creates a chart from a json Options file",
+    "main": "index.js",
+    "scripts": {
+        "main": "node index.js"
+    },
+    "author": "SaaS23-08",
+    "license": "ISC",
+    "dependencies": {
+        "express": "^4.18.2",
+        "highcharts": "^11.1.0",
+        "path": "^0.12.7",
+        "puppeteer": "^20.7.4",
+        "url": "^0.11.1"
+    }
 }
