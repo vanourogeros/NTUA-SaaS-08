@@ -1,21 +1,68 @@
 import express from "express";
 import { inspect } from "util";
 import { parseCSVFile } from "./csvUtils.js";
-import * as bp from "./blueprints.js";
-import * as opt from "./constants.js";
 
-function zip(arr1: any[], arr2: any[]) {
-    if (arr1.length !== arr2.length) {
-        throw new Error("Cannot zip different length arrays");
-    }
+import * as BasicColumn from "./charts/basicColumn/public.js";
+import * as BasicLine from "./charts/basicLine/public.js";
+import * as DependencyWheel from "./charts/dependencyWheel/public.js";
+import * as LineWithAnnotations from "./charts/lineWithAnnotations/public.js";
+import * as NetworkGraph from "./charts/networkGraph/public.js";
+import * as Organization from "./charts/organizationChart/public.js";
+import * as Pie from "./charts/pie/public.js";
+import * as Polar from "./charts/polar/public.js";
+import * as WordCloud from "./charts/wordCloud/public.js";
 
-    let result = [];
-    for (let i = 0; i < arr1.length; ++i) {
-        result.push([arr1[i], arr2[i]]);
-    }
+import type { Blueprint } from "./charts/shared/public.js";
 
-    return result;
-}
+const chartMap: {
+    [key: string]: { blueprint: Blueprint; filename: string; function: Function };
+} = {
+    basicColumn: {
+        blueprint: BasicColumn.blueprint,
+        filename: "basic_column_fixed.csv",
+        function: BasicColumn.create,
+    },
+    basicLine: {
+        blueprint: BasicLine.blueprint,
+        filename: "basic_line_fixed.csv",
+        function: BasicLine.create,
+    },
+    dependencyWheel: {
+        blueprint: DependencyWheel.blueprint,
+        filename: "dependency_wheel_fixed.csv",
+        function: DependencyWheel.create,
+    },
+    lineWithAnnotations: {
+        blueprint: LineWithAnnotations.blueprint,
+        filename: "line_with_annotations_fixed.csv",
+        function: LineWithAnnotations.create,
+    },
+    networkGraph: {
+        blueprint: NetworkGraph.blueprint,
+        filename: "network_graph_fixed.csv",
+        function: NetworkGraph.create,
+    },
+    organization: {
+        blueprint: Organization.blueprint,
+        filename: "organization_fixed.csv",
+        function: Organization.create,
+    },
+    pie: {
+        blueprint: Pie.blueprint,
+        filename: "pie_fixed.csv",
+        function: Pie.create,
+    },
+    polar: {
+        blueprint: Polar.blueprint,
+        filename: "polar_fixed.csv",
+        function: Polar.create,
+    },
+    wordCloud: {
+        blueprint: WordCloud.blueprint,
+        filename: "word_cloud_fixed.csv",
+        function: WordCloud.create,
+    },
+};
 
 // load environment variables
 if (process.env.NODE_ENV === "production") {
@@ -37,90 +84,56 @@ app.post("/", async (req, res) => {
     const chartType = req.body?.chartType;
 
     try {
+        if (typeof chartType !== "string") {
+            throw new Error("'chartType' parameter missing");
+        }
+
         const path = "./csv/fixed";
-        const metadata = await parseCSVFile(
-            `${path}/metadata_example_fixed.csv`,
-            bp.metadata
+        const parsedCSV = await parseCSVFile(
+            `${path}/${chartMap[chartType].filename}`,
+            chartMap[chartType].blueprint
         );
 
-        let chartOptions: any = {
-            chart: opt.chart,
-            credits: opt.credits,
-            tooltip: opt.tooltip,
-            ...metadata,
-        };
-
+        let chartOptions;
         switch (chartType) {
-            case "basicLine": {
-                const filename = `${path}/basic_line_example_fixed.csv`;
-                const data = await parseCSVFile(filename, bp.basicLine);
-                if (typeof data.series === "object") {
-                    chartOptions.series = [];
-
-                    for (const series of Object.values(data.series)) {
-                        chartOptions.series.push(series);
-                    }
-
-                    for (const series of chartOptions.series) {
-                        series.type = "line";
-                        if (
-                            series.data.x == undefined ||
-                            series.data.y == undefined
-                        ) {
-                            throw new Error(
-                                "x-axis and/or y-axis values are missing"
-                            );
-                        }
-                        series.data = zip(series.data.x, series.data.y);
-                    }
-                }
-                break;
-            }
-            case "lineWithAnnotations": {
-                const filename = `${path}/line_with_annotations_example_fixed.csv`;
-                const data = await parseCSVFile(
-                    filename,
-                    bp.lineWithAnnotations
-                );
-                break;
-            }
             case "basicColumn": {
-                const filename = `${path}/line_with_annotations_example_fixed.csv`;
-                const data = await parseCSVFile(filename, bp.basicColumn);
+                chartOptions = BasicColumn.create(parsedCSV);
                 break;
             }
-            case "pieChart": {
-                const filename = `${path}/pie_chart_example_fixed.csv`;
-                const data = await parseCSVFile(filename, bp.pieChart);
+            case "basicLine": {
+                chartOptions = BasicLine.create(parsedCSV);
                 break;
             }
             case "dependencyWheel": {
-                const filename = `${path}/dependency_wheel_example_fixed.csv`;
-                const data = await parseCSVFile(filename, bp.dependencyWheel);
+                chartOptions = DependencyWheel.create(parsedCSV);
+                break;
+            }
+            case "lineWithAnnotations": {
+                chartOptions = LineWithAnnotations.create(parsedCSV);
                 break;
             }
             case "networkGraph": {
-                const filename = `${path}/network_graph_example_fixed.csv`;
-                const data = await parseCSVFile(filename, bp.networkGraph);
+                chartOptions = NetworkGraph.create(parsedCSV);
+                break;
+            }
+            case "organization": {
+                chartOptions = Organization.create(parsedCSV);
+                break;
+            }
+            case "pie": {
+                chartOptions = Pie.create(parsedCSV);
+                break;
+            }
+            case "polar": {
+                chartOptions = Polar.create(parsedCSV);
                 break;
             }
             case "wordCloud": {
-                const filename = `${path}/word_cloud_example_fixed.csv`;
-                const data = await parseCSVFile(filename, bp.wordCloud);
-                break;
-            }
-            case "organizationChart": {
-                const filename = `${path}/organization_chart_example_fixed.csv`;
-                const data = await parseCSVFile(filename, bp.organizationChart);
-                break;
-            }
-            case "polarChart": {
-                const filename = `${path}/polar_chart_example_fixed.csv`;
-                const data = await parseCSVFile(filename, bp.polarChart);
+                chartOptions = WordCloud.create(parsedCSV);
                 break;
             }
             default:
-                console.error("Invalid option:", chartType);
+                throw new Error(`Invalid option: '${chartType}'`);
         }
 
         console.log(
@@ -130,6 +143,7 @@ app.post("/", async (req, res) => {
                 colors: true,
             })
         );
+
         res.locals.chartOptions = JSON.stringify(chartOptions);
 
         res.render("chart");
@@ -141,7 +155,5 @@ app.post("/", async (req, res) => {
 
 // start listening for incoming requests
 app.listen(parseInt("3000"), "localhost", () => {
-    console.log(
-        `User management microservice listening on 'http://${"localhost"}:${3000}'`
-    );
+    console.log(`User management microservice listening on 'http://${"localhost"}:${3000}'`);
 });

@@ -3,7 +3,7 @@ import { createInterface } from "readline/promises";
 
 import type { PathLike } from "fs";
 import type { Interface } from "readline/promises";
-import type { Blueprint } from "./charts/shared.js";
+import type { Blueprint } from "./charts/shared/public.js";
 
 // object containing string keys and boolean (arrays), number (arrays), string (arrays),
 // or other ParsedCSVs as values
