@@ -85,6 +85,6 @@ app.get("/api/diagrams/:userID", async (req, res) => {
 
 app.listen(port, () => {
     console.log(
-        `Store microservice (basic-column) is running at http://localhost:${port}`
+        `Store microservice (${kafkaTopic}) is running at http://localhost:${port}`
     );
 });
