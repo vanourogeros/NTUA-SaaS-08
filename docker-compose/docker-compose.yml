@@ -2,6 +2,8 @@ version: '3'
 services:
   nginx:
     image: nginx:latest
+    depends_on:
+      - mycharts-frontend
     ports:
       - '80:80'
     volumes:
@@ -34,7 +36,24 @@ services:
       - kafka
     command: "bash -c 'echo Waiting for Kafka to be ready... && \
                        cub kafka-ready -b kafka:9092 1 20 && \
-                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic my-topic && \
+                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic csv-chart-line-basic && \
+                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic svg-chart-line-basic && \
+                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic csv-chart-line-annotations && \
+                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic svg-chart-line-annotations && \
+                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic csv-chart-basic-column && \
+                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic svg-chart-basic-column && \
+                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic csv-chart-pie && \
+                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic svg-chart-pie && \
+                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic csv-chart-dependency-wheel && \
+                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic svg-chart-dependency-wheel && \
+                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic csv-chart-network-graph && \
+                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic svg-chart-network-graph && \
+                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic csv-chart-polar && \
+                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic svg-chart-polar && \
+                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic csv-chart-word-cloud && \
+                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic svg-chart-word-cloud && \
+                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic csv-chart-organization && \
+                       kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic svg-chart-organization && \
                        echo Waiting 60 seconds for Connect to be ready... && \
                        sleep 60'"
     environment:
@@ -42,6 +61,7 @@ services:
       # We override the image's `command` anyway, hence this container will not start a broker.
       KAFKA_BROKER_ID: ignored
       KAFKA_ZOOKEEPER_CONNECT: ignored
+
   mycharts-data-uploader:
     build:
       context: ../microservice-data-uploader
@@ -53,11 +73,10 @@ services:
 
   mycharts-frontend:
     build:
-      context: ../microservice-frontend
+      context: ../frontend
       dockerfile: Dockerfile
     depends_on:
       - kafka
-      - kafka-setup
     ports:
       - "3000:3000"
 
@@ -68,5 +87,107 @@ services:
     depends_on:
       - kafka
       - kafka-setup
+      - mycharts-data-uploader
     ports:
       - "3003:3003"
+
+  store-line-basic:
+    build:
+      context: ../microservice-store-line-basic
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+      - kafka-setup
+    ports:
+      - "3020:3020"
+
+  store-basic-column:
+    build:
+      context: ../microservice-store-basic-column
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+      - kafka-setup
+    ports:
+      - "3021:3021"
+
+  store-pie-chart:
+    build:
+      context: ../microservice-store-pie-chart
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+      - kafka-setup
+    ports:
+      - "3022:3022"
+
+  store-line-annotations:
+    build:
+      context: ../microservice-store-line-annotations
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+      - kafka-setup
+    ports:
+      - "3023:3023"
+
+  store-dependency-wheel:
+    build:
+      context: ../microservice-store-dependency-wheel
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+      - kafka-setup
+    ports:
+      - "3024:3024"
+
+  store-network-graph:
+    build:
+      context: ../microservice-store-network-graph
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+      - kafka-setup
+    ports:
+      - "3025:3025"
+
+  store-polar-chart:
+    build:
+      context: ../microservice-store-polar-chart
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+      - kafka-setup
+    ports:
+      - "3026:3026"
+
+  store-word-cloud:
+    build:
+      context: ../microservice-store-word-cloud
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+      - kafka-setup
+    ports:
+      - "3027:3027"
+
+  store-organization-chart:
+    build:
+      context: ../microservice-store-organization-chart
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+      - kafka-setup
+    ports:
+      - "3028:3028"
+
+  diagram-fetcher:
+    build:
+      context: ../microservice-diagram-fetcher
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+      - kafka-setup
+      - mycharts-data-uploader
+    ports:
+      - "3030:3030"
