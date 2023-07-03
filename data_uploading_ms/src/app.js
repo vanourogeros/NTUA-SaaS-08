@@ -26,7 +26,7 @@ try {
         HTTP_HOST: process.env.HTTP_HOST,
         HTTP_PORT: process.env.HTTP_PORT,
         KAFKA_CLIENT_ID: process.env.KAFKA_CLIENT_ID,
-        KAFKA_BROKERS: process.env.KAFKA_BROKERS.split(", ").map((b) => b.trim()),
+        KAFKA_BROKERS: process.env.KAFKA_BROKERS?.split(", ").map((b) => b.trim()),
     });
 
     // make env immutable
@@ -93,8 +93,10 @@ app.post("/chart/:type/new", upload.single("file"), async (req, res) => {
             topic: topicsMap[type],
             messages: [
                 {
-                    userId,
-                    csvData,
+                    value: JSON.stringify({
+                        userId,
+                        csvData,
+                    }),
                 },
             ],
         });
