@@ -50,6 +50,8 @@ const app = express();
 // the response must have a code of 2xx if it's successful,
 // or any other code if it's unsuccessful
 app.get("/authenticate", async (req, res) => {
+    console.debug("Request received:", req.path);
+
     try {
         const payload = await getUserPayload(authClient, getJWT(req));
         const userId = payload.sub;

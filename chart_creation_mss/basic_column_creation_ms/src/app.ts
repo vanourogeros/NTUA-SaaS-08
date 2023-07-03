@@ -5,6 +5,14 @@ import { createSVG } from "./lib/svgUtils.js";
 import { blueprint as chartBlueprint } from "./chart/blueprint.js";
 import { create as createChart } from "./chart/methods.js";
 
+// load environment variables
+if (process.env.NODE_ENV === "production") {
+    console.info("Running in 'production' mode");
+} else {
+    console.info("Running in 'development' mode");
+    (await import("dotenv")).config();
+}
+
 //const client = new kafka.KafkaClient({ kafkaHost: "kafka:9092" });
 let env: Readonly<Record<string, string>>;
 try {
@@ -68,3 +76,5 @@ await consumer.run({
         });
     },
 });
+
+console.log("Basic column chart creation microservice up");

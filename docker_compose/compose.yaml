@@ -2,8 +2,7 @@ services:
   zookeeper:
     container_name: zookeeper
     image: wurstmeister/zookeeper
-    expose:
-      - "2181"
+    expose: "2181"
     healthcheck:
       test: nc -z localhost 2181 || exit -1
       start_period: 10s
@@ -17,8 +16,7 @@ services:
     depends_on:
       zookeeper:
         condition: service_healthy
-    expose:
-      - "9092"
+    expose: "9092"
     environment:
       KAFKA_ADVERTISED_HOST_NAME: "kafka_broker"
       KAFKA_ADVERTISED_PORT: "9092"
@@ -34,6 +32,15 @@ services:
         "pie_csv"
         "polar_csv"
         "word_cloud_csv"
+        "basic_column_svg"
+        "basic_line_svg"
+        "dependency_wheel_svg"
+        "line_with_annotations_svg"
+        "network_graph_svg"
+        "organization_svg"
+        "pie_svg"
+        "polar_svg"
+        "word_cloud_svg"
     healthcheck:
       test: nc -z localhost 9092 || exit -1
       start_period: 15s
@@ -42,15 +49,14 @@ services:
       timeout: 5s
 
   nginx:
-    container_name: nginx_gateway_ms
-    build: ../gateway_ms
+    container_name: nginx_gateway
+    build: ../gateway
     depends_on:
       user_authentication:
         condition: service_healthy
       data_uploading:
         condition: service_healthy
-    ports:
-      - "80:80"
+    ports: "80:80"
 
   user_authentication:
     container_name: user_authentication_ms
@@ -61,8 +67,7 @@ services:
       HTTP_HOST: "0.0.0.0"
       HTTP_PORT: "3000"
       GOOGLE_CLIENT_ID: ""
-    expose:
-      - "3000"
+    expose: "3000"
     healthcheck:
       test: nc -z localhost 3000 || exit -1
       start_period: 5s
@@ -83,14 +88,26 @@ services:
       HTTP_PORT: "3001"
       KAFKA_CLIENT_ID: "data_uploading_ms"
       KAFKA_BROKERS: "kafka_broker:9092"
-    expose:
-      - "3001"
+    expose: "3001"
     healthcheck:
       test: nc -z localhost 3001 || exit -1
       start_period: 5s
       retries: 3
       interval: 10s
       timeout: 5s
+
+  basic_column_creation:
+    container_name: basic_column_creation_ms
+    build: ../chart_creation_mss/basic_column_creation_ms
+    depends_on:
+      kafka:
+        condition: service_healthy
+    env_file: ../chart_creation_mss/basic_column_creation_ms/.env
+    environment:
+      KAFKA_CLIENT_ID: "basic_column_create_ms"
+      KAFKA_CONSUMER_GROUP: "basic_column_csv_group"
+      KAFKA_CONSUMER_TOPIC: "basic_column_csv"
+      KAFKA_PRODUCER_TOPIC: "basic_column_svg"
 
 #  chart_aggregation:
 #    container_name: chart_aggregation_ms
