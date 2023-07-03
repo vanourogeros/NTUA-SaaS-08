@@ -1,4 +1,3 @@
-import express from "express";
 import { Kafka } from "kafkajs";
 import mongoose from "mongoose";
 import { connectToDB } from "./lib/dbUtils.js";
