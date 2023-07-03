@@ -1,8 +1,9 @@
+import express from "express";
 import { Kafka } from "kafkajs";
 import mongoose from "mongoose";
 import { connectToDB } from "./lib/dbUtils.js";
 import { verifyEnv } from "./lib/envUtils.js";
-import { User, userSchema } from "./models/user.js";
+import { Diagram, diagramSchema } from "./models/diagrams.js";
 
 try {
     // load environment variables
@@ -18,13 +19,19 @@ try {
         MONGO_LINK: process.env.MONGO_LINK,
         MONGO_DATABASE: process.env.MONGO_DATABASE,
         MONGO_COLLECTION: process.env.MONGO_COLLECTION,
+        HTTP_HOST: process.env.HTTP_HOST,
+        HTTP_PORT: process.env.HTTP_PORT,
+        KAFKA_TOPIC: process.env.KAFKA_TOPIC,
     });
 
     console.log("All environment variables are present");
 
-    const Usr = mongoose.model<User>("User", userSchema, env.MONGO_COLLECTION);
+    const Diagr = mongoose.model<Diagram>(
+        "Diagram",
+        diagramSchema,
+        env.MONGO_COLLECTION
+    );
 
-    // connect to the database and retry up to 3 times if it fails
     await connectToDB(env.MONGO_LINK, env.MONGO_DATABASE, 2);
 
     console.log("Connected to the database");
@@ -50,34 +57,54 @@ try {
     );
 
     const kafka = new Kafka({
-        clientId: "token_ms",
+        clientId: `${env.KAFKA_TOPIC}_storing_ms`,
         brokers: ["kafka:9092"],
     });
 
-    // TODO: finish
-    const consumer = kafka.consumer({ groupId: "token-group-1" });
+    const consumer = kafka.consumer({ groupId: `${env.KAFKA_TOPIC}_group` });
 
     async function run() {
         await consumer.connect();
-        await consumer.subscribe({ topic: "user-token-updates" });
+        await consumer.subscribe({ topic: env.KAFKA_TOPIC });
         await consumer.run({
             eachMessage: async ({ message }) => {
-                const { userId, newTokens } = JSON.parse(
+                const { id, userId, file } = JSON.parse(
                     message.value?.toString() ?? "{}"
                 );
 
-                // make sure the user has enough credits, if we're subtracting
-                const result = await Usr.updateOne(
-                    { id: userId, totalTokens: { $gte: -newTokens } },
-                    { $inc: { totalTokens: +newTokens } }
-                );
+                const result = await Diagr.create({
+                    id,
+                    userId,
+                    file,
+                    creationDate: Date.now(),
+                });
 
-                console.log(`${result.modifiedCount} document(s) updated`);
+                console.log(
+                    `A document was inserted with the id: ${result.id}`
+                );
             },
         });
     }
 
     run();
+
+    const app = express();
+
+    // API endpoint
+    app.get("/api/charts/:userId", async (req, res) => {
+        const userId = req.params.userId;
+
+        // Fetch charts from MongoDB
+        const charts = await Diagr.find({ userId }).lean();
+
+        res.json(charts);
+    });
+
+    app.listen(Number(env.HTTP_PORT), env.HTTP_HOST, () => {
+        console.log(
+            `Chart storing microservice ('${env.KAFKA_TOPIC}') is listening on 'http://${env.HTTP_HOST}:${env.HTTP_PORT}'`
+        );
+    });
 } catch (err) {
     console.error("Critical error in main app loop:");
     if (err instanceof Error) {
