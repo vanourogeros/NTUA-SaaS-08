@@ -1,5 +1,10 @@
-FROM node:alpine
+FROM node:alpine AS builder
+WORKDIR /home/node/app
+COPY ./ ./
+RUN npm install
+RUN npx tsc
 
+FROM node:alpine
 # Install Chromium
 RUN apk add --no-cache \
       chromium \
@@ -8,12 +13,11 @@ RUN apk add --no-cache \
       harfbuzz \
       ca-certificates \
       ttf-freefont
-
 # Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
-WORKDIR /home/node/app
-COPY ./package*.json ./
+COPY --from=builder /home/node/app/package*.json ./
+COPY --from=builder /home/node/app/.env ./
+COPY --from=builder /home/node/app/dist ./dist
 RUN npm --omit=dev install
-COPY ./ ./
 USER node
-ENTRYPOINT ["node", "src/app.js"]
+ENTRYPOINT ["node", "./dist/app.js"]
