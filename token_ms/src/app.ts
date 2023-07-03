@@ -1,5 +1,5 @@
 import { Kafka } from "kafkajs";
-import mongoose, { Collection } from "mongoose";
+import mongoose from "mongoose";
 import { connectToDB } from "./lib/dbUtils.js";
 import { verifyEnv } from "./lib/envUtils.js";
 import { User, userSchema } from "./models/user.js";
