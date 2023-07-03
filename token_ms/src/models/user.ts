@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema } from "mongoose";
 
 interface User {
     id: string;
@@ -17,4 +17,4 @@ const userSchema = new Schema<User>({
 });
 
 // "user" is the name of the corresponding collection in the database
-export default model<User>("User", userSchema, "user");
+export { User, userSchema };

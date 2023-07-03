@@ -1,16 +1,8 @@
 import { Kafka } from "kafkajs";
-import mongoose from "mongoose";
+import mongoose, { Collection } from "mongoose";
 import { connectToDB } from "./lib/dbUtils.js";
 import { verifyEnv } from "./lib/envUtils.js";
-import User from "./models/user.js";
-
-const codes = {
-    OK: 200,
-    CREATED: 201,
-    UNAUTHORIZED: 401,
-    CONFLICT: 409,
-    INTERNAL_SERVER_ERROR: 500,
-};
+import { User, userSchema } from "./models/user.js";
 
 try {
     // load environment variables
@@ -23,13 +15,17 @@ try {
 
     // verify all required environment variables exist
     const env = verifyEnv({
-        MONGO_NAME: process.env.MONGO_NAME,
+        MONGO_LINK: process.env.MONGO_LINK,
+        MONGO_DATABASE: process.env.MONGO_DATABASE,
+        MONGO_COLLECTION: process.env.MONGO_COLLECTION,
     });
+
+    const Usr = mongoose.model<User>("User", userSchema, env.MONGO_COLLECTION);
 
     console.log("All environment variables are present");
 
     // connect to the database and retry up to 3 times if it fails
-    await connectToDB(env.MONGO_NAME, 2);
+    await connectToDB(env.MONGO_LINK, env.MONGO_DATABASE, 2);
 
     console.log("Connected to the database");
 
@@ -71,7 +67,7 @@ try {
                 );
 
                 // make sure the user has enough credits, if we're subtracting
-                const result = await User.updateOne(
+                const result = await Usr.updateOne(
                     { id: userId, totalTokens: { $gte: -newTokens } },
                     { $inc: { totalTokens: +newTokens } }
                 );
