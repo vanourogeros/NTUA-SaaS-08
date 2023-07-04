@@ -9,6 +9,7 @@ const FileUploadPage = () => {
     const { data: session, status } = useSession();
 
     const previewChart = async (event) => {
+        "use server";
         event.preventDefault();
 
         const formData = new FormData();
