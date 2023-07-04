@@ -1,6 +1,6 @@
 import { Kafka } from "kafkajs";
 import { verifyEnv, EnvError } from "./lib/envUtils.js";
-import { parseCSVFile } from "./lib/csvUtils.js";
+import { parseCSVFile, CSVParsingError } from "./lib/csvUtils.js";
 import { createSVG } from "./lib/svgUtils.js";
 import { blueprint as chartBlueprint } from "./chart/blueprint.js";
 import { create as createChart } from "./chart/methods.js";
@@ -56,24 +56,32 @@ consumer.on("consumer.disconnect", () => console.log("Kafka consumer disconnecte
 await consumer.subscribe({ topic: env.KAFKA_CONSUMER_TOPIC });
 await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
+        console.debug(`Received kafka message in topic: ${topic}`);
+
         if (message.value == null) {
             console.error(`Received empty kafka message in topic '${topic}'`);
             return;
         }
 
-        const { userId, csvData } = JSON.parse(message.value.toString());
-        const jsonData = await parseCSVFile(csvData, chartBlueprint);
-        const chartOptions = createChart(jsonData);
-        const svgData = await createSVG(chartOptions);
+        try {
+            const { userId, csvData } = JSON.parse(message.value.toString());
+            const jsonData = await parseCSVFile(csvData, chartBlueprint);
+            const chartOptions = createChart(jsonData);
+            const svgData = await createSVG(chartOptions);
 
-        await producer.send({
-            topic: env.KAFKA_PRODUCER_TOPIC,
-            messages: [
-                {
-                    value: JSON.stringify({ userId, svgData }),
-                },
-            ],
-        });
+            await producer.send({
+                topic: env.KAFKA_PRODUCER_TOPIC,
+                messages: [
+                    {
+                        value: JSON.stringify({ userId, svgData }),
+                    },
+                ],
+            });
+        } catch (err) {
+            if (err instanceof CSVParsingError) {
+                console.error("Error during parsing\n", err);
+            }
+        }
     },
 });
 

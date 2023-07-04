@@ -1,8 +1,4 @@
-import { createReadStream } from "fs";
-import { createInterface } from "readline/promises";
 import { enumerate } from "./generalUtils.js";
-
-import type { PathLike } from "fs";
 
 interface StringFieldDescription {
     type: "string";
@@ -43,7 +39,7 @@ interface ParsedCSV {
     [key: string]: ParsedCSV | boolean | boolean[] | number | number[] | string | string[];
 }
 
-class CSVParsingError extends Error {
+export class CSVParsingError extends Error {
     constructor(message?: string, options?: ErrorOptions) {
         super(message, options);
         this.name = "CSVParsingError";
