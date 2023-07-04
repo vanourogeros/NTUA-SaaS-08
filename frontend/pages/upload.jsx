@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
+import { authFetch } from "../lib/fetchUtils";
 
 const chartTypes = [
     "basicColumn",
@@ -46,19 +47,19 @@ const FileUploadPage = () => {
         const formData = new FormData();
         formData.append("file", file);
 
-        const response = await fetch(`/api/preview?chart_type=${chartType}`, {
+        const response = await authFetch(session, `/api/preview?chart_type=${chartType}`, {
             method: "POST",
             body: formData,
         });
 
         if (response.ok) {
             const options = await response.json();
-            const response = await fetch(`/api/chart/${chartType}/create`, {
+            const newResponse = await authFetch(session, `/api/chart/${chartType}/create`, {
                 method: "POST",
                 body: { chartOptions: options },
             });
-            console.log(response);
-            //setChartOptions(options);
+            console.log(newResponse);
+            setChartOptions(options);
         } else {
             console.error("Failed to generate chart preview");
         }
