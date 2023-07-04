@@ -5,5 +5,7 @@ const router = Router();
 
 router.post("/new", controller.postNew);
 router.get("/:userId", controller.getUser);
+router.post("/tokens/:userId/:newTokens", controller.addTokens);
+router.get("/tokens/:userId", controller.getTokens, controller.addTokens);
 
 export default router;

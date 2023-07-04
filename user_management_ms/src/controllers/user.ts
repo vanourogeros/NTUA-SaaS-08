@@ -1,4 +1,4 @@
-import { codes } from "../app.js";
+import { codes } from "../setEnv.js";
 import User from "../models/user.js";
 
 import type { Request, Response, NextFunction } from "express";
@@ -67,4 +67,59 @@ export async function getUser(req: Request, res: Response, next: NextFunction) {
     } catch (err) {
         return next(err);
     }
+}
+
+export async function addTokens(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    const userId: string = req.params.userId;
+    const newTokens: number = Number(req.params.newTokens);
+
+    // A more thorough check
+    // if (userId == undefined || userId !== req.get("X-User-ID")) {
+    if (userId == undefined) {
+        // if this error is thrown, something fundamental is wrong with the app
+        throw new Error("Extracted 'userId' is missing");
+    }
+
+    if (newTokens == undefined) {
+        throw new Error("Extracted 'newTokens' is missing");
+    }
+
+    try {
+        const usr = await tokenManager(userId, newTokens);
+        if (usr === null) {
+            return res.status(codes.OK).json({
+                message: "Could not access or change tokens for this user",
+            });
+        } else {
+            return res.status(codes.OK).json({
+                message: "Tokens accessed",
+                totalTokens: usr.totalTokens,
+            });
+        }
+    } catch (err) {
+        return next(err);
+    }
+}
+
+export async function getTokens(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    req.params.newTokens = "0";
+    return next();
+}
+
+async function tokenManager(userId: string, newTokens: number) {
+    // make sure the user has enough credits, if we're subtracting
+
+    return await User.findOneAndUpdate(
+        { id: userId, totalTokens: { $gte: -newTokens } },
+        { $inc: { totalTokens: +newTokens } },
+        { new: true }
+    ).lean();
 }
