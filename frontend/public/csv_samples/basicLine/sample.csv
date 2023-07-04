@@ -1,0 +1,141 @@
+﻿# Sample 'Basic Line' chart description
+# Rows beginning with a hashtag (#) are ignored
+# If there are commas in any values make sure to escape them (\,)
+# The first column of each row is the option name and the rest of the row contains the option value(s)
+
+
+
+# -----------------------------------------------
+# Options regarding basic properties of the chart
+# -----------------------------------------------
+
+# chart width (in pixels)
+chart/width, 800
+
+# chart height (in pixels)
+chart/height, 600
+
+# true, false, set to true if you want to swap the two axes
+chart/inverted, false
+
+
+
+# ----------------------------------------
+# Options regarding the title of the chart
+# ----------------------------------------
+
+# leave empty if you don't want one
+title/text, This is the title\, which contains a comma
+
+# left, center, right (ignored if title text is empty)
+title/align, center
+
+# top, middle, bottom (ignored if title text is empty)
+title/verticalAlign, top
+
+
+
+# -------------------------------------------
+# Options regarding the subtitle of the chart
+# -------------------------------------------
+
+# leave empty if you don't want one
+subtitle/text, This is the subtitle
+
+# left, center, right (ignored if subtitle text is empty)
+subtitle/align, center
+
+# top, middle, bottom (ignored if subtitle text is empty)
+subtitle/verticalAlign, top
+
+
+
+# ------------------------------------------
+# Options regarding the caption of the chart
+# ------------------------------------------
+
+# leave empty if you don't want one
+caption/text, This is the caption
+
+# left, center, right (ignored if caption text is empty)
+caption/align, center
+
+# top, middle, bottom (ignored if caption text is empty)
+caption/verticalAlign, bottom
+
+
+
+# -----------------------------------------
+# Options regarding the legend of the chart
+# -----------------------------------------
+
+# true, false
+legend/enabled, true
+
+# left, center, right (ignored if legend is disabled)
+legend/align, right
+
+# top, middle, bottom (ignored if legend is disabled)
+legend/verticalAlign, bottom
+
+
+
+# -----------------------------------------------------------
+# Options regarding the x-axis (horizontal axis) of the chart
+# -----------------------------------------------------------
+
+# leave empty if you don't want one
+xAxis/title/text, This is the x-axis title
+
+# linear, logarithmic
+xAxis/type, linear
+
+
+
+# ---------------------------------------------------------
+# Options regarding the y-axis (vertical axis) of the chart
+# ---------------------------------------------------------
+
+# leave empty if you don't want one
+yAxis/title/text, This is the y-axis title
+
+# linear, logarithmic
+yAxis/type, linear
+
+
+
+# -----------------------------------------
+# Options regarding the series of the chart
+# -----------------------------------------
+
+# leave empty if you don't want one
+series/1/name, This is the series 1 name
+
+# true, false, number indicating the value of each point on the series line
+series/1/dataLabels/enabled, true
+
+# true, false, dots on the series line
+series/1/marker/enabled, false
+
+# x values
+series/1/data/x, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6
+
+# y values
+series/1/data/y, 10, 15, 14, 17, 46, 55, 34, 22, 5, -3, -9, -20
+
+# You can add more series by copy-pasting the above options and changing the number
+
+# leave empty if you don't want one
+series/2/name, This is the series 2 name
+
+# true, false, number indicating the value of each point on the series line
+series/2/dataLabels/enabled, false
+
+# true, false, dots on the series line
+series/2/marker/enabled, true
+
+# x values
+series/2/data/x, -10, -9, -7, -6, -5, -3, 0, 2, 3, 4, 6, 10
+
+# y values
+series/2/data/y, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 15
