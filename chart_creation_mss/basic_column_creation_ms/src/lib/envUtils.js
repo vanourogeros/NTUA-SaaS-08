@@ -1,7 +1,7 @@
 class EnvError extends Error {
-    undefinedKey: string;
+    undefinedKey;
 
-    constructor(undefinedKey: string, message?: string, options?: ErrorOptions) {
+    constructor(undefinedKey, message, options) {
         super(message, options);
         this.name = "EnvError";
         this.undefinedKey = undefinedKey;
@@ -9,9 +9,9 @@ class EnvError extends Error {
 }
 
 // takes an object containing all environment variables (which are possibly undefined)
-// if the object has no undefined values, it is returned with no "undefined" in its type
+// if the object has no undefined values, it is returned as is
 // if an undefined value is found, an exception is thrown containing the key of the undefined variable
-function verifyEnv(env: Readonly<Record<string, string | undefined>>) {
+function verifyEnv(env) {
     // check for undefined environment variables
     for (const [key, val] of Object.entries(env)) {
         if (val === undefined) {
@@ -19,7 +19,7 @@ function verifyEnv(env: Readonly<Record<string, string | undefined>>) {
         }
     }
 
-    return env as Readonly<Record<string, string>>;
+    return env;
 }
 
 export { EnvError, verifyEnv };

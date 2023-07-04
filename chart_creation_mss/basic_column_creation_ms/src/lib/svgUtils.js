@@ -3,9 +3,7 @@ import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { access, constants } from "fs/promises";
 
-import type { Options } from "highcharts";
-
-async function findNodeModulesPath(currentPath: string) {
+async function findNodeModulesPath(currentPath) {
     try {
         const nodeModulesPath = join(currentPath, "node_modules");
         await access(nodeModulesPath, constants.R_OK);
@@ -58,7 +56,7 @@ async function getSources(online = false) {
     }
 }
 
-export async function createSVG(chartOptions: Options, useOnline = false) {
+export async function createSVG(chartOptions, useOnline = false) {
     // a very basic html page, we really only care about the div tag
     const html = `<!DOCTYPE html>
         <html lang="en">
@@ -96,18 +94,13 @@ export async function createSVG(chartOptions: Options, useOnline = false) {
         });
     }
 
-    async function loadChart() {
+    async function saveChart() {
         return page.evaluate((chartOptions) => {
-            // @ts-ignore
             return Highcharts.chart("chart-container", chartOptions).getSVG({});
         }, chartOptions);
     }
 
-    const svgData = await loadChart();
-
-    // save locally for testing
-    //const outputDir = path.join(rootDir, 'output');
-    //writeFileSync(path.join(outputDir, `${options?.title?.text ?? 'chart'}.svg`), mySVG);
+    const svgData = await saveChart();
     await browser.close();
 
     return svgData;
