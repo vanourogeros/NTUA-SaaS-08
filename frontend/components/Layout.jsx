@@ -24,15 +24,23 @@ const Layout = ({ children }) => {
         <div>
             <nav className="flex items-center justify-between p-6 bg-gray-800 text-white">
                 <div className="flex items-center space-x-4">
-                    <span className="cursor-pointer" onClick={() => router.push('/')}>Home</span>
-                    <span className="cursor-pointer" onClick={() => router.push('/charts')}>Charts</span>
-                    <span className="cursor-pointer" onClick={() => router.push('/upload')}>Upload Data</span>
+                    {status === 'authenticated' ? (<>
+                        <span className="cursor-pointer" onClick={() => router.push('/')}>Home</span>
+                        <span className="cursor-pointer" onClick={() => router.push('/upload')}>Create Chart</span>
+                        <span className="cursor-pointer" onClick={() => router.push('/user')}>User Info</span>
+                        <span className="cursor-pointer" onClick={() => router.push('/my_charts')}>My Charts</span>
+                        <span className="cursor-pointer" onClick={() => router.push('/purchase_tokens')}>Purchase Tokens</span>
+
+                    </>) : (<>
+                        <span className="cursor-pointer" onClick={() => router.push('/')}>Home</span>
+                    </>)}
+
                 </div>
                 <div className="flex items-center space-x-4">
                     {status === 'authenticated' ? (
                         <>
                             <span>Welcome, {data.user.name}</span>
-                            <img src={data.user.image} alt={data.user.name + ' photo'} className="h-12 w-12 rounded-full"/>
+                            <img src={data.user.image} alt={':('} className="h-12 w-12 rounded-full"/>
                             <span className="cursor-pointer" onClick={signOut}>Sign Out</span>
                         </>
                     ) : (
