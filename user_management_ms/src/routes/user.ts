@@ -17,5 +17,6 @@ router.post(
     controller.postDeletedChart,
     controller.updateTotalCharts
 );
+router.post("/updateLastLoginIn/:userId", controller.updateLastSignin);
 
 export default router;

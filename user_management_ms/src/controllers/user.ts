@@ -171,3 +171,34 @@ export async function postDeletedChart(
     req.params.count = "-1";
     return next();
 }
+
+export async function updateLastSignin(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    const userId = req.params.userId;
+    if (userId == undefined) {
+        // if this error is thrown, something fundamental is wrong with the app
+        throw new Error("Extracted 'userId' is missing");
+    }
+
+    try {
+        const usr = User.findOneAndUpdate(
+            { id: userId },
+            { $set: { lastSignIn: Date.now() } },
+            { new: true }
+        ).lean();
+        if (usr === null) {
+            return res
+                .status(codes.OK)
+                .json({ message: "Could not access this user" });
+        } else {
+            return res
+                .status(codes.OK)
+                .json({ message: "Sign in date updated" });
+        }
+    } catch (err) {
+        return next(err);
+    }
+}
