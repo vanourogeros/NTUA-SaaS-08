@@ -1,7 +1,6 @@
 dist
 node_modules
+user_management_database_volume
 .env*
 !.env.sample
-.DS_Store
-.idea
-.vscode
+test-stuff

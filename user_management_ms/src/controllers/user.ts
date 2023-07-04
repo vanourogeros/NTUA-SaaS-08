@@ -1,4 +1,4 @@
-import { codes } from "../app.js";
+import { codes } from "../setEnv.js";
 import User from "../models/user.js";
 
 import type { Request, Response, NextFunction } from "express";
@@ -64,6 +64,140 @@ export async function getUser(req: Request, res: Response, next: NextFunction) {
             totalTokens: result?.totalTokens,
             lastSignIn: result?.lastSignIn,
         });
+    } catch (err) {
+        return next(err);
+    }
+}
+
+export async function addTokens(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    const userId: string = req.params.userId;
+    const newTokens: number = Number(req.params.newTokens);
+
+    // A more thorough check
+    // if (userId == undefined || userId !== req.get("X-User-ID")) {
+    if (userId == undefined) {
+        // if this error is thrown, something fundamental is wrong with the app
+        throw new Error("Extracted 'userId' is missing");
+    }
+
+    if (newTokens == undefined) {
+        throw new Error("Extracted 'newTokens' is missing");
+    }
+
+    try {
+        const usr = await User.findOneAndUpdate(
+            { id: userId, totalTokens: { $gte: -newTokens } },
+            { $inc: { totalTokens: +newTokens } },
+            { new: true }
+        ).lean();
+        if (usr === null) {
+            return res.status(codes.OK).json({
+                message: "Could not access or change tokens for this user",
+            });
+        } else {
+            return res.status(codes.OK).json({
+                message: "Tokens accessed",
+                totalTokens: usr.totalTokens,
+            });
+        }
+    } catch (err) {
+        return next(err);
+    }
+}
+
+export async function getTokens(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    req.params.newTokens = "0";
+    return next();
+}
+
+export async function updateTotalCharts(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    const userId = req.params.userId;
+    const count = Number(req.params.count);
+
+    // A more thorough check
+    // if (userId == undefined || userId !== req.get("X-User-ID")) {
+    if (userId == undefined) {
+        // if this error is thrown, something fundamental is wrong with the app
+        throw new Error("Extracted 'userId' is missing");
+    }
+
+    try {
+        const usr = await User.findOneAndUpdate(
+            { id: userId, totalCharts: { $gte: -count } },
+            { $inc: { totalCharts: +count } },
+            { new: true }
+        ).lean();
+        if (usr === null) {
+            return res.status(codes.OK).json({
+                message: "Could not access or change charts for this user",
+            });
+        } else {
+            return res.status(codes.OK).json({
+                message: "Charts accessed",
+                totalTokens: usr.totalCharts,
+            });
+        }
+    } catch (err) {
+        return next(err);
+    }
+}
+
+export async function postCreatedChart(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    req.params.count = "1";
+    return next();
+}
+
+export async function postDeletedChart(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    req.params.count = "-1";
+    return next();
+}
+
+export async function updateLastSignin(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    const userId = req.params.userId;
+    if (userId == undefined) {
+        // if this error is thrown, something fundamental is wrong with the app
+        throw new Error("Extracted 'userId' is missing");
+    }
+
+    try {
+        const usr = User.findOneAndUpdate(
+            { id: userId },
+            { $set: { lastSignIn: Date.now() } },
+            { new: true }
+        ).lean();
+        if (usr === null) {
+            return res
+                .status(codes.OK)
+                .json({ message: "Could not access this user" });
+        } else {
+            return res
+                .status(codes.OK)
+                .json({ message: "Sign in date updated" });
+        }
     } catch (err) {
         return next(err);
     }

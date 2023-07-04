@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import { env } from "../setEnv.js";
 
 interface User {
     id: string;
@@ -16,4 +17,5 @@ const userSchema = new Schema<User>({
     lastSignIn: { type: Date, required: true },
 });
 
-export default model<User>("User", userSchema);
+// "user" is the name of the corresponding collection in the database
+export default model<User>("User", userSchema, env.MONGO_COLLECTION);

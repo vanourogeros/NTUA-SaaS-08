@@ -1,13 +1,11 @@
 import express from "express";
 import mongoose from "mongoose";
 import { connectToDB } from "./lib/dbUtils.js";
-import { extractUserId } from "./middleware/auth.js";
-import { errorHandler } from "./middleware/error.js";
-import userRouter from "./routes/user.js";
 import { env } from "./setEnv.js";
+import diagramRouter from "./routes/diagram.js";
+import { errorHandler } from "./middleware/error.js";
 
 try {
-    // connect to the database and retry up to 3 times if it fails
     await connectToDB(env.MONGO_LINK, env.MONGO_DATABASE, 2);
 
     console.log("Connected to the database");
@@ -32,14 +30,13 @@ try {
         console.log("Reconnected to the database")
     );
 
-    // create and set up the express app
     const app = express();
-    app.use("/api/user", extractUserId, userRouter, errorHandler);
 
-    // start listening for incoming requests
-    app.listen(parseInt(env.HTTP_PORT), env.HTTP_HOST, () => {
+    app.use("/api/charts", diagramRouter, errorHandler);
+
+    app.listen(Number(env.HTTP_PORT), env.HTTP_HOST, () => {
         console.log(
-            `User management microservice listening on 'http://${env.HTTP_HOST}:${env.HTTP_PORT}'`
+            `Chart storing microservice is listening on 'http://${env.HTTP_HOST}:${env.HTTP_PORT}'`
         );
     });
 } catch (err) {

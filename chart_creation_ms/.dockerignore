@@ -1,10 +1,9 @@
 dist
 node_modules
-user_management_database_volume
 .dockerignore
 .env*
+!.env
 .gitignore
 compose.yaml
 Dockerfile*
 README.md
-test-stuff
