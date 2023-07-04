@@ -4,4 +4,13 @@ module.exports = {
     images: {
         domains: ["developers.google.com", "lh3.googleusercontent.com"],
     },
+    async redirects() {
+        return [
+            {
+                source: "/",
+                destination: "/welcome",
+                permanent: true,
+            },
+        ];
+    },
 };
