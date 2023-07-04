@@ -21,7 +21,11 @@ export let env: Readonly<Record<string, string>>;
 try {
     // verify all required environment variables exist
     env = verifyEnv({
-        KAFKA_TOPIC: process.env.KAFKA_TOPIC,
+        HTTP_HOST: process.env.HTTP_HOST,
+        HTTP_PORT: process.env.HTTP_PORT,
+        MONGO_LINK: process.env.MONGO_LINK,
+        MONGO_DATABASE: process.env.MONGO_DATABASE,
+        MONGO_COLLECTION: process.env.MONGO_COLLECTION,
     });
 
     Object.freeze(env);
