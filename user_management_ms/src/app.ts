@@ -1,5 +1,4 @@
 import express from "express";
-import { Kafka } from "kafkajs";
 import mongoose from "mongoose";
 import { connectToDB } from "./lib/dbUtils.js";
 import { extractUserId } from "./middleware/auth.js";
@@ -8,8 +7,6 @@ import userRouter from "./routes/user.js";
 import { env } from "./setEnv.js";
 
 try {
-    console.log("All environment variables are present");
-
     // connect to the database and retry up to 3 times if it fails
     await connectToDB(env.MONGO_LINK, env.MONGO_DATABASE, 2);
 

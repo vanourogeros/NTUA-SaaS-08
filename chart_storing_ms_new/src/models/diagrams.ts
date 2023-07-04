@@ -1,4 +1,5 @@
-import { Schema } from "mongoose";
+import { Schema, model } from "mongoose";
+import { env } from "../setEnv.js";
 
 interface Diagram {
     id: string;
@@ -17,4 +18,4 @@ const diagramSchema = new Schema<Diagram>({
 });
 
 // "user" is the name of the corresponding collection in the database
-export { Diagram, diagramSchema };
+export default model<Diagram>("Diagram", diagramSchema, env.MONGO_COLLECTION);

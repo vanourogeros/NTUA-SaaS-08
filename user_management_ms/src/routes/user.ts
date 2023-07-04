@@ -7,5 +7,15 @@ router.post("/new", controller.postNew);
 router.get("/:userId", controller.getUser);
 router.post("/tokens/:userId/:newTokens", controller.addTokens);
 router.get("/tokens/:userId", controller.getTokens, controller.addTokens);
+router.post(
+    "/charts/:userId/created",
+    controller.postCreatedChart,
+    controller.updateTotalCharts
+);
+router.post(
+    "/charts/:userId/deleted",
+    controller.postDeletedChart,
+    controller.updateTotalCharts
+);
 
 export default router;

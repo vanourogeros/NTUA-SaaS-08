@@ -1,6 +1,0 @@
-dist
-node_modules
-user_management_database_volume
-.env*
-!.env.sample
-test-stuff

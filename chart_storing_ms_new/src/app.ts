@@ -2,36 +2,10 @@ import express from "express";
 import { Kafka } from "kafkajs";
 import mongoose from "mongoose";
 import { connectToDB } from "./lib/dbUtils.js";
-import { verifyEnv } from "./lib/envUtils.js";
-import { Diagram, diagramSchema } from "./models/diagrams.js";
+import { env } from "./setEnv.js";
+import Diagram from "./models/diagrams.js";
 
 try {
-    // load environment variables
-    if (process.env.NODE_ENV === "production") {
-        console.info("Running in 'production' mode");
-    } else {
-        console.info("Running in 'development' mode");
-        (await import("dotenv")).config();
-    }
-
-    // verify all required environment variables exist
-    const env = verifyEnv({
-        MONGO_LINK: process.env.MONGO_LINK,
-        MONGO_DATABASE: process.env.MONGO_DATABASE,
-        MONGO_COLLECTION: process.env.MONGO_COLLECTION,
-        HTTP_HOST: process.env.HTTP_HOST,
-        HTTP_PORT: process.env.HTTP_PORT,
-        KAFKA_TOPIC: process.env.KAFKA_TOPIC,
-    });
-
-    console.log("All environment variables are present");
-
-    const Diagr = mongoose.model<Diagram>(
-        "Diagram",
-        diagramSchema,
-        env.MONGO_COLLECTION
-    );
-
     await connectToDB(env.MONGO_LINK, env.MONGO_DATABASE, 2);
 
     console.log("Connected to the database");
@@ -72,7 +46,7 @@ try {
                     message.value?.toString() ?? "{}"
                 );
 
-                const result = await Diagr.create({
+                const result = await Diagram.create({
                     id,
                     userId,
                     file,
@@ -82,6 +56,29 @@ try {
                 console.log(
                     `A document was inserted with the id: ${result.id}`
                 );
+
+                const resTokens = await fetch(`/user/tokens/${userId}/-1`, {
+                    method: "POST",
+                });
+
+                if (!resTokens.ok) {
+                    await Diagram.deleteOne({ id });
+                    console.error("Could not remove token...");
+                    return;
+                }
+
+                const resChartCount = await fetch(
+                    `/user/charts/${userId}/created`,
+                    {
+                        method: "POST",
+                    }
+                );
+
+                if (!resChartCount.ok) {
+                    await Diagram.deleteOne({ id });
+                    await fetch(`/user/tokens/${userId}/1`, { method: "POST" });
+                    console.error("Could not update chart Count");
+                }
             },
         });
     }
@@ -95,7 +92,7 @@ try {
         const userId = req.params.userId;
 
         // Fetch charts from MongoDB
-        const charts = await Diagr.find({ userId }).lean();
+        const charts = await Diagram.find({ userId }).lean();
 
         res.json(charts);
     });

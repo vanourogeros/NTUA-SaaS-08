@@ -89,7 +89,11 @@ export async function addTokens(
     }
 
     try {
-        const usr = await tokenManager(userId, newTokens);
+        const usr = await User.findOneAndUpdate(
+            { id: userId, totalTokens: { $gte: -newTokens } },
+            { $inc: { totalTokens: +newTokens } },
+            { new: true }
+        ).lean();
         if (usr === null) {
             return res.status(codes.OK).json({
                 message: "Could not access or change tokens for this user",
@@ -114,12 +118,56 @@ export async function getTokens(
     return next();
 }
 
-async function tokenManager(userId: string, newTokens: number) {
-    // make sure the user has enough credits, if we're subtracting
+export async function updateTotalCharts(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    const userId = req.params.userId;
+    const count = Number(req.params.count);
 
-    return await User.findOneAndUpdate(
-        { id: userId, totalTokens: { $gte: -newTokens } },
-        { $inc: { totalTokens: +newTokens } },
-        { new: true }
-    ).lean();
+    // A more thorough check
+    // if (userId == undefined || userId !== req.get("X-User-ID")) {
+    if (userId == undefined) {
+        // if this error is thrown, something fundamental is wrong with the app
+        throw new Error("Extracted 'userId' is missing");
+    }
+
+    try {
+        const usr = await User.findOneAndUpdate(
+            { id: userId, totalCharts: { $gte: -count } },
+            { $inc: { totalCharts: +count } },
+            { new: true }
+        ).lean();
+        if (usr === null) {
+            return res.status(codes.OK).json({
+                message: "Could not access or change charts for this user",
+            });
+        } else {
+            return res.status(codes.OK).json({
+                message: "Charts accessed",
+                totalTokens: usr.totalCharts,
+            });
+        }
+    } catch (err) {
+        return next(err);
+    }
+}
+
+export async function postCreatedChart(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    req.params.count = "1";
+    return next();
+}
+
+export async function postDeletedChart(
+    req: Request,
+    res: Response,
+    next: NextFunction
+) {
+    req.params.count = "-1";
+    return next();
 }
