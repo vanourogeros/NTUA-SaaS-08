@@ -61,6 +61,18 @@ services:
     ports:
       - "80:80"
 
+  frontend:
+    container_name: frontend
+    build: ../frontend
+    env_file: ../frontend/.env
+    environment:
+      PORT: "3000"
+      GOOGLE_ID: 303659298491-1khljhlgg9i80v4fcj7qtalgj4c9pcpj.apps.googleusercontent.com
+      GOOGLE_SECRET: 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
+      SECRET: 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
+    ports:
+      - "3000:3000"
+
   user_authentication:
     container_name: user_authentication_ms
     build: ../user_authentication_ms
@@ -68,38 +80,38 @@ services:
     environment:
       NODE_ENV: production
       HTTP_HOST: "0.0.0.0"
-      HTTP_PORT: "3000"
+      HTTP_PORT: "3001"
       GOOGLE_CLIENT_ID: ""
     expose:
-      - "3000"
+      - "3001"
     healthcheck:
-      test: nc -z localhost 3000 || exit -1
+      test: nc -z localhost 3001 || exit -1
       start_period: 5s
       retries: 3
       interval: 10s
       timeout: 5s
 
-#  data_uploading:
-#    container_name: data_uploading_ms
-#    build: ../data_uploading_ms
-#    depends_on:
-#      kafka:
-#        condition: service_healthy
-#    env_file: ../data_uploading_ms/.env
-#    environment:
-#      NODE_ENV: "production"
-#      HTTP_HOST: "0.0.0.0"
-#      HTTP_PORT: "3001"
-#      KAFKA_CLIENT_ID: "data_uploading_ms"
-#      KAFKA_BROKERS: "kafka_broker:9092"
-#    expose:
-#      - "3001"
-#    healthcheck:
-#      test: nc -z localhost 3001 || exit -1
-#      start_period: 5s
-#      retries: 3
-#      interval: 10s
-#      timeout: 5s
+  data_uploading:
+    container_name: data_uploading_ms
+    build: ../data_uploading_ms
+    depends_on:
+      kafka:
+        condition: service_healthy
+    env_file: ../data_uploading_ms/.env
+    environment:
+      NODE_ENV: "production"
+      HTTP_HOST: "0.0.0.0"
+      HTTP_PORT: "3002"
+      KAFKA_CLIENT_ID: "data_uploading_ms"
+      KAFKA_BROKERS: "kafka_broker:9092"
+    expose:
+      - "3002"
+    healthcheck:
+      test: nc -z localhost 3002 || exit -1
+      start_period: 5s
+      retries: 3
+      interval: 10s
+      timeout: 5s
 
   basic_column_creation:
     container_name: basic_column_creation_ms
@@ -109,7 +121,7 @@ services:
         condition: service_healthy
     environment:
       HTTP_HOST: "0.0.0.0"
-      HTTP_PORT: "3002"
+      HTTP_PORT: "3003"
       CHART_TYPE: "basic_column"
       MONGO_ATLAS_URL: "mongodb+srv://saas08:saas08@cluster0.zuzcca6.mongodb.net/?retryWrites=true&w=majority"
       MONGO_ATLAS_DB_NAME: "basic_column_tmp"
@@ -118,6 +130,8 @@ services:
       KAFKA_CONSUMER_TOPIC: "basic_column_csv"
       KAFKA_PRODUCER_TOPIC: "basic_column_svg"
       KAFKA_BROKERS: "kafka_broker:9092"
+    expose:
+      - "3003"
 
   basic_line_creation:
     container_name: basic_line_creation_ms
@@ -127,7 +141,7 @@ services:
         condition: service_healthy
     environment:
       HTTP_HOST: "0.0.0.0"
-      HTTP_PORT: "3003"
+      HTTP_PORT: "3004"
       CHART_TYPE: "basic_line"
       MONGO_ATLAS_URL: "mongodb+srv://saas08:saas08@cluster0.zuzcca6.mongodb.net/?retryWrites=true&w=majority"
       MONGO_ATLAS_DB_NAME: "basic_line_tmp"
@@ -136,6 +150,8 @@ services:
       KAFKA_CONSUMER_TOPIC: "basic_line_csv"
       KAFKA_PRODUCER_TOPIC: "basic_line_svg"
       KAFKA_BROKERS: "kafka_broker:9092"
+    expose:
+      - "3004"
 
 #  chart_aggregation:
 #    container_name: chart_aggregation_ms
