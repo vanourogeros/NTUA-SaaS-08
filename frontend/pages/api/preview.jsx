@@ -23,18 +23,14 @@ apiRoute.post(async (req, res) => {
     let chartType = req.query.chart_type;
     console.log(chartType);
 
-    const blueprint_module = await import("./chart_prev_libs/" + chartType + "/blueprint.js"); // Dynamic import
-    const csv_module = await import("./chart_prev_libs/CSVUtils.ts"); // Dynamic import
-    const methods_module = await import("./chart_prev_libs/" + chartType + "/methods.js"); // Dynamic import
+    const { blueprint } = await import("./chart_prev_libs/" + chartType + "/blueprint.js"); // Dynamic import
+    const { parseCSVFile } = await import("./chart_prev_libs/csvUtils.ts"); // Dynamic import
+    const { create } = await import("./chart_prev_libs/" + chartType + "/methods.js"); // Dynamic import
 
-    const parseCSV = csv_module.parseCSVFile;
-    const blueprint = blueprint_module.blueprint;
-    const createChartOptions = methods_module.create;
-
-    const parsed_data = await parseCSV(req.files[0].buffer.toString(), blueprint);
-    console.log('-----------------------\n' + parsed_data);
-    const ChartOptions = createChartOptions(parsed_data);
-    console.log('-----------------------\n' + ChartOptions);
+    const parsed_data = await parseCSVFile(req.files[0].buffer.toString(), blueprint);
+    console.log("-----------------------\n" + parsed_data);
+    const ChartOptions = create(parsed_data);
+    console.log("-----------------------\n" + ChartOptions);
     res.status(200).json(ChartOptions);
 });
 

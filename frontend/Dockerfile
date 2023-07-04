@@ -1,9 +1,8 @@
 FROM node:alpine
 WORKDIR /home/node/app
 COPY ./package*.json ./
-RUN npm install
+RUN npm --omit=dev install
 COPY ./ ./
 RUN npm run build
 USER node
-EXPOSE 3000
 ENTRYPOINT ["npx", "next", "start"]
