@@ -72,8 +72,11 @@ const upload = multer({ dest: "./uploads" });
 
 const app = express();
 app.post("/chart/:type/new", upload.single("file"), async (req, res) => {
+    console.debug(`Request received: ${req.path}`);
+
     const userId = req.get("X-User-ID");
     const type = req.params.type;
+    const file = req.file;
 
     if (userId == undefined) {
         return res.status(codes.UNAUTHORIZED).send("Please log in first");
@@ -83,10 +86,14 @@ app.post("/chart/:type/new", upload.single("file"), async (req, res) => {
         return res.status(codes.BAD_REQUEST).send("Invalid chart type");
     }
 
+    if (file == undefined) {
+        return res.status(codes.BAD_REQUEST).send("CSV file missing from request");
+    }
+
     try {
         // req.file is the 'file' object
         // req.file.path is path to the uploaded file
-        const csvData = readFile(req.file, "utf-8");
+        const csvData = readFile(file, "utf-8");
         console.debug("File contents:\n", csvData);
 
         await producer.send({
