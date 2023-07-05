@@ -66,12 +66,14 @@ services:
     build: ../frontend
     env_file: ../frontend/.env
     environment:
-      PORT: "3000"
-      GOOGLE_ID: 303659298491-1khljhlgg9i80v4fcj7qtalgj4c9pcpj.apps.googleusercontent.com
-      GOOGLE_SECRET: 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
-      SECRET: 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
+      PORT: "4007"
+      GOOGLE_CLIENT_ID: 303659298491-1khljhlgg9i80v4fcj7qtalgj4c9pcpj.apps.googleusercontent.com
+      GOOGLE_CLIENT_SECRET: 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
+      NEXTAUTH_SECRET: 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
+      CHART_UPLOAD_URL: "http://localhost/api/chart/:chartType/create"
+      CHART_FETCH_URL: "http://localhost/api/charts/:userId"
     ports:
-      - "3000:3000"
+      - "4007:4007"
 
   user_authentication:
     container_name: user_authentication_ms
@@ -80,16 +82,10 @@ services:
     environment:
       NODE_ENV: production
       HTTP_HOST: "0.0.0.0"
-      HTTP_PORT: "3001"
-      GOOGLE_CLIENT_ID: ""
+      HTTP_PORT: "5000"
+      GOOGLE_CLIENT_ID: "303659298491-1khljhlgg9i80v4fcj7qtalgj4c9pcpj.apps.googleusercontent.com"
     expose:
-      - "3001"
-    healthcheck:
-      test: nc -z localhost 3001 || exit -1
-      start_period: 5s
-      retries: 3
-      interval: 10s
-      timeout: 5s
+      - "5000"
 
   data_uploading:
     container_name: data_uploading_ms
@@ -101,17 +97,20 @@ services:
     environment:
       NODE_ENV: "production"
       HTTP_HOST: "0.0.0.0"
-      HTTP_PORT: "3002"
+      HTTP_PORT: "6000"
       KAFKA_CLIENT_ID: "data_uploading_ms"
+      KAFKA_BASIC_COLUMN_TOPIC: "basic_column_opts"
+      KAFKA_BASIC_LINE_TOPIC: "basic_line_opts"
+      KAFKA_DEPENDENCY_WHEEL_TOPIC: "dependency_wheel_opts"
+      KAFKA_LINE_WITH_ANNOTATIONS_TOPIC: "line_with_annotations_opts"
+      KAFKA_NETWORK_GRAPH_TOPIC: "network_graph_opts"
+      KAFKA_ORGANIZATION_TOPIC: "organization_opts"
+      KAFKA_PIE_TOPIC: "pie_opts"
+      KAFKA_POLAR_TOPIC: "polar_opts"
+      KAFKA_WORD_CLOUD_TOPIC: "word_cloud_opts"
       KAFKA_BROKERS: "kafka_broker:9092"
     expose:
-      - "3002"
-    healthcheck:
-      test: nc -z localhost 3002 || exit -1
-      start_period: 5s
-      retries: 3
-      interval: 10s
-      timeout: 5s
+      - "6000"
 
   basic_column_creation:
     container_name: basic_column_creation_ms
@@ -120,67 +119,32 @@ services:
       kafka:
         condition: service_healthy
     environment:
-      HTTP_HOST: "0.0.0.0"
-      HTTP_PORT: "3003"
+      NODE_ENV: "production"
       CHART_TYPE: "basic_column"
-      MONGO_ATLAS_URL: "mongodb+srv://saas08:saas08@cluster0.zuzcca6.mongodb.net/?retryWrites=true&w=majority"
-      MONGO_ATLAS_DB_NAME: "basic_column_tmp"
-      KAFKA_CLIENT_ID: "basic_column_create_ms"
-      KAFKA_CONSUMER_GROUP: "basic_column_csv_group"
-      KAFKA_CONSUMER_TOPIC: "basic_column_csv"
+      KAFKA_CLIENT_ID: "basic_column_creation_ms"
+      KAFKA_CONSUMER_GROUP_ID: "basic_column_opts_group"
+      KAFKA_CONSUMER_TOPIC: "basic_column_opts"
       KAFKA_PRODUCER_TOPIC: "basic_column_svg"
       KAFKA_BROKERS: "kafka_broker:9092"
-    expose:
-      - "3003"
 
-  basic_line_creation:
-    container_name: basic_line_creation_ms
-    build: ../chart_creation_ms
-    depends_on:
-      kafka:
-        condition: service_healthy
-    environment:
-      HTTP_HOST: "0.0.0.0"
-      HTTP_PORT: "3004"
-      CHART_TYPE: "basic_line"
-      MONGO_ATLAS_URL: "mongodb+srv://saas08:saas08@cluster0.zuzcca6.mongodb.net/?retryWrites=true&w=majority"
-      MONGO_ATLAS_DB_NAME: "basic_line_tmp"
-      KAFKA_CLIENT_ID: "basic_line_create_ms"
-      KAFKA_CONSUMER_GROUP: "basic_line_csv_group"
-      KAFKA_CONSUMER_TOPIC: "basic_line_csv"
-      KAFKA_PRODUCER_TOPIC: "basic_line_svg"
-      KAFKA_BROKERS: "kafka_broker:9092"
-    expose:
-      - "3004"
-
-  basic_line_storing:
-    container_name: basic_line_storing
+  basic_column_storing:
+    container_name: basic_column_storing
     build: ../chart_storing_ms
-    ports:
-      - "3020:3020"
     depends_on:
       kafka:
         condition: service_healthy
     environment:
       NODE_ENV: "production"
       HTTP_HOST: "0.0.0.0"
-      HTTP_PORT: "3020"
-      MONGO_LINK: "mongodb+srv://saas08:saas08@cluster0.zuzcca6.mongodb.net/?retryWrites=true&w=majority"
-      MONGO_DATABASE: "diagrams_line_basic"
-      MONGO_COLLECTION: "diagrams_line_basic"
-      KAFKA_TOPIC: "basic_line_svg"
-
-  chart_aggregation:
-    container_name: chart_aggregation_ms
-    build: ../chart_aggregation_ms
-    ports:
-      - "3030:3030"
-    env_file:
-      - ../chart_aggregation_ms/.env
-    environment:
-      NODE_ENV: "production"
-      HTTP_HOST: "0.0.0.0"
-      HTTP_PORT: "3030"
+      HTTP_PORT: "7000"
+      CHART_TYPE: "basic_column"
+      MONGO_ATLAS_URL: "mongodb+srv://saas08:saas08@cluster0.zuzcca6.mongodb.net/?retryWrites=true&w=majority"
+      MONGO_ATLAS_DB_NAME: "diagrams_line_basic"
+      MONGO_ATLAS_DB_COLLECTION: "diagram"
+      KAFKA_CLIENT_ID: "basic_column_storing_ms"
+      KAFKA_CONSUMER_GROUP_ID: "basic_column_storing_group"
+      KAFKA_CONSUMER_TOPIC: "basic_column_svg"
+      KAFKA_BROKERS: "kafka_broker:9092"
 
 #  chart_aggregation:
 #    container_name: chart_aggregation_ms
@@ -203,17 +167,6 @@ services:
 #      HTTP_PORT: "3001"
 #    expose:
 #      - "3001"
-#
-#
-#
-#  nginx:
-#    image: nginx:latest
-#    depends_on:
-#      - mycharts-frontend
-#    ports:
-#      - '80:80'
-#    volumes:
-#      - ./nginx.conf:/etc/nginx/conf.d/default.conf
 #
 #  # This "container" is a workaround to pre-create topics
 #  kafka-setup:
