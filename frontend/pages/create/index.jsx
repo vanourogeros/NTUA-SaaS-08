@@ -1,5 +1,3 @@
-import { useSession } from "next-auth/react";
-
 const chartTypes = [
     "basic_column",
     "basic_line",
@@ -25,12 +23,6 @@ const chartNames = [
 ];
 
 export default function CreateIndex() {
-    const { data: session, status } = useSession();
-
-    if (status === "loading") {
-        return <p>Loading...</p>;
-    }
-
     return (
         <div
             style={{

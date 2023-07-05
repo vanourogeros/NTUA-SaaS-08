@@ -1,16 +1,9 @@
-import { useSession, signOut } from "next-auth/react";
-import { useRouter } from "next/router";
 import Image from "next/image";
 
 const buttonTexts = ["Create Chart", "Charts", "User Info", "Purchase Tokens", "My Charts"];
 const buttonLinks = ["/create", "/charts", "/user", "/topup", "/my_charts"];
 
 export default function IndexPage() {
-    const router = useRouter();
-    const { data, status } = useSession();
-
-    if (status === "loading") return <h1>Loading...</h1>;
-
     return (
         <div
             style={{
