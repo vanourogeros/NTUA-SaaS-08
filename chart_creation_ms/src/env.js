@@ -12,7 +12,7 @@ if (process.env.NODE_ENV === "production") {
 const env = {
     CHART_TYPE: process.env.CHART_TYPE,
     KAFKA_CLIENT_ID: process.env.KAFKA_CLIENT_ID,
-    KAFKA_CONSUMER_GROUP: process.env.KAFKA_CONSUMER_GROUP,
+    KAFKA_CONSUMER_GROUP_ID: process.env.KAFKA_CONSUMER_GROUP_ID,
     KAFKA_CONSUMER_TOPIC: process.env.KAFKA_CONSUMER_TOPIC,
     KAFKA_PRODUCER_TOPIC: process.env.KAFKA_PRODUCER_TOPIC,
     KAFKA_BROKERS: process.env.KAFKA_BROKERS?.split(",").map((b) => b.trim()),

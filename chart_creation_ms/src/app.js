@@ -17,7 +17,7 @@ const producer = kafka.producer();
 producer.on("producer.connect", () => console.log("Kafka producer connected"));
 producer.on("producer.disconnect", () => console.log("Kafka producer disconnected"));
 
-const consumer = kafka.consumer({ groupId: env.KAFKA_CONSUMER_GROUP });
+const consumer = kafka.consumer({ groupId: env.KAFKA_CONSUMER_GROUP_ID });
 consumer.on("consumer.connect", () => console.log("Kafka consumer connected"));
 consumer.on("consumer.disconnect", () => console.log("Kafka consumer disconnected"));
 
@@ -46,7 +46,10 @@ async function startConsumer() {
             },
         });
     } catch (err) {
-        console.error(`Error in consumer of group [${env.KAFKA_CONSUMER_GROUP}] ${e.meesage}`, e);
+        console.error(
+            `Error in consumer of group [${env.KAFKA_CONSUMER_GROUP_ID}] ${e.meesage}`,
+            e
+        );
     }
 }
 

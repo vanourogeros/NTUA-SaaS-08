@@ -58,6 +58,8 @@ services:
         condition: service_healthy
       data_uploading:
         condition: service_healthy
+      basic_column_storing:
+        condition: service_healthy
     ports:
       - "80:80"
 
@@ -70,6 +72,7 @@ services:
       GOOGLE_CLIENT_ID: 303659298491-1khljhlgg9i80v4fcj7qtalgj4c9pcpj.apps.googleusercontent.com
       GOOGLE_CLIENT_SECRET: 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
       NEXTAUTH_SECRET: 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
+      NEXTAUTH_URL: "localhost:4007"
       CHART_UPLOAD_URL: "http://localhost/api/chart/:chartType/create"
       CHART_FETCH_URL: "http://localhost/api/charts/:userId"
     ports:
@@ -86,6 +89,12 @@ services:
       GOOGLE_CLIENT_ID: "303659298491-1khljhlgg9i80v4fcj7qtalgj4c9pcpj.apps.googleusercontent.com"
     expose:
       - "5000"
+    healthcheck:
+      test: nc -z localhost 5000 || exit -1
+      start_period: 5s
+      retries: 3
+      interval: 10s
+      timeout: 5s
 
   data_uploading:
     container_name: data_uploading_ms
@@ -111,6 +120,12 @@ services:
       KAFKA_BROKERS: "kafka_broker:9092"
     expose:
       - "6000"
+    healthcheck:
+      test: nc -z localhost 6000 || exit -1
+      start_period: 5s
+      retries: 3
+      interval: 10s
+      timeout: 5s
 
   basic_column_creation:
     container_name: basic_column_creation_ms
@@ -128,7 +143,7 @@ services:
       KAFKA_BROKERS: "kafka_broker:9092"
 
   basic_column_storing:
-    container_name: basic_column_storing
+    container_name: basic_column_storing_ms
     build: ../chart_storing_ms
     depends_on:
       kafka:
@@ -145,6 +160,12 @@ services:
       KAFKA_CONSUMER_GROUP_ID: "basic_column_storing_group"
       KAFKA_CONSUMER_TOPIC: "basic_column_svg"
       KAFKA_BROKERS: "kafka_broker:9092"
+    healthcheck:
+      test: nc -z localhost 7000 || exit -1
+      start_period: 5s
+      retries: 3
+      interval: 10s
+      timeout: 5s
 
 #  chart_aggregation:
 #    container_name: chart_aggregation_ms

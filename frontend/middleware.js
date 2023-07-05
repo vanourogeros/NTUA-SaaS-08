@@ -6,14 +6,14 @@ export async function middleware(req) {
 
     // redirect logged in users from '/welcome' and from '/api/auth/signin' to '/dashboard'
     if (
-        req.nextUrl.pathname === "/welcome" ||
-        (req.nextUrl.pathname === "/api/auth/signin" && token)
+        (req.nextUrl.pathname === "/welcome" || req.nextUrl.pathname === "/api/auth/signin") &&
+        token
     ) {
         return NextResponse.redirect(new URL("/dashboard", req.url));
     }
 
     // redirect logged out users from anywhere to '/welcome'
-    if (!token) {
+    if (req.nextUrl.pathname !== "/welcome" && !token) {
         return NextResponse.redirect(new URL("/welcome", req.url));
     }
 
