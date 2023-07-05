@@ -13,41 +13,87 @@ export const codes = {
 };
 
 const kafka = new Kafka({
-    clientId: env.KAFKA_CLIENT_ID,
+    //clientId: env.KAFKA_CLIENT_ID,
     brokers: env.KAFKA_BROKERS,
 });
 
-//const producer = kafka.producer();
-//producer.on("producer.connect", () => console.log("Kafka producer connected"));
-//producer.on("producer.disconnect", () => console.log("Kafka producer disconnected"));
-//
-//const consumer = kafka.consumer({ groupId: env.KAFKA_CONSUMER_GROUP });
-//consumer.on("consumer.connect", () => console.log("Kafka consumer connected"));
-//consumer.on("consumer.disconnect", () => console.log("Kafka consumer disconnected"));
-//
-//await consumer.subscribe({ topic: env.KAFKA_CONSUMER_TOPIC });
-//await consumer.run({
-//    eachMessage: async ({ topic, partition, message }) => {
-//        if (message.value == null) {
-//            console.error(`Received empty kafka message in topic '${topic}'`);
-//            return;
-//        }
-//
-//        const { userId, csvData } = JSON.parse(message.value.toString());
-//        const jsonData = await parseCSVFile(csvData, chartBlueprint);
-//        const chartOptions = createChart(jsonData);
-//        const svgData = await createSVG(chartOptions);
-//
-//        await producer.send({
-//            topic: env.KAFKA_PRODUCER_TOPIC,
-//            messages: [
-//                {
-//                    value: JSON.stringify({ userId, svgData }),
-//                },
-//            ],
-//        });
-//    },
-//});
+const producer = kafka.producer();
+producer.on("producer.connect", () => console.log("Kafka producer connected"));
+producer.on("producer.disconnect", () =>
+    console.log("Kafka producer disconnected")
+);
+
+const consumer = kafka.consumer({ groupId: env.KAFKA_CONSUMER_GROUP });
+consumer.on("consumer.connect", () => console.log("Kafka consumer connected"));
+consumer.on("consumer.disconnect", () =>
+    console.log("Kafka consumer disconnected")
+);
+
+async function run() {
+    try {
+        await consumer.connect();
+        await consumer.subscribe({ topic: env.KAFKA_CONSUMER_TOPIC });
+        await consumer.run({
+            eachMessage: async ({ topic, message }) => {
+                if (message.value == null) {
+                    console.error(
+                        `Received empty kafka message in topic '${topic}'`
+                    );
+                    return;
+                }
+
+                const { userId, csvData } = JSON.parse(
+                    message.value.toString()
+                );
+                const jsonData = await parseCSVFile(csvData, chartBlueprint);
+                const chartOptions = createChart(jsonData);
+                const svgData = await createSVG(chartOptions);
+
+                await producer.send({
+                    topic: env.KAFKA_PRODUCER_TOPIC,
+                    messages: [
+                        {
+                            value: JSON.stringify({ userId, svgData }),
+                        },
+                    ],
+                });
+            },
+        });
+    } catch (err) {
+        console.error(
+            `Error in consumer of group [${env.KAFKA_CONSUMER_GROUP}] ${e.meesage}`,
+            e
+        );
+    }
+}
+
+run();
+
+const errorTypes = ["unhandledRejection", "uncaughtException"];
+const signalTraps = ["SIGTERM", "SIGINT", "SIGUSR2"];
+
+errorTypes.forEach((type) => {
+    process.on(type, async (e) => {
+        try {
+            console.log(`process.on ${type}`);
+            console.error(e);
+            await consumer.disconnect();
+            process.exit(0);
+        } catch (_) {
+            process.exit(1);
+        }
+    });
+});
+
+signalTraps.forEach((type) => {
+    process.once(type, async () => {
+        try {
+            await consumer.disconnect();
+        } finally {
+            process.kill(process.pid, type);
+        }
+    });
+});
 
 try {
     await connectToDB(env.MONGO_ATLAS_URL, env.MONGO_ATLAS_DB_NAME, 3);
@@ -60,8 +106,12 @@ try {
         console.error("Database connection error:");
         console.error(err);
     });
-    mongoose.connection.on("disconnected", () => console.log("Disconnected from the database"));
-    mongoose.connection.on("connected", () => console.log("Reconnected to the database"));
+    mongoose.connection.on("disconnected", () =>
+        console.log("Disconnected from the database")
+    );
+    mongoose.connection.on("connected", () =>
+        console.log("Reconnected to the database")
+    );
 
     const app = express();
     app.use(express.json());

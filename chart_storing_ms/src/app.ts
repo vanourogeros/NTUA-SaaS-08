@@ -73,6 +73,32 @@ try {
     // run without await so that the rest of the program also executes...
     run();
 
+    const errorTypes = ["unhandledRejection", "uncaughtException"];
+    const signalTraps = ["SIGTERM", "SIGINT", "SIGUSR2"];
+
+    errorTypes.forEach((type) => {
+        process.on(type, async (e) => {
+            try {
+                console.log(`process.on ${type}`);
+                console.error(e);
+                await consumer.disconnect();
+                process.exit(0);
+            } catch (_) {
+                process.exit(1);
+            }
+        });
+    });
+
+    signalTraps.forEach((type) => {
+        process.once(type, async () => {
+            try {
+                await consumer.disconnect();
+            } finally {
+                process.kill(process.pid, type);
+            }
+        });
+    });
+
     app.listen(Number(env.HTTP_PORT), env.HTTP_HOST, () => {
         console.log(
             `Chart storing microservice is listening on 'http://${env.HTTP_HOST}:${env.HTTP_PORT}'`
