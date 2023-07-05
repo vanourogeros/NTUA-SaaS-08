@@ -17,26 +17,24 @@ const kafka = new Kafka({
 
 // map chart types to kafka topics
 const kafkaTopicsMap = {
-    basic_column: "basic_column_opts",
-    basic_line: "basic_line_opts",
-    dependency_wheel: "dependency_wheel_opts",
-    line_with_annotations: "line_with_annotations_opts",
-    network_graph: "network_graph_opts",
-    organization: "organization_opts",
-    pie: "pie_opts",
-    polar: "polar_opts",
-    word_cloud: "word_cloud_opts",
+    basic_column: env.KAFKA_BASIC_COLUMN_TOPIC,
+    basic_line: env.KAFKA_BASIC_LINE_TOPIC,
+    dependency_wheel: env.KAFKA_DEPENDENCY_WHEEL_TOPIC,
+    line_with_annotations: env.KAFKA_LINE_WITH_ANNOTATIONS_TOPIC,
+    network_graph: env.KAFKA_NETWORK_GRAPH_TOPIC,
+    organization: env.KAFKA_ORGANIZATION_TOPIC,
+    pie: env.KAFKA_PIE_TOPIC,
+    polar: env.KAFKA_POLAR_TOPIC,
+    word_cloud: env.KAFKA_WORD_CLOUD_TOPIC,
 };
 
 const producer = kafka.producer();
 producer.on("producer.connect", () => console.log("Kafka producer connected"));
-producer.on("producer.disconnect", () =>
-    console.log("Kafka producer disconnected")
-);
+producer.on("producer.disconnect", () => console.log("Kafka producer disconnected"));
 await producer.connect();
 
 const app = express();
-app.post("/api/chart/:type/new", async (req, res) => {
+app.post("/api/chart/:type/create", async (req, res) => {
     console.debug(`Request received: ${req.path}`);
 
     const userId = req.get("X-User-ID");
@@ -52,22 +50,19 @@ app.post("/api/chart/:type/new", async (req, res) => {
     }
 
     if (chartOptions == undefined) {
-        return res
-            .status(codes.BAD_REQUEST)
-            .send("Chart options object missing from request body");
+        return res.status(codes.BAD_REQUEST).send("Chart options object missing from request body");
     }
 
     try {
         console.debug("Received options:\n", chartOptions);
 
-        const validTokens = await fetch(`/api/user/tokens/${userId}/-1`, {
-            method: "POST",
+        const validTokens = await fetch(`/api/user/${userId}/tokens/-1`, {
+            method: "post",
         });
 
         if (!validTokens.ok) {
             return res.status(validTokens.status).json({
-                message:
-                    "Failed to updated tokens, could not accept new chart request",
+                message: "Failed to create your chart",
             });
         }
 
@@ -101,9 +96,7 @@ app.post("/api/chart/:type/new", async (req, res) => {
         return res.status(codes.NO_CONTENT).send();
     } catch (err) {
         console.error(err);
-        return res
-            .status(codes.INTERNAL_SERVER_ERROR)
-            .send("Internal Server Error");
+        return res.status(codes.INTERNAL_SERVER_ERROR).send("Internal Server Error");
     }
 });
 
