@@ -1,158 +1,60 @@
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import React, { useState } from "react";
-import HighchartsReact from "highcharts-react-official";
-import Highcharts from "highcharts";
 
-const Charts = () => {
-    const router = useRouter();
+const MyChartsPage = () => {
     const { data: session, status } = useSession();
-    const [chartIndex, setChartIndex] = useState(0);
+    const [diagrams, setDiagrams] = useState([]);
 
-    const chartOptions1 = {
-        chart: {
-            type: "area",
-        },
-        xAxis: {
-            categories: [
-                "Jan",
-                "Feb",
-                "Mar",
-                "Apr",
-                "May",
-                "Jun",
-                "Jul",
-                "Aug",
-                "Sep",
-                "Oct",
-                "Nov",
-                "Dec",
-            ],
-        },
+    useEffect(() => {
+        console.log("session: " + session);
+        if (session) {
+            fetch(`/api/my_charts?userId=${session.user.id}`) // also works with 'giannis'
+                .then((response) => response.json())
+                .then((data) => {
+                    // Extract diagrams from the nested structure of the response
+                    console.debug(data);
+                    const extractedDiagrams = data.charts
+                        .filter((chart) => chart) // Filter out null values
+                        .flatMap((chart) => chart.diagrams); // Flatten the array of arrays
+                    setDiagrams(extractedDiagrams);
+                })
+                .catch((error) => console.error("Error fetching diagrams:", error));
+        }
+    }, [session]);
 
-        plotOptions: {
-            series: {
-                animation: false,
-            },
-        },
-
-        series: [
-            {
-                data: [
-                    29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4,
-                ],
-            },
-        ],
+    const handleDownload = (diagram, format) => {
+        // TODO: Implement download functionality
+        console.log(`Download ${diagram._id} as ${format}`);
     };
 
-    const chartOptions2 = {
-        chart: {
-            type: "line",
-        },
-        xAxis: {
-            categories: [
-                "Jan",
-                "Feb",
-                "Mar",
-                "Apr",
-                "May",
-                "Jun",
-                "Jul",
-                "Aug",
-                "Sep",
-                "Oct",
-                "Nov",
-                "Dec",
-            ],
-        },
+    if (status === "loading") {
+        return <p>Loading...</p>;
+    }
 
-        plotOptions: {
-            series: {
-                animation: false,
-            },
-        },
-
-        series: [
-            {
-                data: [
-                    29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4,
-                ],
-            },
-        ],
-    };
-
-    const chartOptions3 = {
-        chart: {
-            type: "bar",
-        },
-        xAxis: {
-            categories: [
-                "Jan",
-                "Feb",
-                "Mar",
-                "Apr",
-                "May",
-                "Jun",
-                "Jul",
-                "Aug",
-                "Sep",
-                "Oct",
-                "Nov",
-                "Dec",
-            ],
-        },
-
-        plotOptions: {
-            series: {
-                animation: false,
-            },
-        },
-
-        series: [
-            {
-                data: [
-                    29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4,
-                ],
-            },
-        ],
-    };
-
-    const chartsList = [chartOptions1, chartOptions2, chartOptions3];
-
-    const handleChartChange = (index) => {
-        setChartIndex(index);
-    };
-    if (status === "authenticated") {
+    if (!session) {
         return (
             <div>
-                <h1>authorized</h1>
-                <div>
-                    <HighchartsReact highcharts={Highcharts} options={chartsList[chartIndex]} />
-                </div>
-                <button className="button" onClick={() => handleChartChange(0)}>
-                    line
-                </button>
-                <button className="button" onClick={() => handleChartChange(1)}>
-                    area
-                </button>
-                <button className="button" onClick={() => handleChartChange(2)}>
-                    bar
-                </button>
-                <button className="button" onClick={() => router.push("/")}>
-                    back to reality
-                </button>
-            </div>
-        );
-    } else {
-        return (
-            <div>
-                <h1>Not authorized</h1>
-                <button className="button" onClick={() => router.push("/")}>
-                    back to reality
-                </button>
+                <p>Please sign in to view your diagrams</p>
             </div>
         );
     }
+
+    return (
+        <div className="flex flex-col items-center justify-center min-h-screen py-2">
+            {diagrams.map((diagram) => (
+                <div key={diagram._id}>
+                    <div dangerouslySetInnerHTML={{ __html: diagram.file }} />
+                    <select onChange={(event) => handleDownload(diagram, event.target.value)}>
+                        <option value="">Download As...</option>
+                        <option value="svg">SVG</option>
+                        <option value="html">HTML</option>
+                        <option value="pdf">PDF</option>
+                        <option value="png">PNG</option>
+                    </select>
+                </div>
+            ))}
+        </div>
+    );
 };
 
-export default Charts;
+export default MyChartsPage;

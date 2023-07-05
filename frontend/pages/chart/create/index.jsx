@@ -1,30 +1,30 @@
 import Link from "next/link";
 
-const chartTypes = [
-    "basic_column",
-    "basic_line",
-    "dependency_wheel",
-    "line_with_annotations",
-    "network_graph",
-    "organization",
-    "pie",
-    "polar",
-    "word_cloud",
-];
-
-const chartNames = [
-    "Basic Column",
-    "Basic Line",
-    "Dependency Wheel",
-    "Line With Annotations",
-    "Network Graph",
-    "Organization Chart",
-    "Pie Chart",
-    "Polar",
-    "Word Cloud",
-];
-
 export default function CreateIndex() {
+    const chartTypes = [
+        "basic_column",
+        "basic_line",
+        "dependency_wheel",
+        "line_with_annotations",
+        "network_graph",
+        "organization",
+        "pie",
+        "polar",
+        "word_cloud",
+    ];
+
+    const chartNames = [
+        "Basic Column",
+        "Basic Line",
+        "Dependency Wheel",
+        "Line With Annotations",
+        "Network Graph",
+        "Organization Chart",
+        "Pie Chart",
+        "Polar",
+        "Word Cloud",
+    ];
+
     return (
         <div
             style={{

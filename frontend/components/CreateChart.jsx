@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { authFetch } from "../lib/generalUtils.js";
 import { parseCSVFile } from "../lib/csvUtils.js";
 
-export default function CreateChart({ chartType, chartName, uploadUrl }) {
+export default function CreateChart({ chartType, chartName }) {
     let chartBlueprint, createChartOptions;
     import(`../lib/charts/${chartType}/blueprint.js`).then(
         ({ blueprint }) => (chartBlueprint = blueprint)
@@ -40,12 +40,16 @@ export default function CreateChart({ chartType, chartName, uploadUrl }) {
     }
 
     async function handleConfirmChart() {
-        const response = await authFetch(session, uploadUrl, {
-            method: "post",
-            body: {
-                chartOptions,
-            },
-        });
+        const response = await authFetch(
+            session,
+            process.env.CHART_UPLOAD_URL.replace(":chartType", chartType),
+            {
+                method: "post",
+                body: {
+                    chartOptions,
+                },
+            }
+        );
 
         if (!response.ok) {
             setChartVisible(false);
