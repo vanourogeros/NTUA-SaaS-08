@@ -6,8 +6,6 @@ export async function middleware(req) {
 
     const pathnames = ["/welcome", "/api/auth/signin", "/api/auth/callback/google"];
 
-    console.log(pathnames.includes(req.nextUrl.pathname));
-
     // redirect logged in users from '/welcome' and from '/api/auth/signin' to '/dashboard'
     if (token && pathnames.includes(req.nextUrl.pathname)) {
         return NextResponse.redirect(new URL("/dashboard", req.url));

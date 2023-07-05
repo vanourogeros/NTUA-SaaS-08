@@ -45,7 +45,7 @@ services:
         "word_cloud_svg"
     healthcheck:
       test: nc -z localhost 9092 || exit -1
-      start_period: 15s
+      start_period: 25s
       retries: 10
       interval: 10s
       timeout: 5s
@@ -102,6 +102,7 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
+    restart: on_failure
     env_file: ../data_uploading_ms/.env
     environment:
       NODE_ENV: "production"
@@ -133,6 +134,7 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
+    restart: on_failure
     environment:
       NODE_ENV: "production"
       CHART_TYPE: "basic_column"
@@ -148,6 +150,7 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
+    restart: on_failure
     environment:
       NODE_ENV: "production"
       HTTP_HOST: "0.0.0.0"
