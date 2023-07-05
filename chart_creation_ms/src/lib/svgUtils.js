@@ -42,8 +42,8 @@ async function getSources(online = false) {
         }
 
         return [
-            `${nodeModulesPath}/highcharts.js`,
-            `${nodeModulesPath}/highcharts-more.js`,
+            `${nodeModulesPath}/highcharts/highcharts.js`,
+            `${nodeModulesPath}/highcharts/highcharts-more.js`,
             `${nodeModulesPath}/highcharts/modules/annotations.js`,
             `${nodeModulesPath}/highcharts/modules/sankey.js`,
             `${nodeModulesPath}/highcharts/modules/dependency-wheel.js`,
