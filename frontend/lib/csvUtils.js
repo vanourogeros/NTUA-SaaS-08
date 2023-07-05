@@ -1,56 +1,12 @@
-interface StringFieldDescription {
-    type: "string";
-}
-
-interface NumberFieldDescription {
-    type: "number";
-}
-
-interface BooleanFieldDescription {
-    type: "boolean";
-}
-
-interface EnumFieldDescription {
-    type: "enum";
-    values: string[];
-}
-
-// interface that enforces blueprints are written correctly
-// an object in brackets represents an array of it
-export interface Blueprint {
-    [key: string]:
-        | Blueprint
-        | [Blueprint]
-        | StringFieldDescription
-        | [StringFieldDescription]
-        | NumberFieldDescription
-        | [NumberFieldDescription]
-        | BooleanFieldDescription
-        | [BooleanFieldDescription]
-        | EnumFieldDescription
-        | [EnumFieldDescription];
-}
-
-// object containing string keys and boolean (arrays), number (arrays), string (arrays),
-// or other ParsedCSVs as values
-interface ParsedCSV {
-    [key: string]: ParsedCSV | boolean | boolean[] | number | number[] | string | string[];
-}
-
 class CSVParsingError extends Error {
-    constructor(message?: string, options?: ErrorOptions) {
+    constructor(message, options) {
         super(message, options);
         this.name = "CSVParsingError";
     }
 }
 
 // helper function to reduce parseCSVFile's size
-function createFirstFields(
-    firstFields: string[],
-    object: ParsedCSV,
-    blueprint: Blueprint,
-    lineNo: number
-): [ParsedCSV, Blueprint] {
+function createFirstFields(firstFields, object, blueprint, lineNo) {
     // reference to the object that will be created
     let objectRef = object;
     // reference to the blueprint that will help detect errors in the given data
@@ -109,32 +65,26 @@ function createFirstFields(
             prevFieldWasArray = false;
         } else if (Array.isArray(blueprintRef[field])) {
             prevFieldWasArray = true;
-            blueprintRef = (blueprintRef[field] as [Blueprint])[0] as Blueprint;
+            blueprintRef = blueprintRef[field][0];
         } else {
-            blueprintRef = blueprintRef[field] as Blueprint;
+            blueprintRef = blueprintRef[field];
         }
 
-        objectRef = objectRef[field] as ParsedCSV;
+        objectRef = objectRef[field];
     }
 
     return [objectRef, blueprintRef];
 }
 
 // helper function to reduce parseCSVFile's size
-function fillInValues(
-    values: string[],
-    lastField: string,
-    objectRef: ParsedCSV,
-    blueprintRef: Blueprint,
-    lineNo: number
-): void {
+function fillInValues(values, lastField, objectRef, blueprintRef, lineNo) {
     function fillInStrings() {
         objectRef[lastField] = values.length > 1 ? values : values[0];
     }
 
     function fillInNumbers() {
         for (const value of values) {
-            if (value.trim() === "" || isNaN(value as any)) {
+            if (value.trim() === "" || isNaN(value)) {
                 throw new CSVParsingError(`Invalid value '${value}' in line ${lineNo}, \
                 expected number`);
             }
@@ -162,7 +112,7 @@ function fillInValues(
     function fillInEnums() {
         // since 'type' is surely 'enum', 'values' definitely exists and is 'string[]',
         // but the typescript compiler complains, so we cast it to 'unknown' first
-        const blueprintValues = blueprintRef.values as unknown as string[];
+        const blueprintValues = blueprintRef.values;
         for (const value of values) {
             if (!blueprintValues.includes(value.toLowerCase())) {
                 throw new CSVParsingError(
@@ -177,9 +127,9 @@ function fillInValues(
     // see comment in 'createFirstFields()' to understand the use of this variable
     const valuesInArray = Array.isArray(blueprintRef[lastField]);
     if (valuesInArray) {
-        blueprintRef = (blueprintRef[lastField] as [Blueprint])[0] as Blueprint;
+        blueprintRef = blueprintRef[lastField][0];
     } else {
-        blueprintRef = blueprintRef[lastField] as Blueprint;
+        blueprintRef = blueprintRef[lastField];
     }
 
     if (typeof blueprintRef.type !== "string") {
@@ -235,7 +185,7 @@ function fillInValues(
 
     by this function
 */
-function fixParsedArrays(objectRef: ParsedCSV, blueprintRef: Blueprint) {
+function fixParsedArrays(objectRef, blueprintRef) {
     for (const key in objectRef) {
         if (Array.isArray(blueprintRef[key])) {
             const arr = [];
@@ -246,16 +196,14 @@ function fixParsedArrays(objectRef: ParsedCSV, blueprintRef: Blueprint) {
         }
 
         if (typeof blueprintRef[key] === "object") {
-            fixParsedArrays(objectRef[key] as ParsedCSV, blueprintRef[key] as Blueprint);
+            fixParsedArrays(objectRef[key], blueprintRef[key]);
         }
     }
 }
 
 // parse a CSV line, returning an array of its values in 3 different 'categories'
 // also trims and unescapes escaped commas
-function parseCSVLine(
-    line: string
-): [undefined, undefined, undefined] | [string[], string, string[]] {
+function parseCSVLine(line) {
     // every input line that starts with this symbol is treated as a comment
     const COMMENTS_IDENTIFIER = "#";
     // commas not preceded by '\' and not inside '[...]' are matched
@@ -277,10 +225,10 @@ function parseCSVLine(
 
     // ['a/b/c/d', 'e', 'f', 'g'] -> 'a/b/c/d', ['e', 'f', 'g']
     // 'a/b/c/d' -> ['a', 'b', 'c', 'd']
-    const firstOptionFields = (values.shift() as string).split(FIELDS_SEPARATOR);
+    const firstOptionFields = values.shift().split(FIELDS_SEPARATOR);
 
     // ['a', 'b', 'c', 'd'] -> ['a', 'b', 'c'], 'd'
-    const lastOptionField = firstOptionFields.pop() as string;
+    const lastOptionField = firstOptionFields.pop();
 
     // firstOptionFields might be empty
     // lastOptionField will not be empty
@@ -293,10 +241,10 @@ function parseCSVLine(
 }
 
 // parse a CSV file while validating that the parsed data conforms to the blueprint's data
-export async function parseCSVFile(csvData: string, blueprint: Blueprint) {
+export async function parseCSVFile(csvData, blueprint) {
     try {
         // object to store the CSV data
-        const object: ParsedCSV = {};
+        const object = {};
 
         for (const [i, line] of Object.entries(csvData.split("\n"))) {
             console.debug(i, line);
@@ -313,7 +261,7 @@ export async function parseCSVFile(csvData: string, blueprint: Blueprint) {
                 firstOptionFields,
                 object,
                 blueprint,
-                parseInt(i)
+                Number(i)
             );
 
             // if the final option of the blueprint does not contain the values'
@@ -323,7 +271,7 @@ export async function parseCSVFile(csvData: string, blueprint: Blueprint) {
             }
 
             // fill in the values of the current line following the blueprint
-            fillInValues(fieldValues, lastOptionField, objectRef, blueprintRef, parseInt(i));
+            fillInValues(fieldValues, lastOptionField, objectRef, blueprintRef, Number(i));
         }
 
         fixParsedArrays(object, blueprint);

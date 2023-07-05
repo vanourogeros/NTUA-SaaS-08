@@ -6,8 +6,9 @@ import Highcharts from "highcharts";
 
 const Charts = () => {
     const router = useRouter();
-    const { data, status } = useSession();
+    const { data: session, status } = useSession();
     const [chartIndex, setChartIndex] = useState(0);
+
     const chartOptions1 = {
         chart: {
             type: "area",

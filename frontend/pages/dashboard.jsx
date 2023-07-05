@@ -2,6 +2,9 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 
+const buttonTexts = ["Create Chart", "Charts", "User Info", "Purchase Tokens", "My Charts"];
+const buttonLinks = ["/create", "/charts", "/user", "/topup", "/my_charts"];
+
 export default function IndexPage() {
     const router = useRouter();
     const { data, status } = useSession();
@@ -28,51 +31,11 @@ export default function IndexPage() {
                     clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)",
                 }}
             />
-            <button
-                style={{ marginBottom: "10px" }}
-                className="button"
-                onClick={() => {
-                    router.push("/upload");
-                }}
-            >
-                Create Chart
-            </button>
-            <button
-                style={{ marginBottom: "10px" }}
-                className="button"
-                onClick={() => {
-                    router.push("/charts");
-                }}
-            >
-                Charts
-            </button>
-            <button
-                style={{ marginBottom: "10px" }}
-                className="button"
-                onClick={() => {
-                    router.push("/user");
-                }}
-            >
-                User Info
-            </button>
-            <button
-                style={{ marginBottom: "10px" }}
-                className="button"
-                onClick={() => {
-                    router.push("/topup");
-                }}
-            >
-                Purchase Tokens
-            </button>
-            <button
-                style={{ marginBottom: "10px" }}
-                className="button"
-                onClick={() => {
-                    router.push("/my_charts");
-                }}
-            >
-                My Charts
-            </button>
+            {buttonTexts.map((text, i) => (
+                <a href={buttonLinks[i]} style={{ marginBottom: "10px" }} className="button">
+                    {text}
+                </a>
+            ))}
             <button style={{ marginBottom: "10px" }} className="button" onClick={signOut}>
                 Sign Out
             </button>

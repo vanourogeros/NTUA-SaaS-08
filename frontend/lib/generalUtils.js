@@ -1,6 +1,6 @@
 // zip an arbitrary number of arrays into one (similar to python's zip())
 // arrays must have the same length
-export function zip(...arrays: unknown[][]) {
+export function zip(...arrays) {
     let length = arrays[0].length;
 
     for (const array of arrays) {
@@ -9,7 +9,7 @@ export function zip(...arrays: unknown[][]) {
         }
     }
 
-    let result: unknown[][] = [];
+    let result = [];
     for (let i = 0; i < length; ++i) {
         result.push([]);
         for (const array of arrays) {
