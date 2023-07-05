@@ -68,15 +68,15 @@ services:
     build: ../frontend
     env_file: ../frontend/.env
     environment:
-      PORT: "4007"
+      PORT: "3000"
       GOOGLE_CLIENT_ID: 303659298491-1khljhlgg9i80v4fcj7qtalgj4c9pcpj.apps.googleusercontent.com
       GOOGLE_CLIENT_SECRET: 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
       NEXTAUTH_SECRET: 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
-      NEXTAUTH_URL: "localhost:4007"
+      NEXTAUTH_URL: "http://localhost:3000"
       CHART_UPLOAD_URL: "http://localhost/api/chart/:chartType/create"
       CHART_FETCH_URL: "http://localhost/api/charts/:userId"
     ports:
-      - "4007:4007"
+      - "3000:3000"
 
   user_authentication:
     container_name: user_authentication_ms
