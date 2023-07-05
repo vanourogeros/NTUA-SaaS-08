@@ -19,7 +19,7 @@ export default function CreateChart({ chartType, chartName }) {
     const [chartVisible, setChartVisible] = useState(false);
     const [feedback, setFeedback] = useState("");
     const [chartOptions, setChartOptions] = useState(null);
-    const { data: session, status } = useSession();
+    const { data: session } = useSession();
 
     async function handleFormSubmit(event) {
         event.preventDefault();
@@ -40,9 +40,10 @@ export default function CreateChart({ chartType, chartName }) {
     }
 
     async function handleConfirmChart() {
+        console.log(process.env.NEXT_PUBLIC_CHART_UPLOAD_URL.replace(":chartType", chartType));
         const response = await authFetch(
             session,
-            process.env.CHART_UPLOAD_URL.replace(":chartType", chartType),
+            process.env.NEXT_PUBLIC_CHART_UPLOAD_URL.replace(":chartType", chartType),
             {
                 method: "post",
                 body: {
@@ -63,7 +64,7 @@ export default function CreateChart({ chartType, chartName }) {
     return (
         <div className="flex flex-col items-center justify-center min-h-screen py-2">
             <p>Create a '{chartName}' chart</p>
-            <div hidden={chartVisible}>
+            <div hidden={!chartVisible}>
                 <br />
                 <HighchartsReact highcharts={Highcharts} options={chartOptions} />
                 <div className="flex justify-center mt-4">
