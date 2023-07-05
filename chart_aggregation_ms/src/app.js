@@ -17,15 +17,15 @@ app.get("/api/charts/:userId", async (req, res) => {
     }
 
     const services = [
-        env.BASIC_COLUMN_URL,
-        env.BASIC_LINE_URL,
-        env.DEPENDENCY_WHEEL_URL,
-        env.LINE_WITH_ANNOTATIONS_URL,
-        env.NETWORK_GRAPH_URL,
-        env.ORGANIZATION_URL,
-        env.PIE_URL,
-        env.POLAR_URL,
-        env.WORD_CLOUD_URL,
+        env.BASIC_COLUMN_BASE_URL,
+        env.BASIC_LINE_BASE_URL,
+        env.DEPENDENCY_WHEEL_BASE_URL,
+        env.LINE_WITH_ANNOTATIONS_BASE_URL,
+        env.NETWORK_GRAPH_BASE_URL,
+        env.ORGANIZATION_BASE_URL,
+        env.PIE_BASE_URL,
+        env.POLAR_BASE_URL,
+        env.WORD_CLOUD_BASE_URL,
     ];
 
     try {

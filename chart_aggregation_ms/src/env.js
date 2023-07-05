@@ -12,15 +12,15 @@ if (process.env.NODE_ENV === "production") {
 const env = {
     HTTP_HOST: process.env.HTTP_HOST,
     HTTP_PORT: process.env.HTTP_PORT,
-    BASIC_COLUMN_URL: process.env.BASIC_COLUMN_URL,
-    BASIC_LINE_URL: process.env.BASIC_LINE_URL,
-    DEPENDENCY_WHEEL_URL: process.env.DEPENDENCY_WHEEL_URL,
-    LINE_WITH_ANNOTATIONS_URL: process.env.LINE_WITH_ANNOTATIONS_URL,
-    NETWORK_GRAPH_URL: process.env.NETWORK_GRAPH_URL,
-    ORGANIZATION_URL: process.env.ORGANIZATION_URL,
-    PIE_URL: process.env.PIE_URL,
-    POLAR_URL: process.env.POLAR_URL,
-    WORD_CLOUD_URL: process.env.WORD_CLOUD_URL,
+    BASIC_COLUMN_URL: process.env.BASIC_COLUMN_BASE_URL,
+    BASIC_LINE_URL: process.env.BASIC_LINE_BASE_URL,
+    DEPENDENCY_WHEEL_URL: process.env.DEPENDENCY_WHEEL_BASE_URL,
+    LINE_WITH_ANNOTATIONS_URL: process.env.LINE_WITH_ANNOTATIONS_BASE_URL,
+    NETWORK_GRAPH_URL: process.env.NETWORK_GRAPH_BASE_URL,
+    ORGANIZATION_URL: process.env.ORGANIZATION_BASE_URL,
+    PIE_URL: process.env.PIE_BASE_URL,
+    POLAR_URL: process.env.POLAR_BASE_URL,
+    WORD_CLOUD_URL: process.env.WORD_CLOUD_BASE_URL,
 };
 
 // ensure all variables exist
