@@ -6,6 +6,7 @@ export const codes = {
     UNAUTHORIZED: 401,
     CONFLICT: 409,
     INTERNAL_SERVER_ERROR: 500,
+    BAD_REQUEST: 400,
 };
 
 // load environment variables

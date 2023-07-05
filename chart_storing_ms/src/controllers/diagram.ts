@@ -82,11 +82,15 @@ export async function postDeleteChart(
     try {
         const result = await Diagram.deleteOne({ id });
 
-        const message =
-            result.deletedCount > 0
-                ? "Deleted a diagram"
-                : "Didn't delete a diagram";
-        res.status(codes.OK).json({ message, diagramId: id });
+        if (result.deletedCount > 0) {
+            return res
+                .status(codes.OK)
+                .json({ message: "Deleted a diagram", diagramId: id });
+        } else {
+            return res
+                .status(codes.BAD_REQUEST)
+                .json({ message: "Couldn't delete a diagram", diagramId: id });
+        }
     } catch (err) {
         return next(err);
     }
