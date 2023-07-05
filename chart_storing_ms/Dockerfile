@@ -8,6 +8,7 @@ FROM node:alpine
 WORKDIR /home/node/app
 COPY --from=builder /home/node/app/package*.json ./
 COPY --from=builder /home/node/app/dist ./dist
+COPY --from=builder /home/node/app/.env ./.env
 RUN npm --omit=dev install
 USER node
 ENTRYPOINT ["node", "./dist/app.js"]

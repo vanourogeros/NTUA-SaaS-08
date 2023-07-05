@@ -80,7 +80,7 @@ services:
     build: ../user_authentication_ms
     env_file: ../user_authentication_ms/.env
     environment:
-      NODE_ENV: production
+      NODE_ENV: "production"
       HTTP_HOST: "0.0.0.0"
       HTTP_PORT: "5000"
       GOOGLE_CLIENT_ID: "303659298491-1khljhlgg9i80v4fcj7qtalgj4c9pcpj.apps.googleusercontent.com"
