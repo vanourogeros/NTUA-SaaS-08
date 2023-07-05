@@ -11,18 +11,20 @@ export const authOptions = {
     session: {
         strategy: "jwt",
     },
-    // get jwt from account
-    async jwt({ token, account }) {
-        if (account) {
-            token.accessToken = account.access_token;
-        }
+    callbacks: {
+        // get jwt from account
+        async jwt({ token, account }) {
+            if (account) {
+                token.accessToken = account.access_token;
+            }
 
-        return token;
-    },
-    // pass jwt to the user's session
-    async session({ session, token, user }) {
-        session.accessToken = token.accessToken;
-        return session;
+            return token;
+        },
+        // pass jwt to the user's session
+        async session({ session, token }) {
+            session.accessToken = token.accessToken;
+            return session;
+        },
     },
 };
 
