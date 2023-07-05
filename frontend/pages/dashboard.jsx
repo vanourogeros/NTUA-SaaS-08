@@ -1,9 +1,9 @@
 import Image from "next/image";
 
-const buttonTexts = ["Create Chart", "Charts", "User Info", "Purchase Tokens", "My Charts"];
-const buttonLinks = ["/create", "/charts", "/user", "/topup", "/my_charts"];
-
 export default function IndexPage() {
+    const buttonTexts = ["Create Chart", "View Your Charts", "Purchase Tokens"];
+    const buttonLinks = ["/chart/create", "/charts", "/topup"];
+
     return (
         <div
             style={{
@@ -25,9 +25,9 @@ export default function IndexPage() {
                 }}
             />
             {buttonTexts.map((text, i) => (
-                <a href={buttonLinks[i]} style={{ marginBottom: "10px" }} className="button">
+                <Link href={buttonLinks[i]} style={{ marginBottom: "10px" }} className="button">
                     {text}
-                </a>
+                </Link>
             ))}
             <button style={{ marginBottom: "10px" }} className="button" onClick={signOut}>
                 Sign Out

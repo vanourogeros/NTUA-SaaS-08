@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const chartTypes = [
     "basic_column",
     "basic_line",
@@ -33,13 +35,13 @@ export default function CreateIndex() {
             }}
         >
             {chartTypes.map((chartType, i) => (
-                <a
-                    href={`/create/${chartType}`}
+                <Link
+                    href={`/chart/create/${chartType}`}
                     style={{ marginBottom: "10px" }}
                     className="button"
                 >
                     {chartNames[i]}
-                </a>
+                </Link>
             ))}
         </div>
     );
