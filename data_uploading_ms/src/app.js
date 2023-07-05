@@ -30,7 +30,9 @@ const kafkaTopicsMap = {
 
 const producer = kafka.producer();
 producer.on("producer.connect", () => console.log("Kafka producer connected"));
-producer.on("producer.disconnect", () => console.log("Kafka producer disconnected"));
+producer.on("producer.disconnect", () =>
+    console.log("Kafka producer disconnected")
+);
 await producer.connect();
 
 const app = express();
@@ -50,13 +52,35 @@ app.post("/api/chart/:type/new", async (req, res) => {
     }
 
     if (chartOptions == undefined) {
-        return res.status(codes.BAD_REQUEST).send("Chart options object missing from request body");
+        return res
+            .status(codes.BAD_REQUEST)
+            .send("Chart options object missing from request body");
     }
 
     try {
         console.debug("Received options:\n", chartOptions);
 
-        // TODO: check if user has enough tokens
+        const validTokens = await fetch(`/api/user/tokens/${userId}/-1`, {
+            method: "POST",
+        });
+
+        if (!validTokens.ok) {
+            return res.status(validTokens.status).json({
+                message:
+                    "Failed to updated tokens, could not accept new chart request",
+            });
+        }
+
+        const chartAdded = await fetch(`/api/user/charts/${userId}/created`, {
+            method: "POST",
+        });
+
+        if (!chartAdded.ok) {
+            return res.status(chartAdded.status).json({
+                message:
+                    "Failed to access user information and update total chart count. Will not accept new chart request",
+            });
+        }
 
         await producer.send({
             topic: kafkaTopicsMap[type],
@@ -73,7 +97,9 @@ app.post("/api/chart/:type/new", async (req, res) => {
         return res.status(codes.NO_CONTENT).send();
     } catch (err) {
         console.error(err);
-        return res.status(codes.INTERNAL_SERVER_ERROR).send("Internal Server Error");
+        return res
+            .status(codes.INTERNAL_SERVER_ERROR)
+            .send("Internal Server Error");
     }
 });
 
