@@ -102,7 +102,7 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
-    restart: on_failure
+    restart: on-failure
     env_file: ../data_uploading_ms/.env
     environment:
       NODE_ENV: "production"
@@ -134,7 +134,7 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
-    restart: on_failure
+    restart: on-failure
     environment:
       NODE_ENV: "production"
       CHART_TYPE: "basic_column"
@@ -150,7 +150,7 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
-    restart: on_failure
+    restart: on-failure
     environment:
       NODE_ENV: "production"
       HTTP_HOST: "0.0.0.0"
