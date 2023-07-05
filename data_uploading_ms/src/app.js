@@ -76,6 +76,10 @@ app.post("/api/chart/:type/new", async (req, res) => {
         });
 
         if (!chartAdded.ok) {
+            // add the removed token back in. In case of failure
+            await fetch(`/api/user/tokens/${userId}/1`, {
+                method: "POST",
+            });
             return res.status(chartAdded.status).json({
                 message:
                     "Failed to access user information and update total chart count. Will not accept new chart request",
