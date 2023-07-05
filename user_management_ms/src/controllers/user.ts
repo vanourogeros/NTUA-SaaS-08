@@ -13,11 +13,7 @@ export async function postNew(_: Request, res: Response, next: NextFunction) {
     }
 
     try {
-        await new User({
-            id: userId,
-            totalTokens: 3,
-            lastSignIn: Date.now(),
-        }).save();
+        await User.create({ id: userId });
 
         console.log("New user saved to the database");
         console.debug(`New user has id: ${userId}`);
@@ -69,11 +65,7 @@ export async function getUser(req: Request, res: Response, next: NextFunction) {
     }
 }
 
-export async function addTokens(
-    req: Request,
-    res: Response,
-    next: NextFunction
-) {
+export async function addTokens(req: Request, res: Response, next: NextFunction) {
     const userId: string = req.params.userId;
     const newTokens: number = Number(req.params.newTokens);
 
@@ -109,20 +101,12 @@ export async function addTokens(
     }
 }
 
-export async function getTokens(
-    req: Request,
-    res: Response,
-    next: NextFunction
-) {
+export async function getTokens(req: Request, res: Response, next: NextFunction) {
     req.params.newTokens = "0";
     return next();
 }
 
-export async function updateTotalCharts(
-    req: Request,
-    res: Response,
-    next: NextFunction
-) {
+export async function updateTotalCharts(req: Request, res: Response, next: NextFunction) {
     const userId = req.params.userId;
     const count = Number(req.params.count);
 
@@ -154,29 +138,17 @@ export async function updateTotalCharts(
     }
 }
 
-export async function postCreatedChart(
-    req: Request,
-    res: Response,
-    next: NextFunction
-) {
+export async function postCreatedChart(req: Request, res: Response, next: NextFunction) {
     req.params.count = "1";
     return next();
 }
 
-export async function postDeletedChart(
-    req: Request,
-    res: Response,
-    next: NextFunction
-) {
+export async function postDeletedChart(req: Request, res: Response, next: NextFunction) {
     req.params.count = "-1";
     return next();
 }
 
-export async function updateLastSignin(
-    req: Request,
-    res: Response,
-    next: NextFunction
-) {
+export async function updateLastSignin(req: Request, res: Response, next: NextFunction) {
     const userId = req.params.userId;
     if (userId == undefined) {
         // if this error is thrown, something fundamental is wrong with the app
@@ -190,13 +162,9 @@ export async function updateLastSignin(
             { new: true }
         ).lean();
         if (usr === null) {
-            return res
-                .status(codes.BAD_REQUEST)
-                .json({ message: "Could not access this user" });
+            return res.status(codes.BAD_REQUEST).json({ message: "Could not access this user" });
         } else {
-            return res
-                .status(codes.OK)
-                .json({ message: "Sign in date updated" });
+            return res.status(codes.OK).json({ message: "Sign in date updated" });
         }
     } catch (err) {
         return next(err);

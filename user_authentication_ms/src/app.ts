@@ -1,44 +1,13 @@
 import express from "express";
 import { OAuth2Client } from "google-auth-library";
+import env from "./env.js";
 import { getUserPayload, getJWT, PayloadError, AuthorizationError } from "./lib/authUtils.js";
-import { EnvError, verifyEnv } from "./lib/envUtils.js";
 
 // http response codes
 const codes = {
     NO_CONTENT: 204,
     UNAUTHORIZED: 401,
 };
-
-// load environment variables
-if (process.env.NODE_ENV === "production") {
-    console.info("Running in 'production' mode");
-} else {
-    console.info("Running in 'development' mode");
-    (await import("dotenv")).config();
-}
-
-// verify all required environment variables exist
-let env: Record<string, string>;
-try {
-    env = verifyEnv({
-        HTTP_HOST: process.env.HTTP_HOST,
-        HTTP_PORT: process.env.HTTP_PORT,
-        GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
-    });
-
-    // make env immutable
-    Object.freeze(env);
-} catch (err) {
-    if (err instanceof EnvError) {
-        console.error(`Environment variable '${err.undefinedKey}' is missing`);
-    } else {
-        console.error(
-            "An unexpected error occured while verifying that the environment variables exist:",
-            err
-        );
-    }
-    process.exit(-1);
-}
 
 // create the express app and the authentication client
 const authClient = new OAuth2Client(env.GOOGLE_CLIENT_ID);
