@@ -1,6 +1,6 @@
 import express from "express";
 import axios from "axios";
-import { verifyEnv, EnvError } from "./utils/envUtils.js";
+import { verifyEnv, EnvError } from "./lib/envUtils.js";
 
 const codes = {
     OK: 200,
@@ -65,14 +65,16 @@ app.get("/api/charts/:userId", async (req, res) => {
     ];
 
     try {
+        console.debug(`${services[1]}/api/charts/${userId}`)
         const requests = services.map((service) => axios.get(`${service}/api/charts/${userId}`));
         const responses = await Promise.allSettled(requests);
         const charts = responses
             .map((response) => {
                 // even if some of the microservices are down, we still want
                 // the rest to be returned to the user
+                //console.debug(response);
                 if (response.status === "fulfilled") {
-                    return response.data;
+                    return response.value.data;
                 }
             })
             .flat(); // flatten the array of arrays

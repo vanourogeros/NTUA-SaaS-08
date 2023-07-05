@@ -154,7 +154,7 @@ services:
       - "3004"
 
   basic_line_storing:
-    container_name: basic_line_storing_ms
+    container_name: basic_line_storing
     build: ../chart_storing_ms
     ports:
       - "3020:3020"
@@ -169,6 +169,18 @@ services:
       MONGO_DATABASE: "diagrams_line_basic"
       MONGO_COLLECTION: "diagrams_line_basic"
       KAFKA_TOPIC: "basic_line_svg"
+
+  chart_aggregation:
+    container_name: chart_aggregation_ms
+    build: ../chart_aggregation_ms
+    ports:
+      - "3030:3030"
+    env_file:
+      - ../chart_aggregation_ms/.env
+    environment:
+      NODE_ENV: "production"
+      HTTP_HOST: "0.0.0.0"
+      HTTP_PORT: "3030"
 
 #  chart_aggregation:
 #    container_name: chart_aggregation_ms
