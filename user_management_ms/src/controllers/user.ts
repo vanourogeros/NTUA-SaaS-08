@@ -95,7 +95,7 @@ export async function addTokens(
             { new: true }
         ).lean();
         if (usr === null) {
-            return res.status(codes.OK).json({
+            return res.status(codes.BAD_REQUEST).json({
                 message: "Could not access or change tokens for this user",
             });
         } else {
@@ -140,7 +140,7 @@ export async function updateTotalCharts(
             { new: true }
         ).lean();
         if (usr === null) {
-            return res.status(codes.OK).json({
+            return res.status(codes.BAD_REQUEST).json({
                 message: "Could not access or change charts for this user",
             });
         } else {
@@ -191,7 +191,7 @@ export async function updateLastSignin(
         ).lean();
         if (usr === null) {
             return res
-                .status(codes.OK)
+                .status(codes.BAD_REQUEST)
                 .json({ message: "Could not access this user" });
         } else {
             return res
