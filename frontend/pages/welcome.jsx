@@ -1,10 +1,6 @@
-import { useSession, signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 
 export default function IndexPage() {
-    const { status } = useSession();
-
-    if (status === "loading") return <h1>Loading...</h1>;
-
     return (
         <div
             style={{
@@ -14,7 +10,7 @@ export default function IndexPage() {
                 justifyContent: "center",
             }}
         >
-            <button className="button " onClick={() => signIn("google")}>
+            <button className="button" onClick={() => signIn("google")}>
                 Sign In with Google
             </button>
         </div>
