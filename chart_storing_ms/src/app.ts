@@ -5,7 +5,7 @@ import { connectToDB } from "./lib/dbUtils.js";
 import chartRouter from "./routes/chart.js";
 import { errorHandler } from "./middleware/error.js";
 import { Kafka } from "kafkajs";
-import Diagram from "./models/chart.js";
+import Chart from "./models/chart.js";
 
 export const codes = {
     OK: 200,
@@ -17,7 +17,7 @@ export const codes = {
 };
 
 try {
-    await connectToDB(env.MONGO_ATLAS_URL, env.MONGO_ATLAS_DB_NAME, 5);
+    await connectToDB(env.MONGO_ATLAS_URL, env.MONGO_ATLAS_DB_NAME, 3);
 
     console.log("Connected to the database");
 
@@ -38,7 +38,7 @@ try {
 
     const app = express();
 
-    app.use("/api/charts", chartRouter, errorHandler);
+    app.use(chartRouter, errorHandler);
 
     const kafka = new Kafka({
         clientId: env.KAFKA_CLIENT_ID,
@@ -53,18 +53,16 @@ try {
             eachMessage: async ({ message }) => {
                 try {
                     // upload the diagram to the database
-                    const { id, userId, file } = JSON.parse(message.value?.toString() ?? "{}");
+                    const { userId, svgData } = JSON.parse(message.value?.toString() ?? "{}");
 
-                    const result = await Diagram.create({
-                        id,
+                    const chart = await Chart.create({
                         userId,
-                        file,
-                        creationDate: Date.now(),
+                        svgData,
                     });
 
-                    console.log(`A document was inserted with the id: ${id}`);
+                    console.log(`A document was inserted with the id: ${chart._id}`);
                 } catch (err) {
-                    console.log("failed to insert a diagram");
+                    console.log("Chart insertion failed");
                 }
             },
         });
@@ -83,7 +81,7 @@ try {
                 console.error(e);
                 await consumer.disconnect();
                 process.exit(0);
-            } catch (_) {
+            } catch {
                 process.exit(1);
             }
         });
