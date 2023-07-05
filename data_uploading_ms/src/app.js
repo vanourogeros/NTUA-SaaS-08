@@ -34,12 +34,13 @@ producer.on("producer.disconnect", () => console.log("Kafka producer disconnecte
 await producer.connect();
 
 const app = express();
+app.use(express.json());
 app.post("/api/chart/:type/create", async (req, res) => {
     console.debug(`Request received: ${req.path}`);
 
     const userId = req.get("X-User-ID");
     const type = req.params.type;
-    const chartOptions = req.body.chartOptions;
+    const chartOptions = req.body?.chartOptions;
 
     if (userId == undefined) {
         return res.status(codes.UNAUTHORIZED).send("Please log in first");
@@ -49,6 +50,7 @@ app.post("/api/chart/:type/create", async (req, res) => {
         return res.status(codes.BAD_REQUEST).send("Invalid chart type");
     }
 
+    console.debug("Received options:\n", chartOptions);
     if (chartOptions == undefined) {
         return res.status(codes.BAD_REQUEST).send("Chart options object missing from request body");
     }

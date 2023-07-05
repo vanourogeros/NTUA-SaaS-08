@@ -44,10 +44,11 @@ export default function CreateChart({ chartType, chartName, chartUrlType }) {
             session,
             process.env.NEXT_PUBLIC_CHART_UPLOAD_URL.replace(":chartType", chartUrlType),
             {
-                method: "post",
-                body: {
-                    chartOptions,
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
                 },
+                body: JSON.stringify({ chartOptions }),
             }
         );
 
