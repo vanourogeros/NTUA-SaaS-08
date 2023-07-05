@@ -33,8 +33,12 @@ try {
         }
     });
 
-    mongoose.connection.on("connected", () => console.log("Reconnected to the database"));
-    mongoose.connection.on("disconnected", () => console.log("Disconnected from the database"));
+    mongoose.connection.on("connected", () =>
+        console.log("Reconnected to the database")
+    );
+    mongoose.connection.on("disconnected", () =>
+        console.log("Disconnected from the database")
+    );
 
     const app = express();
 
@@ -53,14 +57,20 @@ try {
             eachMessage: async ({ message }) => {
                 try {
                     // upload the diagram to the database
-                    const { userId, svgData } = JSON.parse(message.value?.toString() ?? "{}");
+                    const { id, userId, data } = JSON.parse(
+                        message.value?.toString() ?? "{}"
+                    );
 
                     const chart = await Chart.create({
+                        type: env.DATA_TYPE,
+                        id,
                         userId,
-                        svgData,
+                        data,
                     });
 
-                    console.log(`A document was inserted with the id: ${chart._id}`);
+                    console.log(
+                        `A document was inserted with the _id: ${chart._id}`
+                    );
                 } catch (err) {
                     console.log("Chart insertion failed");
                 }

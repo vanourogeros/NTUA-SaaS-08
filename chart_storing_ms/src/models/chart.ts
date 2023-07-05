@@ -1,19 +1,28 @@
 import { Schema, model } from "mongoose";
 import env from "../env.js";
 
+// type is "svg", "html", "pdf", "png"
 interface Chart {
+    type: string;
+    id: string;
     userId: string;
-    svgData: string;
+    data: string;
 }
 
 const chartSchema = new Schema<Chart>(
     {
         // the user ID will be obtained from Google's API,
         // so we assume that it will always be valid
+        type: { type: String, required: true },
+        id: { type: String, required: true, unique: true },
         userId: { type: String, required: true },
-        svgData: { type: String, required: true },
+        data: { type: String, required: true },
     },
     { timestamps: true } // mongoose creates 'createdAt', 'updatedAt'
 );
 
-export default model<Chart>("Chart", chartSchema, env.MONGO_ATLAS_DB_COLLECTION);
+export default model<Chart>(
+    "Chart",
+    chartSchema,
+    env.MONGO_ATLAS_DB_COLLECTION
+);
