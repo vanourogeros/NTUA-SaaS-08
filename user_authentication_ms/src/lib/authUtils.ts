@@ -38,13 +38,10 @@ function getJWT(req: Request): string {
         throw new AuthorizationError("Missing Authorization header");
     }
 
-    const jwtRegex = /^Bearer .+$/;
-    if (jwtRegex.test(req.headers.authorization)) {
-        throw new AuthorizationError("Invalid Authorization header");
-    }
-
     // "Authorization": "Bearer <token>"
-    return req.headers.authorization.split(" ")[1];
+    const arr = req.headers.authorization.split(" ");
+
+    return arr.length > 0 ? arr[1] : "";
 }
 
 export { PayloadError, AuthorizationError, getUserPayload, getJWT };

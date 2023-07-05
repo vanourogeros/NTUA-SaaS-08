@@ -13,12 +13,22 @@ const codes = {
 const authClient = new OAuth2Client(env.GOOGLE_CLIENT_ID);
 const app = express();
 
+app.options("/authenticate", function (req, res) {
+    console.debug("Request received:", req.path);
+    // Set the appropriate CORS headers for the OPTIONS request
+    res.header("Access-Control-Allow-Origin", "http://localhost:5000");
+    res.header("Access-Control-Allow-Methods", "*");
+    res.header("Access-Control-Allow-Headers", "Authorization");
+    res.header("Access-Control-Max-Age", "86400");
+    res.sendStatus(200);
+});
+
 // GET /authenticate
 // each time the API gateway receives a request that requires authentication
 // it will send a request to this route
 // the response must have a code of 2xx if it's successful,
 // or any other code if it's unsuccessful
-app.get("/authenticate", async (req, res) => {
+app.post("/authenticate", async (req, res) => {
     console.debug("Request received:", req.path);
 
     try {
