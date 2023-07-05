@@ -4,21 +4,13 @@ import { connectToDB } from "./lib/dbUtils.js";
 import { env } from "./setEnv.js";
 import diagramRouter from "./routes/diagram.js";
 import { errorHandler } from "./middleware/error.js";
-import {Kafka} from "kafkajs";
+import { Kafka } from "kafkajs";
+import Diagram from "./models/diagram.js";
 
 try {
     await connectToDB(env.MONGO_LINK, env.MONGO_DATABASE, 7);
 
     console.log("Connected to the database");
-
-    const kafka = new Kafka({
-        clientId: `${env.KAFKA_TOPIC}_storing_ms`,
-        brokers: ["kafka:9092"],
-    });
-
-    const consumer = kafka.consumer({ groupId: `${env.KAFKA_TOPIC}_group` });
-    await consumer.connect();
-    await consumer.subscribe({ topic: env.KAFKA_TOPIC }); // svg topic
 
     // add event listeners on the database connection
     // if a diconnection due to an error occurs, mongoose will automatically try to reconnect
@@ -44,27 +36,42 @@ try {
 
     app.use("/api/charts", diagramRouter, errorHandler);
 
-    await consumer.run({
-        eachMessage: async ({ message }) => {
-            // upload the diagram to the database
-            const { id, userId, file } = JSON.parse(
-                message.value?.toString() ?? "{}"
-            );
-
-            const result = await fetch(`/api/charts/${userId}/${id}`, {
-                method: "POST",
-                body: file,
-            });
-
-            if (!result.ok) {
-                console.error("Could not save diagram");
-                return;
-            }
-
-            console.log(`A document was inserted with the id: ${id}`);
-
-        }
+    const kafka = new Kafka({
+        clientId: `${env.KAFKA_TOPIC}_storing_ms`,
+        brokers: ["kafka:9092"],
     });
+
+    const consumer = kafka.consumer({ groupId: `${env.KAFKA_TOPIC}_group` });
+
+    async function run() {
+        await consumer.connect();
+        await consumer.subscribe({ topic: env.KAFKA_TOPIC }); // svg topic
+
+        await consumer.run({
+            eachMessage: async ({ message }) => {
+                try {
+                    // upload the diagram to the database
+                    const { id, userId, file } = JSON.parse(
+                        message.value?.toString() ?? "{}"
+                    );
+
+                    const result = await Diagram.create({
+                        id,
+                        userId,
+                        file,
+                        creationDate: Date.now(),
+                    });
+
+                    console.log(`A document was inserted with the id: ${id}`);
+                } catch (err) {
+                    console.log("failed to insert a diagram");
+                }
+            },
+        });
+    }
+
+    // run without await so that the rest of the program also executes...
+    run();
 
     app.listen(Number(env.HTTP_PORT), env.HTTP_HOST, () => {
         console.log(
