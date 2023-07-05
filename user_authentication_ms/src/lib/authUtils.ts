@@ -38,8 +38,7 @@ function getJWT(req: Request): string {
         throw new AuthorizationError("Missing Authorization header");
     }
 
-    // [\w-] is the same as [a-zA-Z0-9_-]
-    const jwtRegex = /^Bearer ([\w-]*\.[\w-]*\.[\w-]*)$/;
+    const jwtRegex = /^Bearer .+$/;
     if (jwtRegex.test(req.headers.authorization)) {
         throw new AuthorizationError("Invalid Authorization header");
     }

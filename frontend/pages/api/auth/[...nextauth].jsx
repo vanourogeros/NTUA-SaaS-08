@@ -15,7 +15,7 @@ export const authOptions = {
         // get jwt from account
         async jwt({ token, account }) {
             if (account) {
-                token.accessToken = account.access_token;
+                token.accessToken = account.id_token;
             }
 
             return token;
