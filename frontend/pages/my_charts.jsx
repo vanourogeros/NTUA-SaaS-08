@@ -6,17 +6,25 @@ const MyChartsPage = () => {
     const [diagrams, setDiagrams] = useState([]);
 
     useEffect(() => {
+        console.log('session: '+ session)
         if (session) {
-            fetch(`/api/diagrams/${session.user.id}`)
+            fetch(`/api/my_charts?userId=${session.user.id}`)// also works with 'giannis'
                 .then(response => response.json())
-                .then(data => setDiagrams(data))
+                .then(data => {
+                    // Extract diagrams from the nested structure of the response
+                    console.debug(data);
+                    const extractedDiagrams = data.charts
+                        .filter(chart => chart) // Filter out null values
+                        .flatMap(chart => chart.diagrams); // Flatten the array of arrays
+                    setDiagrams(extractedDiagrams);
+                })
                 .catch(error => console.error('Error fetching diagrams:', error));
         }
     }, [session]);
 
     const handleDownload = (diagram, format) => {
         // TODO: Implement download functionality
-        console.log(`Download ${diagram.id} as ${format}`);
+        console.log(`Download ${diagram._id} as ${format}`);
     };
 
     if (status === 'loading') {
@@ -34,7 +42,7 @@ const MyChartsPage = () => {
     return (
         <div className="flex flex-col items-center justify-center min-h-screen py-2">
             {diagrams.map(diagram => (
-                <div key={diagram.id}>
+                <div key={diagram._id}>
                     <div dangerouslySetInnerHTML={{ __html: diagram.file }} />
                     <select onChange={event => handleDownload(diagram, event.target.value)}>
                         <option value="">Download As...</option>
