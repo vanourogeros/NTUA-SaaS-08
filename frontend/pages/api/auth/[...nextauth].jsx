@@ -23,6 +23,7 @@ export const authOptions = {
         // pass jwt to the user's session
         async session({ session, token }) {
             session.accessToken = token.accessToken;
+            session.userId = token.sub;
             return session;
         },
     },
