@@ -73,8 +73,8 @@ services:
       GOOGLE_CLIENT_SECRET: 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
       NEXTAUTH_SECRET: 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
       NEXTAUTH_URL: "http://localhost:3000"
-      CHART_UPLOAD_URL: "http://localhost/api/chart/:chartType/create"
-      CHART_FETCH_URL: "http://localhost/api/charts/:userId"
+      NEXT_PUBLIC_CHART_UPLOAD_URL: "http://localhost/api/chart/:chartType/create"
+      NEXT_PUBLIC_CHART_FETCH_URL: "http://localhost/api/charts/:userId"
     ports:
       - "3000:3000"
 
