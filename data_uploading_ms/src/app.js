@@ -1,8 +1,6 @@
 import express from "express";
-import multer from "multer";
-import { readFile, unlink } from "fs/promises";
 import { Kafka } from "kafkajs";
-import { verifyEnv, EnvError } from "./lib/envUtils.js";
+import env from "./env.js"; // environment variables
 
 const codes = {
     NO_CONTENT: 204,
@@ -11,105 +9,66 @@ const codes = {
     INTERNAL_SERVER_ERROR: 500,
 };
 
-// load environment variables
-if (process.env.NODE_ENV === "production") {
-    console.info("Running in 'production' mode");
-} else {
-    console.info("Running in 'development' mode");
-    (await import("dotenv")).config();
-}
-
-// verify all required environment variables exist
-let env;
-try {
-    env = verifyEnv({
-        HTTP_HOST: process.env.HTTP_HOST,
-        HTTP_PORT: process.env.HTTP_PORT,
-        KAFKA_CLIENT_ID: process.env.KAFKA_CLIENT_ID,
-        KAFKA_BROKERS: process.env.KAFKA_BROKERS?.split(", ").map((b) => b.trim()),
-    });
-
-    // make env immutable
-    Object.freeze(env);
-} catch (err) {
-    if (err instanceof EnvError) {
-        console.error(`Environment variable '${err.undefinedKey}' is missing`);
-    } else {
-        console.error(
-            "An unexpected error occured while verifying that the environment variables exist:",
-            err
-        );
-    }
-    process.exit(-1);
-}
-
-// connect to kafka and create a producer
+// create a kafka client
 const kafka = new Kafka({
     clientId: env.KAFKA_CLIENT_ID,
     brokers: env.KAFKA_BROKERS,
 });
+
+// map chart types to kafka topics
+const kafkaTopicsMap = {
+    basic_column: "basic_column_opts",
+    basic_line: "basic_line_opts",
+    dependency_wheel: "dependency_wheel_opts",
+    line_with_annotations: "line_with_annotations_opts",
+    network_graph: "network_graph_opts",
+    organization: "organization_opts",
+    pie: "pie_opts",
+    polar: "polar_opts",
+    word_cloud: "word_cloud_opts",
+};
 
 const producer = kafka.producer();
 producer.on("producer.connect", () => console.log("Kafka producer connected"));
 producer.on("producer.disconnect", () => console.log("Kafka producer disconnected"));
 await producer.connect();
 
-// map chart types to kafka topics
-const topicsMap = {
-    basic_column: "basic_column_csv",
-    basic_line: "basic_line_csv",
-    dependency_wheel: "dependency_wheel_csv",
-    line_with_annotations: "line_with_annotations_csv",
-    network_graph: "network_graph_csv",
-    organization: "organization_csv",
-    pie: "pie_csv",
-    polar: "polar_csv",
-    word_cloud: "word_cloud_csv",
-};
-
-// uploads will be stored in an "uploads" directory in the project
-const upload = multer({ dest: "./uploads" });
-
 const app = express();
-app.post("/chart/:type/new", upload.single("file"), async (req, res) => {
+app.post("/api/chart/:type/new", async (req, res) => {
     console.debug(`Request received: ${req.path}`);
 
     const userId = req.get("X-User-ID");
     const type = req.params.type;
-    const file = req.file;
+    const chartOptions = req.body.chartOptions;
 
     if (userId == undefined) {
         return res.status(codes.UNAUTHORIZED).send("Please log in first");
     }
 
-    if (!Object.keys(topicsMap).includes(type)) {
+    if (!Object.keys(kafkaTopicsMap).includes(type)) {
         return res.status(codes.BAD_REQUEST).send("Invalid chart type");
     }
 
-    if (file == undefined) {
-        return res.status(codes.BAD_REQUEST).send("CSV file missing from request");
+    if (chartOptions == undefined) {
+        return res.status(codes.BAD_REQUEST).send("Chart options object missing from request body");
     }
 
     try {
-        // req.file is the 'file' object
-        // req.file.path is path to the uploaded file
-        const csvData = readFile(file, "utf-8");
-        console.debug("File contents:\n", csvData);
+        console.debug("Received options:\n", chartOptions);
+
+        // TODO: check if user has enough tokens
 
         await producer.send({
-            topic: topicsMap[type],
+            topic: kafkaTopicsMap[type],
             messages: [
                 {
                     value: JSON.stringify({
                         userId,
-                        csvData,
+                        chartOptions,
                     }),
                 },
             ],
         });
-
-        // delete file after sending its data
-        //await unlink(req.file);
 
         return res.status(codes.NO_CONTENT).send();
     } catch (err) {
