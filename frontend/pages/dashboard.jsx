@@ -1,8 +1,11 @@
 import Image from "next/image";
+import Link from "next/link";
+import { signOut, useSession } from "next-auth/react";
 
 export default function IndexPage() {
     const buttonTexts = ["Create Chart", "View Your Charts", "Purchase Tokens"];
     const buttonLinks = ["/chart/create", "/charts", "/topup"];
+    const { data: session } = useSession();
 
     return (
         <div
@@ -13,12 +16,12 @@ export default function IndexPage() {
                 justifyContent: "center",
             }}
         >
-            <h1>Welcome back, {data.user.name}!</h1>
+            <h1>Welcome back, {session?.user.name}!</h1>
             <Image
-                src={data.user.image}
+                src={session?.user.image}
                 width={80}
                 height={80}
-                alt={data.user.name + " photo"}
+                alt={"google profile pic"}
                 style={{
                     borderRadius: "50%",
                     clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)",
