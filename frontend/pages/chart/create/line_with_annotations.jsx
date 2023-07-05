@@ -5,6 +5,7 @@ export default function CreateBasicColumn() {
         <CreateChart
             chartType="lineWithAnnotations"
             chartName="Line With Annotations"
+            chartUrlType="line_with_annotations"
         ></CreateChart>
     );
 }

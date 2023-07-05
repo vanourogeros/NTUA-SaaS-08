@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { authFetch } from "../lib/generalUtils.js";
 import { parseCSVFile } from "../lib/csvUtils.js";
 
-export default function CreateChart({ chartType, chartName }) {
+export default function CreateChart({ chartType, chartName, chartUrlType }) {
     let chartBlueprint, createChartOptions;
     import(`../lib/charts/${chartType}/blueprint.js`).then(
         ({ blueprint }) => (chartBlueprint = blueprint)
@@ -40,10 +40,9 @@ export default function CreateChart({ chartType, chartName }) {
     }
 
     async function handleConfirmChart() {
-        console.log(process.env.NEXT_PUBLIC_CHART_UPLOAD_URL.replace(":chartType", chartType));
         const response = await authFetch(
             session,
-            process.env.NEXT_PUBLIC_CHART_UPLOAD_URL.replace(":chartType", chartType),
+            process.env.NEXT_PUBLIC_CHART_UPLOAD_URL.replace(":chartType", chartUrlType),
             {
                 method: "post",
                 body: {

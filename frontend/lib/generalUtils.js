@@ -34,5 +34,7 @@ export async function authFetch(session, input, init) {
         }
     }
 
+    console.log(input);
+    console.log(init);
     return await fetch(input, init);
 }
