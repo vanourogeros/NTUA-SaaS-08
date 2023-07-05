@@ -16,22 +16,25 @@ const apiRoute = nextConnect({
 apiRoute.use(multer().any());
 
 apiRoute.post(async (req, res) => {
-    //console.log(req.files); // files here
-    //console.log(req.body); // form data here
+    //req.files: files here
+    //req.body: form data here
 
     // Access URL parameter "chart type"
     let chartType = req.query.chart_type;
-    console.log(chartType);
 
-    const { blueprint } = await import("./chart_prev_libs/" + chartType + "/blueprint.js"); // Dynamic import
-    const { parseCSVFile } = await import("./chart_prev_libs/csvUtils.ts"); // Dynamic import
-    const { create } = await import("./chart_prev_libs/" + chartType + "/methods.js"); // Dynamic import
+    const { chartBlueprint } = ({ blueprint } = await import(
+        `../../lib/charts/${chartType}/blueprint.js`
+    )); // Dynamic import
+    const { parseCSVFile } = await import("../../lib/csvUtils.js"); // Dynamic import
+    const { createChartOptions } = ({ create } = await import(
+        `../../lib/charts/${chartType}/methods.js`
+    )); // Dynamic import
 
-    const parsed_data = await parseCSVFile(req.files[0].buffer.toString(), blueprint);
+    const parsed_data = await parseCSVFile(req.files[0].buffer.toString(), chartBlueprint);
     console.log("-----------------------\n" + parsed_data);
-    const ChartOptions = create(parsed_data);
-    console.log("-----------------------\n" + ChartOptions);
-    res.status(200).json(ChartOptions);
+    const chartOptions = createChartOptions(parsed_data);
+    console.log("-----------------------\n" + chartOptions);
+    res.status(200).json(chartOptions);
 });
 
 export default apiRoute;

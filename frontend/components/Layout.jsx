@@ -9,15 +9,7 @@ export const metadata = {
     title: "myCharts",
 };
 
-/*export default function RootLayout({ children }) {
-  return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
-    </html>
-  )
-}*/
-
-const Layout = ({ children }) => {
+export default function Layout({ children }) {
     const router = useRouter();
     const { data, status } = useSession();
 
@@ -92,6 +84,4 @@ const Layout = ({ children }) => {
             <main className={inter.className}>{children}</main>
         </div>
     );
-};
-
-export default Layout;
+}

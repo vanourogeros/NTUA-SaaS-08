@@ -28,7 +28,6 @@ export default function IndexPage() {
                     clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)",
                 }}
             />
-
             <button
                 style={{ marginBottom: "10px" }}
                 className="button"
