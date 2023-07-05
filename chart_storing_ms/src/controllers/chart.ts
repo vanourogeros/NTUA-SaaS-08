@@ -1,12 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import Diagram from "../models/diagram.js";
-import { codes } from "../setEnv.js";
+import Chart from "../models/chart.js";
+import { codes } from "../app.js";
 
-export async function getCharts(
-    req: Request,
-    res: Response,
-    next: NextFunction
-) {
+export async function getCharts(req: Request, res: Response, next: NextFunction) {
     const userId: string = req.params.userId;
 
     if (userId == undefined) {
@@ -15,22 +11,16 @@ export async function getCharts(
     }
 
     try {
-        const diagrams = await Diagram.find({ userId }).lean();
-
-        res.status(codes.OK).json({
-            message: "Diagrams received",
-            diagrams,
+        const charts = await Chart.find({ userId }).lean();
+        return res.status(codes.OK).json({
+            charts,
         });
     } catch (err) {
         return next(err);
     }
 }
 
-export async function postChart(
-    req: Request,
-    res: Response,
-    next: NextFunction
-) {
+export async function postChart(req: Request, res: Response, next: NextFunction) {
     const userId: string = req.params.userId;
     const id: string = req.params.id;
     const svg: string = req.body;
@@ -51,27 +41,22 @@ export async function postChart(
     }
 
     try {
-        const result = await Diagram.create({
+        await Chart.create({
             id,
             userId,
             file: svg,
-            creationDate: Date.now(),
         });
 
-        res.status(codes.CREATED).json({
-            message: "A new diagram created",
-            diagramId: id,
+        return res.status(codes.CREATED).json({
+            message: "Chart created successfully",
+            chartId: id,
         });
     } catch (err) {
         return next(err);
     }
 }
 
-export async function postDeleteChart(
-    req: Request,
-    res: Response,
-    next: NextFunction
-) {
+export async function postDeleteChart(req: Request, res: Response, next: NextFunction) {
     const id: string = req.params.id;
 
     if (id == undefined) {
@@ -80,16 +65,14 @@ export async function postDeleteChart(
     }
 
     try {
-        const result = await Diagram.deleteOne({ id });
+        const result = await Chart.deleteOne({ id });
 
         if (result.deletedCount > 0) {
-            return res
-                .status(codes.OK)
-                .json({ message: "Deleted a diagram", diagramId: id });
+            return res.status(codes.OK).json({ message: "Chart deleted", chartId: id });
         } else {
             return res
                 .status(codes.BAD_REQUEST)
-                .json({ message: "Couldn't delete a diagram", diagramId: id });
+                .json({ message: "Chart could not be deleted", chartId: id });
         }
     } catch (err) {
         return next(err);

@@ -1,14 +1,23 @@
 import express from "express";
 import mongoose from "mongoose";
+import env from "./env.js";
 import { connectToDB } from "./lib/dbUtils.js";
-import { env } from "./setEnv.js";
-import diagramRouter from "./routes/diagram.js";
+import chartRouter from "./routes/chart.js";
 import { errorHandler } from "./middleware/error.js";
 import { Kafka } from "kafkajs";
-import Diagram from "./models/diagram.js";
+import Diagram from "./models/chart.js";
+
+export const codes = {
+    OK: 200,
+    CREATED: 201,
+    UNAUTHORIZED: 401,
+    CONFLICT: 409,
+    INTERNAL_SERVER_ERROR: 500,
+    BAD_REQUEST: 400,
+};
 
 try {
-    await connectToDB(env.MONGO_LINK, env.MONGO_DATABASE, 7);
+    await connectToDB(env.MONGO_ATLAS_URL, env.MONGO_ATLAS_DB_NAME, 5);
 
     console.log("Connected to the database");
 
@@ -24,36 +33,27 @@ try {
         }
     });
 
-    mongoose.connection.on("disconnected", () =>
-        console.log("Disconnected from the database")
-    );
-
-    mongoose.connection.on("connected", () =>
-        console.log("Reconnected to the database")
-    );
+    mongoose.connection.on("connected", () => console.log("Reconnected to the database"));
+    mongoose.connection.on("disconnected", () => console.log("Disconnected from the database"));
 
     const app = express();
 
-    app.use("/api/charts", diagramRouter, errorHandler);
+    app.use("/api/charts", chartRouter, errorHandler);
 
     const kafka = new Kafka({
-        clientId: `${env.KAFKA_TOPIC}_storing_ms`,
-        brokers: ["kafka:9092"],
+        clientId: env.KAFKA_CLIENT_ID,
+        brokers: env.KAFKA_BROKERS as unknown as string[], // i said trust me
     });
 
-    const consumer = kafka.consumer({ groupId: `${env.KAFKA_TOPIC}_group` });
-
-    async function run() {
+    const consumer = kafka.consumer({ groupId: env.KAFKA_CONSUMER_GROUP_ID });
+    async function startConsumer() {
         await consumer.connect();
-        await consumer.subscribe({ topic: env.KAFKA_TOPIC }); // svg topic
-
+        await consumer.subscribe({ topic: env.KAFKA_CONSUMER_TOPIC }); // svg topic
         await consumer.run({
             eachMessage: async ({ message }) => {
                 try {
                     // upload the diagram to the database
-                    const { id, userId, file } = JSON.parse(
-                        message.value?.toString() ?? "{}"
-                    );
+                    const { id, userId, file } = JSON.parse(message.value?.toString() ?? "{}");
 
                     const result = await Diagram.create({
                         id,
@@ -71,7 +71,7 @@ try {
     }
 
     // run without await so that the rest of the program also executes...
-    run();
+    startConsumer();
 
     const errorTypes = ["unhandledRejection", "uncaughtException"];
     const signalTraps = ["SIGTERM", "SIGINT", "SIGUSR2"];
@@ -101,7 +101,7 @@ try {
 
     app.listen(Number(env.HTTP_PORT), env.HTTP_HOST, () => {
         console.log(
-            `Chart storing microservice is listening on 'http://${env.HTTP_HOST}:${env.HTTP_PORT}'`
+            `Chart storing microservice ('${env.CHART_TYPE}') is listening on 'http://${env.HTTP_HOST}:${env.HTTP_PORT}'`
         );
     });
 } catch (err) {

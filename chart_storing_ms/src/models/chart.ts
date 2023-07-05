@@ -1,21 +1,20 @@
 import { Schema, model } from "mongoose";
-import { env } from "../setEnv.js";
+import env from "../env.js";
 
-interface Diagram {
+interface Chart {
     id: string;
     userId: string;
     file: string;
     creationDate: Date;
 }
 
-const diagramSchema = new Schema<Diagram>({
+const chartSchema = new Schema<Chart>({
     // the user ID will be obtained from Google's API,
     // so we assume that it will always be valid
     id: { type: String, required: true, unique: true },
     userId: { type: String, required: true },
     file: { type: String, required: true },
-    creationDate: { type: Date },
+    creationDate: { type: Date, default: Date.now() },
 });
 
-// "user" is the name of the corresponding collection in the database
-export default model<Diagram>("Diagram", diagramSchema, env.MONGO_COLLECTION);
+export default model<Chart>("Chart", chartSchema, env.MONGO_ATLAS_DB_COLLECTION);
