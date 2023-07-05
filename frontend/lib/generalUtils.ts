@@ -1,12 +1,3 @@
-import type { Interface } from "readline/promises";
-
-export async function* enumerate(str: string[]): AsyncGenerator<[number, string]> {
-    let index = 0;
-    for (const item of str) {
-        yield [index++, item];
-    }
-}
-
 // zip an arbitrary number of arrays into one (similar to python's zip())
 // arrays must have the same length
 export function zip(...arrays: unknown[][]) {

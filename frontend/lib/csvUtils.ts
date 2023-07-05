@@ -1,9 +1,3 @@
-import { createReadStream } from "fs";
-import { createInterface } from "readline/promises";
-import { enumerate } from "./generalUtils";
-
-import type { PathLike } from "fs";
-
 interface StringFieldDescription {
     type: "string";
 }
@@ -304,8 +298,7 @@ export async function parseCSVFile(csvData: string, blueprint: Blueprint) {
         // object to store the CSV data
         const object: ParsedCSV = {};
 
-        // await each line from the input stream (which is an async iterable)
-        for await (const [i, line] of enumerate(csvData.split("\n"))) {
+        for (const [i, line] of Object.entries(csvData.split("\n"))) {
             console.debug(i, line);
 
             const [firstOptionFields, lastOptionField, fieldValues] = parseCSVLine(line);
@@ -320,7 +313,7 @@ export async function parseCSVFile(csvData: string, blueprint: Blueprint) {
                 firstOptionFields,
                 object,
                 blueprint,
-                i
+                parseInt(i)
             );
 
             // if the final option of the blueprint does not contain the values'
@@ -330,7 +323,7 @@ export async function parseCSVFile(csvData: string, blueprint: Blueprint) {
             }
 
             // fill in the values of the current line following the blueprint
-            fillInValues(fieldValues, lastOptionField, objectRef, blueprintRef, i);
+            fillInValues(fieldValues, lastOptionField, objectRef, blueprintRef, parseInt(i));
         }
 
         fixParsedArrays(object, blueprint);

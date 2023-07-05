@@ -1,4 +1,4 @@
-import { zip } from "../zip.js";
+import { zip } from "../../generalUtils.js";
 import {
     chartDefaults,
     creditsDefaults,
