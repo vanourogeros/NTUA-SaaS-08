@@ -7,7 +7,7 @@ const UserPage = () => {
 
     useEffect(() => {
         // Fetch user data when component mounts
-        fetch(`/api/userData?userId=${session.user.id}`)
+        fetch(`/api/userData?userId=${session?.user.id}`)
             .then((response) => response.json())
             .then((data) => setUserData(data));
     }, [session]);
@@ -25,7 +25,7 @@ const UserPage = () => {
                 fontFamily: "Arial, sans-serif",
             }}
         >
-            <h1 style={{ marginBottom: "1rem" }}>{session.user.name}&apos;s User Page</h1>
+            <h1 style={{ marginBottom: "1rem" }}>{session?.user.name}&apos;s User Page</h1>
             <div
                 style={{
                     backgroundColor: "#fff",

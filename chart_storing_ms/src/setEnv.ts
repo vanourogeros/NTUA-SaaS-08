@@ -26,6 +26,7 @@ try {
         MONGO_LINK: process.env.MONGO_LINK,
         MONGO_DATABASE: process.env.MONGO_DATABASE,
         MONGO_COLLECTION: process.env.MONGO_COLLECTION,
+        KAFKA_TOPIC: process.env.KAFKA_TOPIC,
     });
 
     Object.freeze(env);

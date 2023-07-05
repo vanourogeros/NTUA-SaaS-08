@@ -153,6 +153,23 @@ services:
     expose:
       - "3004"
 
+  basic_line_storing:
+    container_name: basic_line_storing_ms
+    build: ../chart_storing_ms
+    ports:
+      - "3020:3020"
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      NODE_ENV: "production"
+      HTTP_HOST: "0.0.0.0"
+      HTTP_PORT: "3020"
+      MONGO_LINK: "mongodb+srv://saas08:saas08@cluster0.zuzcca6.mongodb.net/?retryWrites=true&w=majority"
+      MONGO_DATABASE: "diagrams_line_basic"
+      MONGO_COLLECTION: "diagrams_line_basic"
+      KAFKA_TOPIC: "basic_line_svg"
+
 #  chart_aggregation:
 #    container_name: chart_aggregation_ms
 #    build: ../chart_aggregation_ms

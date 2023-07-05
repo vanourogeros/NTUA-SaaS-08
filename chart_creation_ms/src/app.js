@@ -73,6 +73,6 @@ try {
         );
     });
 } catch (err) {
-    console.errror("Critical error encountered:\n", err);
+    console.error("Critical error encountered:\n", err);
     process.exit(-1);
 }
