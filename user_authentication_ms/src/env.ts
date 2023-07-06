@@ -12,6 +12,7 @@ if (process.env.NODE_ENV === "production") {
 const env = {
     HTTP_HOST: process.env.HTTP_HOST,
     HTTP_PORT: process.env.HTTP_PORT,
+
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
 };
 
