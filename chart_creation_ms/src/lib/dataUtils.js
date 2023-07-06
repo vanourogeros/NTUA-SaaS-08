@@ -2,7 +2,6 @@ import { launch } from "puppeteer";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { access, constants } from "fs/promises";
-import { writeFileSync } from "fs";
 
 async function findNodeModulesPath(currentPath) {
     try {
@@ -57,7 +56,9 @@ async function getSources(online = false) {
     }
 }
 
-export async function createSVG(chartOptions, useOnline = false) {
+// createData should return the formats in this order as well
+export const fileFormats = ["svg", "html", "pdf", "png"];
+export async function createData(chartOptions, useOnline = false) {
     // a very basic html page, we really only care about the div tag
     const html = `<!DOCTYPE html>
         <html lang="en">
@@ -132,12 +133,7 @@ export async function createSVG(chartOptions, useOnline = false) {
 
     await finalPage.close();
     await browser.close();
-    return [
-        svgData,
-        htmlData,
-        pdfData.toString("binary"),
-        pngData.toString("base64"),
-    ];
+    return [svgData, htmlData, pdfData.toString("binary"), pngData.toString("base64")];
 }
 
 //const { htmlData, svgData, pdfData, pngData } = await createSVG({

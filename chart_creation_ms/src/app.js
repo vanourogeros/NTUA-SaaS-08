@@ -1,6 +1,7 @@
 import env from "./env.js";
 import { Kafka } from "kafkajs";
-import { createSVG } from "./lib/svgUtils.js"
+import { v1 } from "uuid";
+import { fileFormats, createData } from "./lib/dataUtils.js";
 
 export const codes = {
     OK: 200,
@@ -26,39 +27,36 @@ async function startConsumer() {
     try {
         await consumer.connect();
         await consumer.subscribe({ topic: env.KAFKA_CONSUMER_TOPIC });
-        console.log("subscribed to " + env.KAFKA_CONSUMER_TOPIC)
+        console.debug("Consumer starting");
         await consumer.run({
-            eachMessage: async ({ topic, partition, message }) => {
+            eachMessage: async ({ topic, message }) => {
+                console.debug(`Received message in topic '${topic}'`);
                 if (message.value == null) {
-                    console.error(`Received empty kafka message in topic '${topic}'`);
+                    console.error(`Received empty message in topic '${topic}'`);
                     return;
                 }
 
                 const { userId, chartOptions } = JSON.parse(message.value.toString());
-                console.log("Received Message. userid: " + userId);
-                console.log("Received Message. chart_options: " + chartOptions);
-                const svgData = await createSVG(chartOptions);
-                console.log("Will now try to send SVG message at " + env.KAFKA_PRODUCER_TOPIC)
+                const data = await createData(chartOptions);
+                const chartId = v1();
 
-                try {
+                for (let i = 0; i < fileFormats.length; ++i) {
+                    console.debug(
+                        `Sending message to topic '${env.KAFKA_PRODUCER_TOPIC_BASE}_${fileFormats[i]}'`
+                    );
                     await producer.send({
-                        topic: env.KAFKA_PRODUCER_TOPIC,
+                        topic: `${env.KAFKA_PRODUCER_TOPIC_BASE}_${fileFormats[i]}`,
                         messages: [
                             {
-                                value: JSON.stringify({userId, svgData}),
+                                value: JSON.stringify({
+                                    chartId,
+                                    userId,
+                                    data: data[i],
+                                }),
                             },
                         ],
                     });
-                } catch (e) {
-                    console.error(
-                        `Error in producer of group [${env.KAFKA_CONSUMER_GROUP_ID}] ${e.message}`,
-                        e
-                    );
                 }
-
-
-                // Acknowledge the processing of the message
-                await consumer.commitOffsets([{ topic, partition, offset: message.offset }]);
             },
         });
     } catch (err) {
@@ -69,16 +67,6 @@ async function startConsumer() {
     }
 }
 
-async function startProducer() {
-    try {
-        await producer.connect();
-        console.log("Kafka producer connected");
-    } catch (err) {
-        console.error("Error connecting Kafka producer", err);
-    }
-}
-
-startProducer();
 startConsumer();
 
 const errorTypes = ["unhandledRejection", "uncaughtException"];
