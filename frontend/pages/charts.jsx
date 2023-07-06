@@ -11,12 +11,12 @@ const MyChartsPage = () => {
             fetch(`/api/my_charts?userId=${session.userId}`) // also works with 'giannis'
                 .then((response) => response.json())
                 .then((data) => {
-                    // Extract diagrams from the nested structure of the response
+                    // Extract data from the nested structure of the response
                     console.debug(data);
-                    const extractedDiagrams = data.charts
+                    const extractedData = data.charts
                         .filter((chart) => chart) // Filter out null values
-                        .flatMap((chart) => chart.diagrams); // Flatten the array of arrays
-                    setDiagrams(extractedDiagrams);
+                        .map((chart) => chart.data); // Extract the 'data' property from each chart
+                    setDiagrams(extractedData);
                 })
                 .catch((error) => console.error("Error fetching diagrams:", error));
         }
@@ -41,19 +41,19 @@ const MyChartsPage = () => {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen py-2">
-            {diagrams.map((diagram) => (
-                <div key={diagram._id}>
-                    <div dangerouslySetInnerHTML={{ __html: diagram.file }} />
-                    <select onChange={(event) => handleDownload(diagram, event.target.value)}>
-                        <option value="">Download As...</option>
-                        <option value="svg">SVG</option>
-                        <option value="html">HTML</option>
-                        <option value="pdf">PDF</option>
-                        <option value="png">PNG</option>
-                    </select>
-                </div>
-            ))}
+    {diagrams.map((diagramData, index) => (
+        <div key={index}>
+            <div dangerouslySetInnerHTML={{ __html: diagramData }} />
+            <select onChange={(event) => handleDownload(diagramData, event.target.value)}>
+                <option value="">Download As...</option>
+                <option value="svg">SVG</option>
+                <option value="html">HTML</option>
+                <option value="pdf">PDF</option>
+                <option value="png">PNG</option>
+            </select>
         </div>
+    ))}
+</div>
     );
 };
 

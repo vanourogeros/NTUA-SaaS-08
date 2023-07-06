@@ -5,7 +5,7 @@ import * as controller from "../controllers/chart.js";
 const router = Router();
 
 router.get(
-    `/api/charts/${env.CHART_TYPE}/${env.DATA_TYPE}/:userId`,
+    `/api/charts/${env.DATA_TYPE}/:userId`,
     controller.getCharts
 );
 router.post(
