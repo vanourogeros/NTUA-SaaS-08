@@ -58,7 +58,7 @@ app.post("/api/chart/:type/create", async (req, res) => {
     }
 
     try {
-        console.debug("Received options:\n", chartOptions);
+        console.debug("Received options successfully");
 
         const validTokens = await fetch(
             `${env.USER_MANAGEMENT_BASE_URL}/api/user/tokens/${userId}/-1`,
