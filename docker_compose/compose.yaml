@@ -48,7 +48,7 @@ services:
       start_period: 25s
       retries: 10
       interval: 10s
-      timeout: 5s
+      timeout: 12s
 
   nginx:
     container_name: nginx_gateway

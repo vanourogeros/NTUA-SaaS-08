@@ -8,7 +8,7 @@ const MyChartsPage = () => {
     useEffect(() => {
         console.log("session: " + session);
         if (session) {
-            fetch(`/api/my_charts?userId=${session.user.id}`) // also works with 'giannis'
+            fetch(`/api/my_charts?userId=${session.userId}`) // also works with 'giannis'
                 .then((response) => response.json())
                 .then((data) => {
                     // Extract diagrams from the nested structure of the response

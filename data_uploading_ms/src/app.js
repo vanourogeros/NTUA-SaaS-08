@@ -38,11 +38,16 @@ app.use(express.json());
 app.post("/api/chart/:type/create", async (req, res) => {
     console.debug(`Request received: ${req.path}`);
 
-    const userId = req.get("X-User-ID");
+    const userId = req.query.userId;
     const type = req.params.type;
     const chartOptions = req.body?.chartOptions;
 
+    console.log(userId);
+    console.log(type);
+
+
     if (userId == undefined) {
+        console.log("UNAUTHORIZED BLAKA");
         return res.status(codes.UNAUTHORIZED).send("Please log in first");
     }
 
@@ -58,7 +63,7 @@ app.post("/api/chart/:type/create", async (req, res) => {
     try {
         console.debug("Received options:\n", chartOptions);
 
-        const validTokens = await fetch(`/api/user/${userId}/tokens/-1`, {
+        try{const validTokens = await fetch(`/api/user/${userId}/tokens/-1`, {
             method: "post",
         });
 
@@ -66,12 +71,15 @@ app.post("/api/chart/:type/create", async (req, res) => {
             return res.status(validTokens.status).json({
                 message: "Failed to create your chart",
             });
+        }}
+        catch (err) {
+            console.log("Dwrean diagrammata gia olous! " + err);
         }
 
-        const chartAdded = await fetch(`/api/user/charts/${userId}/created`, {
+        try{
+            const chartAdded = await fetch(`/api/user/charts/${userId}/created`, {
             method: "POST",
         });
-
         if (!chartAdded.ok) {
             // add the removed token back in. In case of failure
             await fetch(`/api/user/tokens/${userId}/1`, {
@@ -82,6 +90,17 @@ app.post("/api/chart/:type/create", async (req, res) => {
                     "Failed to access user information and update total chart count. Will not accept new chart request",
             });
         }
+        } catch (err) {
+            console.log("proste8hke to chart? de tha ma8oume pote!: " + err);
+        }
+
+        
+
+        console.log("Sending message at " + kafkaTopicsMap[type]);
+        console.log("Message: " + JSON.stringify({
+                        userId,
+                        chartOptions,
+                    }));
 
         await producer.send({
             topic: kafkaTopicsMap[type],

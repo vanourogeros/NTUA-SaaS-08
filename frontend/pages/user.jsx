@@ -7,7 +7,8 @@ const UserPage = () => {
 
     useEffect(() => {
         // Fetch user data when component mounts
-        fetch(`/api/userData?userId=${session?.user.id}`)
+        console.debug(session?.user.id)
+        fetch(`/api/userData?userId=${session?.userId}`)
             .then((response) => response.json())
             .then((data) => setUserData(data));
     }, [session]);

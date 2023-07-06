@@ -22,6 +22,8 @@ export function zip(...arrays) {
 
 export async function authFetch(session, input, init) {
     if (session != null && session.accessToken) {
+        console.log("access token not null");
+        console.log(session.accessToken)
         if (typeof init.headers === "object") {
             init.headers = {
                 ...init.headers,

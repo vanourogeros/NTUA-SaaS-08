@@ -42,7 +42,7 @@ export default function CreateChart({ chartType, chartName, chartUrlType }) {
     async function handleConfirmChart() {
         const response = await authFetch(
             session,
-            process.env.NEXT_PUBLIC_CHART_UPLOAD_URL.replace(":chartType", chartUrlType),
+            process.env.NEXT_PUBLIC_CHART_UPLOAD_URL.replace(":chartType", chartUrlType)+'?userId='+session.userId,
             {
                 method: "POST",
                 headers: {
