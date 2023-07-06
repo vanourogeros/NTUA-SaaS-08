@@ -56,7 +56,7 @@ async function startConsumer() {
                             ],
                         };
                     });
-                    console.debug("Sending message to all topics");
+                    console.debug("Sending message to all topics (only SVG in reality)");
                     console.debug(allMessages);
                     await producer.sendBatch({ topicMessages: allMessages });
                 } catch (err) {

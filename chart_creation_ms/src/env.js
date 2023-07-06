@@ -11,10 +11,12 @@ if (process.env.NODE_ENV === "production") {
 // create an object to hold all required environment variables
 const env = {
     CHART_TYPE: process.env.CHART_TYPE,
+
     KAFKA_CLIENT_ID: process.env.KAFKA_CLIENT_ID,
     KAFKA_CONSUMER_GROUP_ID: process.env.KAFKA_CONSUMER_GROUP_ID,
     KAFKA_CONSUMER_TOPIC: process.env.KAFKA_CONSUMER_TOPIC,
     KAFKA_PRODUCER_TOPIC_BASE: process.env.KAFKA_PRODUCER_TOPIC_BASE,
+
     KAFKA_BROKERS: process.env.KAFKA_BROKERS?.split(",").map((b) => b.trim()),
 };
 

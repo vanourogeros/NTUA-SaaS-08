@@ -75,7 +75,7 @@ async function getSources(online = false) {
 }
 
 // createData should return the formats in this order as well
-export const fileFormats = ["svg", "html", "pdf", "png"];
+export const fileFormats = ["svg"]; //, "html", "pdf", "png"];
 export async function createData(chartOptions, useOnline = false) {
     // create a page in the browser
     const page = await browser.newPage();
@@ -107,33 +107,33 @@ export async function createData(chartOptions, useOnline = false) {
     const svgData = await saveChart();
     await page.close();
 
-    const htmlData = `<!DOCTYPE html>
-        <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <title>Chart</title>
-            </head>
-            <body>
-                ${svgData}
-            </body>
-        </html>`;
+    //const htmlData = `<!DOCTYPE html>
+    //    <html lang="en">
+    //        <head>
+    //            <meta charset="UTF-8">
+    //            <title>Chart</title>
+    //        </head>
+    //        <body>
+    //            ${svgData}
+    //        </body>
+    //    </html>`;
+    //
+    //const finalPage = await browser.newPage();
+    //const finalLoaded = finalPage.waitForNavigation({
+    //    waitUntil: "load",
+    //});
+    //
+    //// load our html page on the page we created in the browser
+    //await finalPage.setContent(htmlData);
+    //await finalLoaded;
+    //
+    //const pdfData = await finalPage.pdf();
+    //
+    //const pngData = await finalPage.screenshot();
+    //
+    //await finalPage.close();
 
-    const finalPage = await browser.newPage();
-    const finalLoaded = finalPage.waitForNavigation({
-        waitUntil: "load",
-    });
-
-    // load our html page on the page we created in the browser
-    await finalPage.setContent(htmlData);
-    await finalLoaded;
-
-    const pdfData = await finalPage.pdf();
-
-    const pngData = await finalPage.screenshot();
-
-    await finalPage.close();
-
-    return [svgData, htmlData, pdfData.toString("binary"), pngData.toString("base64")];
+    return [svgData]; //, htmlData, pdfData.toString("binary"), pngData.toString("base64")];
 }
 
 //const [svgData, htmlData, pdfData, pngData] = await createSVG({
