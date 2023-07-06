@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import env from "../env.js";
 
 interface User {
     id: string;
@@ -12,8 +13,9 @@ const userSchema = new Schema<User>({
     // so we assume that it will always be valid
     id: { type: String, required: true, unique: true },
     totalCharts: { type: Number, default: 0 },
-    totalTokens: { type: Number, required: true },
-    lastSignIn: { type: Date, required: true },
+    totalTokens: { type: Number, default: 10, required: true },
+    lastSignIn: { type: Date, default: () => new Date(), required: true },
 });
 
-export default model<User>("User", userSchema);
+// "user" is the name of the corresponding collection in the database
+export default model<User>("User", userSchema, env.MONGO_ATLAS_DB_COLLECTION);

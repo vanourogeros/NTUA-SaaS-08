@@ -1,0 +1,235 @@
+services:
+  zookeeper:
+    container_name: zookeeper
+    image: wurstmeister/zookeeper
+    expose:
+      - "2181"
+    healthcheck:
+      test: nc -z localhost 2181 || exit -1
+      start_period: 15s
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  kafka:
+    container_name: kafka_broker
+    image: wurstmeister/kafka
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    expose:
+      - "9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: "kafka_broker"
+      KAFKA_ADVERTISED_PORT: "9092"
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CREATE_TOPICS_SEPARATOR: "$$'\n'"
+      KAFKA_CREATE_TOPICS: |
+        "basic_column_opts"
+        "basic_line_opts"
+        "dependency_wheel_opts"
+        "line_with_annotations_opts"
+        "network_graph_opts"
+        "organization_opts"
+        "pie_opts"
+        "polar_opts"
+        "word_cloud_opts"
+        "basic_column_svg"
+        "basic_line_svg"
+        "dependency_wheel_svg"
+        "line_with_annotations_svg"
+        "network_graph_svg"
+        "organization_svg"
+        "pie_svg"
+        "polar_svg"
+        "word_cloud_svg"
+    healthcheck:
+      test: nc -z localhost 9092 || exit -1
+      start_period: 30s
+      interval: 15s
+      timeout: 15s
+      retries: 5
+
+  nginx:
+    container_name: nginx_gateway
+    build: ../gateway
+    restart: on-failure
+    depends_on:
+      user_authentication:
+        condition: service_healthy
+      user_management:
+        condition: service_healthy
+      data_uploading:
+        condition: service_healthy
+      basic_column_storing_svg:
+        condition: service_healthy
+      #basic_line_storing_svg:
+      #  condition: service_healthy
+      #dependency_wheel_storing_svg:
+      #  condition: service_healthy
+      #line_with_annotations_storing_svg:
+      #  condition: service_healthy
+      #network_graph_storing_svg:
+      #  condition: service_healthy
+      #organization_storing_svg:
+      #  condition: service_healthy
+      #pie_storing_svg:
+      #  condition: service_healthy
+      #polar_storing_svg:
+      #  condition: service_healthy
+      #word_cloud_storing_svg:
+      #  condition: service_healthy
+    ports:
+      - "80:80"
+
+  frontend:
+    container_name: frontend
+    build: ../frontend
+    restart: on-failure
+    environment:
+      PORT: "3000"
+      GOOGLE_CLIENT_ID: 303659298491-1khljhlgg9i80v4fcj7qtalgj4c9pcpj.apps.googleusercontent.com
+      GOOGLE_CLIENT_SECRET: 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
+      NEXTAUTH_SECRET: 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
+      NEXTAUTH_URL: "http://localhost:3000"
+      NEXT_PUBLIC_CHART_UPLOAD_URL: "http://localhost/api/chart/:chartType/create"
+      NEXT_PUBLIC_CHART_FETCH_URL: "http://localhost/api/charts/:userId"
+      NEXT_PUBLIC_USER_CREATION_URL: "http://localhost/api/user/new"
+      NEXT_PUBLIC_UPDATE_LAST_LOGIN_URL: "http://localhost/api/user/updateLastLogIn/:userId"
+      NEXT_PUBLIC_ADD_TOKENS_URL: "http://localhost/api/user/tokens/:userId/:newTokens"
+      NEXT_PUBLIC_GET_USER_INFO_URL: "http://localhost/api/user/:userId"
+    ports:
+      - "3000:3000"
+
+  user_authentication:
+    container_name: user_authentication_ms
+    build: ../user_authentication_ms
+    restart: on-failure
+    environment:
+      NODE_ENV: "production"
+      HTTP_HOST: "0.0.0.0"
+      HTTP_PORT: "4000"
+      GOOGLE_CLIENT_ID: "303659298491-1khljhlgg9i80v4fcj7qtalgj4c9pcpj.apps.googleusercontent.com"
+    expose:
+      - "4000"
+    healthcheck:
+      test: nc -z localhost 4000 || exit -1
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  user_management:
+    container_name: user_management_ms
+    build: ../user_management_ms
+    restart: on-failure
+    environment:
+      NODE_ENV: "production"
+      HTTP_HOST: "0.0.0.0"
+      HTTP_PORT: "5000"
+      MONGO_ATLAS_URL: "mongodb+srv://saas08:saas08@cluster0.zuzcca6.mongodb.net/?retryWrites=true&w=majority"
+      MONGO_ATLAS_DB_NAME: "myCharts_user"
+      MONGO_ATLAS_DB_COLLECTION: "user"
+    expose:
+      - "5000"
+    healthcheck:
+      test: nc -z localhost 5000 || exit -1
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  data_uploading:
+    container_name: data_uploading_ms
+    build: ../data_uploading_ms
+    restart: on-failure
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      NODE_ENV: "production"
+      HTTP_HOST: "0.0.0.0"
+      HTTP_PORT: "6000"
+      USER_MANAGEMENT_BASE_URL: "http://user_management:5000"
+      KAFKA_CLIENT_ID: "data_uploading_ms"
+      KAFKA_BASIC_COLUMN_TOPIC: "basic_column_opts"
+      KAFKA_BASIC_LINE_TOPIC: "basic_line_opts"
+      KAFKA_DEPENDENCY_WHEEL_TOPIC: "dependency_wheel_opts"
+      KAFKA_LINE_WITH_ANNOTATIONS_TOPIC: "line_with_annotations_opts"
+      KAFKA_NETWORK_GRAPH_TOPIC: "network_graph_opts"
+      KAFKA_ORGANIZATION_TOPIC: "organization_opts"
+      KAFKA_PIE_TOPIC: "pie_opts"
+      KAFKA_POLAR_TOPIC: "polar_opts"
+      KAFKA_WORD_CLOUD_TOPIC: "word_cloud_opts"
+      KAFKA_BROKERS: "kafka_broker:9092"
+    expose:
+      - "6000"
+    healthcheck:
+      test: nc -z localhost 6000 || exit -1
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  basic_column_creation:
+    container_name: basic_column_creation_ms
+    build: ../chart_creation_ms
+    restart: on-failure
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      NODE_ENV: "production"
+      CHART_TYPE: "basic_column"
+      KAFKA_CLIENT_ID: "basic_column_creation_ms"
+      KAFKA_CONSUMER_GROUP_ID: "basic_column_opts_group"
+      KAFKA_CONSUMER_TOPIC: "basic_column_opts"
+      KAFKA_PRODUCER_TOPIC_BASE: "basic_column"
+      KAFKA_BROKERS: "kafka_broker:9092"
+
+  basic_column_storing_svg:
+    container_name: basic_column_storing_svg_ms
+    build: ../chart_storing_ms
+    depends_on:
+      kafka:
+        condition: service_healthy
+    restart: on-failure
+    environment:
+      NODE_ENV: "production"
+      HTTP_HOST: "0.0.0.0"
+      HTTP_PORT: "7000"
+      CHART_TYPE: "basic_column"
+      DATA_TYPE: "svg"
+      MONGO_ATLAS_URL: "mongodb+srv://saas08:saas08@cluster0.zuzcca6.mongodb.net/?retryWrites=true&w=majority"
+      MONGO_ATLAS_DB_NAME: "chart_basic_column_svg"
+      MONGO_ATLAS_DB_COLLECTION: "chart_basic_column_svg"
+      KAFKA_CLIENT_ID: "basic_column_storing_svg_ms"
+      KAFKA_CONSUMER_GROUP_ID: "basic_column_storing_svg_group"
+      KAFKA_CONSUMER_TOPIC_BASE: "basic_column"
+      KAFKA_BROKERS: "kafka_broker:9092"
+    healthcheck:
+      test: nc -z localhost 7000 || exit -1
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  chart_aggregation:
+    container_name: chart_aggregation_ms
+    build: ../chart_aggregation_ms
+    restart: on-failure
+    environment:
+      NODE_ENV: production
+      HTTP_HOST: "0.0.0.0"
+      HTTP_PORT: "11000"
+      BASIC_COLUMN_BASE_URL: "http://basic_column_storing_svg:7000"
+      BASIC_LINE_BASE_URL: "http://basic_line_storing:7001"
+      DEPENDENCY_WHEEL_BASE_URL: "http://dependency_wheel_storing:7002"
+      LINE_WITH_ANNOTATIONS_BASE_URL: "http://line_with_annotations_storing:7003"
+      NETWORK_GRAPH_BASE_URL: "http://network_graph_storing:7004"
+      ORGANIZATION_BASE_URL: "http://organization_storing:7005"
+      PIE_BASE_URL: "http://pie_storing:7006"
+      POLAR_BASE_URL: "http://polar_storing:7007"
+      WORD_CLOUD_BASE_URL: "http://word_cloud_storing:7008"
+      SVG_FETCH_URL: "/api/charts/svg/:userId"

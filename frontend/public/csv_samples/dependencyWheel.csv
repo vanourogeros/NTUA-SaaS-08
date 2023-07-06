@@ -1,0 +1,79 @@
+﻿# Sample 'Dependency Wheel' chart description
+# Rows beginning with a hashtag (#) are ignored
+# If there are commas in any values make sure to escape them (\,)
+# The first column of each row is the option name and the rest of the row contains the option value(s)
+
+
+
+# -----------------------------------------------
+# Options regarding basic properties of the chart
+# -----------------------------------------------
+
+# chart width (in pixels)
+chart/width, 800
+
+# chart height (in pixels)
+chart/height, 600
+
+
+
+# ----------------------------------------
+# Options regarding the title of the chart
+# ----------------------------------------
+
+# leave empty if you don't want one
+title/text, This is the title\, which contains a comma
+
+# left, center, right (ignored if title text is empty)
+title/align, center
+
+# top, middle, bottom (ignored if title text is empty)
+title/verticalAlign, top
+
+
+
+# -------------------------------------------
+# Options regarding the subtitle of the chart
+# -------------------------------------------
+
+# leave empty if you don't want one
+subtitle/text, This is the subtitle
+
+# left, center, right (ignored if subtitle text is empty)
+subtitle/align, center
+
+# top, middle, bottom (ignored if subtitle text is empty)
+subtitle/verticalAlign, top
+
+
+
+# ------------------------------------------
+# Options regarding the caption of the chart
+# ------------------------------------------
+
+# leave empty if you don't want one
+caption/text, This is the caption
+
+# left, center, right (ignored if caption text is empty)
+caption/align, center
+
+# top, middle, bottom (ignored if caption text is empty)
+caption/verticalAlign, bottom
+
+
+
+# -----------------------------------------
+# Options regarding the series of the chart
+# -----------------------------------------
+
+# leave empty if you don't want one
+series/name, This is the series 1 name
+
+# start nodes
+series/data/from, Greece, Finland, Italy, Canada, Chile, Poland
+
+# end nodes
+series/data/to, Italy, Italy, Canada, Bulgaria, Poland, Chile
+
+# link weights
+series/data/weight, 4, 2, 6, 7, 4, 5
