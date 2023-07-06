@@ -177,6 +177,134 @@ services:
             KAFKA_PRODUCER_TOPIC_BASE: "basic_column"
             KAFKA_BROKERS: "kafka_broker:9092"
 
+    basic_line_creation:
+        container_name: basic_line_creation_ms
+        build: ../chart_creation_ms
+        restart: on-failure
+        depends_on:
+            kafka:
+                condition: service_healthy
+        environment:
+            NODE_ENV: "production"
+            CHART_TYPE: "basic_line"
+            KAFKA_CLIENT_ID: "basic_line_creation_ms"
+            KAFKA_CONSUMER_GROUP_ID: "basic_line_opts_group"
+            KAFKA_CONSUMER_TOPIC: "basic_line_opts"
+            KAFKA_PRODUCER_TOPIC_BASE: "basic_line"
+            KAFKA_BROKERS: "kafka_broker:9092"
+
+    dependency_wheel_creation:
+        container_name: dependency_wheel_creation_ms
+        build: ../chart_creation_ms
+        restart: on-failure
+        depends_on:
+            kafka:
+                condition: service_healthy
+        environment:
+            NODE_ENV: "production"
+            CHART_TYPE: "dependency_wheel"
+            KAFKA_CLIENT_ID: "dependency_wheel_creation_ms"
+            KAFKA_CONSUMER_GROUP_ID: "dependency_wheel_opts_group"
+            KAFKA_CONSUMER_TOPIC: "dependency_wheel_opts"
+            KAFKA_PRODUCER_TOPIC_BASE: "dependency_wheel"
+            KAFKA_BROKERS: "kafka_broker:9092"
+
+    line_with_annotations_creation:
+        container_name: line_with_annotations_creation_ms
+        build: ../chart_creation_ms
+        restart: on-failure
+        depends_on:
+            kafka:
+                condition: service_healthy
+        environment:
+            NODE_ENV: "production"
+            CHART_TYPE: "line_with_annotations"
+            KAFKA_CLIENT_ID: "line_with_annotations_creation_ms"
+            KAFKA_CONSUMER_GROUP_ID: "line_with_annotations_opts_group"
+            KAFKA_CONSUMER_TOPIC: "line_with_annotations_opts"
+            KAFKA_PRODUCER_TOPIC_BASE: "line_with_annotations"
+            KAFKA_BROKERS: "kafka_broker:9092"
+
+    network_graph_creation:
+        container_name: network_graph_creation_ms
+        build: ../chart_creation_ms
+        restart: on-failure
+        depends_on:
+            kafka:
+                condition: service_healthy
+        environment:
+            NODE_ENV: "production"
+            CHART_TYPE: "network_graph"
+            KAFKA_CLIENT_ID: "network_graph_creation_ms"
+            KAFKA_CONSUMER_GROUP_ID: "network_graph_opts_group"
+            KAFKA_CONSUMER_TOPIC: "network_graph_opts"
+            KAFKA_PRODUCER_TOPIC_BASE: "network_graph"
+            KAFKA_BROKERS: "kafka_broker:9092"
+
+    organization_creation:
+        container_name: organization_creation_ms
+        build: ../chart_creation_ms
+        restart: on-failure
+        depends_on:
+            kafka:
+                condition: service_healthy
+        environment:
+            NODE_ENV: "production"
+            CHART_TYPE: "organization"
+            KAFKA_CLIENT_ID: "organization_creation_ms"
+            KAFKA_CONSUMER_GROUP_ID: "organization_opts_group"
+            KAFKA_CONSUMER_TOPIC: "organization_opts"
+            KAFKA_PRODUCER_TOPIC_BASE: "organization"
+            KAFKA_BROKERS: "kafka_broker:9092"
+
+    pie_creation:
+        container_name: pie_creation_ms
+        build: ../chart_creation_ms
+        restart: on-failure
+        depends_on:
+            kafka:
+                condition: service_healthy
+        environment:
+            NODE_ENV: "production"
+            CHART_TYPE: "pie"
+            KAFKA_CLIENT_ID: "pie_creation_ms"
+            KAFKA_CONSUMER_GROUP_ID: "pie_opts_group"
+            KAFKA_CONSUMER_TOPIC: "pie_opts"
+            KAFKA_PRODUCER_TOPIC_BASE: "pie"
+            KAFKA_BROKERS: "kafka_broker:9092"
+
+    polar_creation:
+        container_name: polar_creation_ms
+        build: ../chart_creation_ms
+        restart: on-failure
+        depends_on:
+            kafka:
+                condition: service_healthy
+        environment:
+            NODE_ENV: "production"
+            CHART_TYPE: "polar"
+            KAFKA_CLIENT_ID: "polar_creation_ms"
+            KAFKA_CONSUMER_GROUP_ID: "polar_opts_group"
+            KAFKA_CONSUMER_TOPIC: "polar_opts"
+            KAFKA_PRODUCER_TOPIC_BASE: "polar"
+            KAFKA_BROKERS: "kafka_broker:9092"
+
+    word_cloud_creation:
+        container_name: word_cloud_creation_ms
+        build: ../chart_creation_ms
+        restart: on-failure
+        depends_on:
+            kafka:
+                condition: service_healthy
+        environment:
+            NODE_ENV: "production"
+            CHART_TYPE: "word_cloud"
+            KAFKA_CLIENT_ID: "word_cloud_creation_ms"
+            KAFKA_CONSUMER_GROUP_ID: "word_cloud_opts_group"
+            KAFKA_CONSUMER_TOPIC: "word_cloud_opts"
+            KAFKA_PRODUCER_TOPIC_BASE: "word_cloud"
+            KAFKA_BROKERS: "kafka_broker:9092"
+
     basic_column_storing_svg:
         container_name: basic_column_storing_svg_ms
         build: ../chart_storing_ms
@@ -393,8 +521,8 @@ services:
             timeout: 5s
             retries: 3
 
-    work_cloud_storing_svg:
-        container_name: work_cloud_storing_svg_ms
+    word_cloud_storing_svg:
+        container_name: word_cloud_storing_svg_ms
         build: ../chart_storing_ms
         depends_on:
             kafka:
@@ -404,14 +532,14 @@ services:
             NODE_ENV: "production"
             HTTP_HOST: "0.0.0.0"
             HTTP_PORT: "7008"
-            CHART_TYPE: "work_cloud"
+            CHART_TYPE: "word_cloud"
             DATA_TYPE: "svg"
             MONGO_ATLAS_URL: "mongodb+srv://saas08:saas08@cluster0.zuzcca6.mongodb.net/?retryWrites=true&w=majority"
-            MONGO_ATLAS_DB_NAME: "chart_work_cloud_svg"
-            MONGO_ATLAS_DB_COLLECTION: "chart_work_cloud_svg"
-            KAFKA_CLIENT_ID: "work_cloud_storing_svg_ms"
-            KAFKA_CONSUMER_GROUP_ID: "work_cloud_storing_svg_group"
-            KAFKA_CONSUMER_TOPIC_BASE: "work_cloud"
+            MONGO_ATLAS_DB_NAME: "chart_word_cloud_svg"
+            MONGO_ATLAS_DB_COLLECTION: "chart_word_cloud_svg"
+            KAFKA_CLIENT_ID: "word_cloud_storing_svg_ms"
+            KAFKA_CONSUMER_GROUP_ID: "word_cloud_storing_svg_group"
+            KAFKA_CONSUMER_TOPIC_BASE: "word_cloud"
             KAFKA_BROKERS: "kafka_broker:9092"
         healthcheck:
             test: nc -z localhost 7008 || exit -1
