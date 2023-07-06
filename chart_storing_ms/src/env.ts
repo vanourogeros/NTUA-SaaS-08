@@ -12,14 +12,18 @@ if (process.env.NODE_ENV === "production") {
 const env = {
     HTTP_HOST: process.env.HTTP_HOST,
     HTTP_PORT: process.env.HTTP_PORT,
+
     CHART_TYPE: process.env.CHART_TYPE,
     DATA_TYPE: process.env.DATA_TYPE,
+
     MONGO_ATLAS_URL: process.env.MONGO_ATLAS_URL,
     MONGO_ATLAS_DB_NAME: process.env.MONGO_ATLAS_DB_NAME,
     MONGO_ATLAS_DB_COLLECTION: process.env.MONGO_ATLAS_DB_COLLECTION,
+
     KAFKA_CLIENT_ID: process.env.KAFKA_CLIENT_ID,
     KAFKA_CONSUMER_GROUP_ID: process.env.KAFKA_CONSUMER_GROUP_ID,
     KAFKA_CONSUMER_TOPIC_BASE: process.env.KAFKA_CONSUMER_TOPIC_BASE,
+
     KAFKA_BROKERS: process.env.KAFKA_BROKERS?.split(",").map((b) => b.trim()) as unknown as string, // trust me
 };
 

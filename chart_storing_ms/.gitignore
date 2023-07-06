@@ -1,5 +1,5 @@
 dist
 node_modules
-user_management_database_volume
-!.env.sample
-test-stuff
+.DS_Store
+.idea
+.vscode

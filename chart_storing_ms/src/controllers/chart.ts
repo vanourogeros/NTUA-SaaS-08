@@ -60,13 +60,10 @@ export async function getChart(req: Request, res: Response, next: NextFunction) 
         throw new Error("Extracted 'id' is missing, no chart id available");
     }
 
-    console.debug("Chart ID present");
-
     try {
         const result = await Chart.findOne({ id }).lean();
 
         if (result === null) {
-            console.debug("Result is null");
             return res.status(codes.BAD_REQUEST).json({
                 message: "Could not retrieve chart",
             });
