@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useSession } from "next-auth/react";
 import { authFetch } from "lib/generalUtils";
 import { jsPDF } from "jspdf";
@@ -11,7 +11,7 @@ export default function Charts() {
     const [charts, setCharts] = useState(null);
     const [filetype, setFiletype] = useState("svg");
 
-    function fetchCharts() {
+    useEffect(() => {
         authFetch(
             session,
             process.env.NEXT_PUBLIC_CHART_FETCH_URL?.replace(":userId", session?.userId || "12345")
@@ -20,9 +20,12 @@ export default function Charts() {
             .then((body) => {
                 console.debug("Received response body:", body);
                 setCharts(body?.charts?.filter((c) => c));
-                setFetchedCharts(true);
             })
             .catch((err) => console.error("Error fetching charts:\n", err));
+    }, [fetchCharts]);
+
+    function fetchCharts() {
+        setFetchedCharts(true);
     }
 
     if (status === "loading") return <div>Loading...</div>;
