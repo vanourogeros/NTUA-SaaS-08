@@ -6,9 +6,9 @@ services:
             - "2181"
         healthcheck:
             test: nc -z localhost 2181 || exit -1
-            start_period: 15s
-            interval: 5s
-            timeout: 5s
+            start_period: 30s
+            interval: 10s
+            timeout: 10s
             retries: 5
 
     kafka:
@@ -104,10 +104,10 @@ services:
             - "4000"
         healthcheck:
             test: nc -z localhost 4000 || exit -1
-            start_period: 10s
-            interval: 5s
-            timeout: 5s
-            retries: 3
+            start_period: 30s
+            interval: 10s
+            timeout: 10s
+            retries: 6
 
     user_management:
         container_name: user_management_ms
@@ -124,10 +124,10 @@ services:
             - "5000"
         healthcheck:
             test: nc -z localhost 5000 || exit -1
-            start_period: 10s
-            interval: 5s
-            timeout: 5s
-            retries: 3
+            start_period: 30s
+            interval: 10s
+            timeout: 10s
+            retries: 6
 
     data_uploading:
         container_name: data_uploading_ms
@@ -156,10 +156,10 @@ services:
             - "6000"
         healthcheck:
             test: nc -z localhost 6000 || exit -1
-            start_period: 10s
-            interval: 5s
-            timeout: 5s
-            retries: 3
+            start_period: 30s
+            interval: 10s
+            timeout: 10s
+            retries: 6
 
     basic_column_creation:
         container_name: basic_column_creation_ms
@@ -329,10 +329,10 @@ services:
             - "7000"
         healthcheck:
             test: nc -z localhost 7000 || exit -1
-            start_period: 10s
-            interval: 5s
-            timeout: 5s
-            retries: 3
+            start_period: 30s
+            interval: 10s
+            timeout: 10s
+            retries: 6
 
     basic_line_storing_svg:
         container_name: basic_line_storing_svg_ms
@@ -358,10 +358,10 @@ services:
             - "7001"
         healthcheck:
             test: nc -z localhost 7001 || exit -1
-            start_period: 10s
-            interval: 5s
-            timeout: 5s
-            retries: 3
+            start_period: 30s
+            interval: 10s
+            timeout: 10s
+            retries: 6
 
     dependency_wheel_storing_svg:
         container_name: dependency_wheel_storing_svg_ms
@@ -387,10 +387,10 @@ services:
             - "7002"
         healthcheck:
             test: nc -z localhost 7002 || exit -1
-            start_period: 10s
-            interval: 5s
-            timeout: 5s
-            retries: 3
+            start_period: 30s
+            interval: 10s
+            timeout: 10s
+            retries: 6
 
     line_with_annotations_storing_svg:
         container_name: line_with_annotations_storing_svg_ms
@@ -416,10 +416,10 @@ services:
             - "7003"
         healthcheck:
             test: nc -z localhost 7003 || exit -1
-            start_period: 10s
-            interval: 5s
-            timeout: 5s
-            retries: 3
+            start_period: 30s
+            interval: 10s
+            timeout: 10s
+            retries: 6
 
     network_graph_storing_svg:
         container_name: network_graph_storing_svg_ms
@@ -445,10 +445,10 @@ services:
             - "7004"
         healthcheck:
             test: nc -z localhost 7004 || exit -1
-            start_period: 10s
-            interval: 5s
-            timeout: 5s
-            retries: 3
+            start_period: 30s
+            interval: 10s
+            timeout: 10s
+            retries: 6
 
     organization_storing_svg:
         container_name: organization_storing_svg_ms
@@ -474,10 +474,10 @@ services:
             - "7005"
         healthcheck:
             test: nc -z localhost 7005 || exit -1
-            start_period: 10s
-            interval: 5s
-            timeout: 5s
-            retries: 3
+            start_period: 30s
+            interval: 10s
+            timeout: 10s
+            retries: 6
 
     pie_storing_svg:
         container_name: pie_storing_svg_ms
@@ -503,10 +503,10 @@ services:
             - "7006"
         healthcheck:
             test: nc -z localhost 7006 || exit -1
-            start_period: 10s
-            interval: 5s
-            timeout: 5s
-            retries: 3
+            start_period: 30s
+            interval: 10s
+            timeout: 10s
+            retries: 6
 
     polar_storing_svg:
         container_name: polar_storing_svg_ms
@@ -532,10 +532,10 @@ services:
             - "7007"
         healthcheck:
             test: nc -z localhost 7007 || exit -1
-            start_period: 10s
-            interval: 5s
-            timeout: 5s
-            retries: 3
+            start_period: 30s
+            interval: 10s
+            timeout: 10s
+            retries: 6
 
     word_cloud_storing_svg:
         container_name: word_cloud_storing_svg_ms
@@ -561,10 +561,10 @@ services:
             - "7008"
         healthcheck:
             test: nc -z localhost 7008 || exit -1
-            start_period: 10s
-            interval: 5s
-            timeout: 5s
-            retries: 3
+            start_period: 30s
+            interval: 10s
+            timeout: 10s
+            retries: 6
 
     chart_aggregation:
         container_name: chart_aggregation_ms
