@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="d0636dad-9b77-4645-a93b-01e673d3bd5f" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/pages/charts.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/pages/charts.jsx" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Dockerfile" />
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2PTt82T1U6Sr3BsMaPSOZtOpnwh" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;dev-restructure&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;javascript.nodejs.core.library.configured.version&quot;: &quot;18.16.0&quot;,
+    &quot;javascript.nodejs.core.library.typings.version&quot;: &quot;18.16.0&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/jprot/Desktop/ΥΠΗΡΕΣΙΕΣ ΤΕΧΝΟΛΟΓΙΩΝ ΛΟΓΙΣΜΙΚΟΥ/SaaS23-08/chart_storing_ms&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\jprot\\Desktop\\ΥΠΗΡΕΣΙΕΣ ΤΕΧΝΟΛΟΓΙΩΝ ΛΟΓΙΣΜΙΚΟΥ\\SaaS23-08\\chart_storing_ms\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\jprot\Desktop\ΥΠΗΡΕΣΙΕΣ ΤΕΧΝΟΛΟΓΙΩΝ ΛΟΓΙΣΜΙΚΟΥ\SaaS23-08\chart_storing_ms" />
+      <recent name="C:\Users\jprot\Desktop\ΥΠΗΡΕΣΙΕΣ ΤΕΧΝΟΛΟΓΙΩΝ ΛΟΓΙΣΜΙΚΟΥ\SaaS23-08\frontend\pages\api\chart_prev_libs" />
+      <recent name="C:\Users\jprot\Desktop\ΥΠΗΡΕΣΙΕΣ ΤΕΧΝΟΛΟΓΙΩΝ ΛΟΓΙΣΜΙΚΟΥ\SaaS23-08\microservice-store-organization-chart" />
+      <recent name="C:\Users\jprot\Desktop\ΥΠΗΡΕΣΙΕΣ ΤΕΧΝΟΛΟΓΙΩΝ ΛΟΓΙΣΜΙΚΟΥ\SaaS23-08\microservice-store-word-cloud" />
+      <recent name="C:\Users\jprot\Desktop\ΥΠΗΡΕΣΙΕΣ ΤΕΧΝΟΛΟΓΙΩΝ ΛΟΓΙΣΜΙΚΟΥ\SaaS23-08\microservice-store-polar-chart" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\jprot\Desktop\ΥΠΗΡΕΣΙΕΣ ΤΕΧΝΟΛΟΓΙΩΝ ΛΟΓΙΣΜΙΚΟΥ\SaaS23-08\microservice-chart-line-basic" />
+      <recent name="C:\Users\jprot\Desktop\ΥΠΗΡΕΣΙΕΣ ΤΕΧΝΟΛΟΓΙΩΝ ΛΟΓΙΣΜΙΚΟΥ\SaaS23-08\microservice-chart-line-basic\charter" />
+      <recent name="C:\Users\jprot\Desktop\ΥΠΗΡΕΣΙΕΣ ΤΕΧΝΟΛΟΓΙΩΝ ΛΟΓΙΣΜΙΚΟΥ\SaaS23-08\microservice-frontend\public" />
+      <recent name="C:\Users\jprot\Desktop\ΥΠΗΡΕΣΙΕΣ ΤΕΧΝΟΛΟΓΙΩΝ ΛΟΓΙΣΜΙΚΟΥ\SaaS23-08\microservice-frontend\styles" />
+      <recent name="C:\Users\jprot\Desktop\ΥΠΗΡΕΣΙΕΣ ΤΕΧΝΟΛΟΓΙΩΝ ΛΟΓΙΣΜΙΚΟΥ\SaaS23-08\microservice-frontend\components" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Docker.docker_compose/compose.yaml.basic_line_storing: Compose Deployment">
+    <configuration name="_app.jsx" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/frontend/pages/_app.jsx" working-dir="$PROJECT_DIR$/frontend/pages">
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
+      <deployment type="docker-compose.yml">
+        <settings />
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
+      <deployment type="dockerfile">
+        <settings />
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="basic_column_creation_ms_old/Dockerfile builder" type="docker-deploy" factoryName="dockerfile" temporary="true" server-name="Docker">
+      <deployment type="dockerfile">
+        <settings>
+          <option name="imageTag" value="nodealpine_builder" />
+          <option name="buildCliOptions" value="--target builder" />
+          <option name="buildKitEnabled" value="true" />
+          <option name="buildOnly" value="true" />
+          <option name="sourceFilePath" value="basic_column_creation_ms_old/Dockerfile" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="chart_creation_ms/Dockerfile" type="docker-deploy" factoryName="dockerfile" temporary="true" server-name="Docker">
+      <deployment type="dockerfile">
+        <settings>
+          <option name="sourceFilePath" value="chart_creation_ms/Dockerfile" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="docker_compose/compose.yaml.basic_column_creation: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="services">
+            <list>
+              <option value="basic_column_creation" />
+            </list>
+          </option>
+          <option name="sourceFilePath" value="docker_compose/compose.yaml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <configuration name="docker_compose/compose.yaml.basic_line_storing: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
+      <deployment type="docker-compose.yml">
+        <settings>
+          <option name="services">
+            <list>
+              <option value="basic_line_storing" />
+            </list>
+          </option>
+          <option name="sourceFilePath" value="docker_compose/compose.yaml" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Docker.docker_compose/compose.yaml.basic_line_storing: Compose Deployment" />
+        <item itemvalue="Docker.docker_compose/compose.yaml.basic_column_creation: Compose Deployment" />
+        <item itemvalue="Docker.chart_creation_ms/Dockerfile" />
+        <item itemvalue="Docker.basic_column_creation_ms_old/Dockerfile builder" />
+        <item itemvalue="Node.js._app.jsx" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d0636dad-9b77-4645-a93b-01e673d3bd5f" name="Changes" comment="" />
+      <created>1683492736926</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1683492736926</updated>
+      <workItem from="1683492742340" duration="1548000" />
+      <workItem from="1683494516075" duration="2892000" />
+      <workItem from="1683497482067" duration="3071000" />
+      <workItem from="1683835182719" duration="7326000" />
+      <workItem from="1683935677805" duration="17349000" />
+      <workItem from="1684355784707" duration="3636000" />
+      <workItem from="1684362944101" duration="1272000" />
+      <workItem from="1684365297362" duration="7673000" />
+      <workItem from="1684412208335" duration="7020000" />
+      <workItem from="1684538492699" duration="8006000" />
+      <workItem from="1684870316161" duration="7090000" />
+      <workItem from="1686241937336" duration="7119000" />
+      <workItem from="1686428783400" duration="9973000" />
+      <workItem from="1688167368030" duration="40779000" />
+      <workItem from="1688461370766" duration="47974000" />
+      <workItem from="1688523822866" duration="467000" />
+      <workItem from="1688525311239" duration="1460000" />
+      <workItem from="1688526974836" duration="53000" />
+      <workItem from="1688574461329" duration="9190000" />
+      <workItem from="1688584541644" duration="496000" />
+      <workItem from="1688600502680" duration="2466000" />
+      <workItem from="1688650894655" duration="2582000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+</project>
