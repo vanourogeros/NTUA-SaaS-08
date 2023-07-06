@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { authFetch } from "lib/generalUtils";
 
 export default function Dashboard() {
     const { data: session, status } = useSession();
     const [userData, setUserData] = useState(null);
+    const router = useRouter();
 
     useEffect(() => {
         if (status === "loading") return;
@@ -29,6 +31,13 @@ export default function Dashboard() {
     }, [session]);
 
     if (status === "loading") return <div>Loading...</div>;
+    if (userData == null) {
+        authFetch(session, process.env.NEXT_PUBLIC_USER_CREATION_URL, {
+            method: "POST",
+        })
+            .then((response) => response.json())
+            .then((body) => router.reload(window.location.pathname));
+    }
 
     return (
         <div

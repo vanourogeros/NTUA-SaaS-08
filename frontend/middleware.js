@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function middleware(req) {
     const token = await getToken({ req });
 
-    if (token?.justLoggedIn) {
+    if (false && token?.justLoggedIn) {
         console.log("Just logged in");
         try {
             console.log("Trying to create user");
