@@ -5,6 +5,23 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { authFetch } from "../lib/generalUtils.js";
 import { parseCSVFile } from "../lib/csvUtils.js";
+import highchartsMore from "highcharts/highcharts-more.js";
+import annotations from "highcharts/modules/annotations.js";
+import sankey from "highcharts/modules/sankey.js";
+import dependenchyWheel from "highcharts/modules/dependency-wheel.js";
+import networkGraph from "highcharts/modules/networkgraph.js";
+import noData from "highcharts/modules/no-data-to-display.js";
+import organization from "highcharts/modules/organization.js";
+import wordCloud from "highcharts/modules/wordcloud.js";
+
+highchartsMore(Highcharts);
+annotations(Highcharts);
+sankey(Highcharts);
+dependenchyWheel(Highcharts);
+networkGraph(Highcharts);
+noData(Highcharts);
+organization(Highcharts);
+wordCloud(Highcharts);
 
 export default function CreateChart({ chartType, chartName, chartUrlType }) {
     let chartBlueprint, createChartOptions;
@@ -45,7 +62,10 @@ export default function CreateChart({ chartType, chartName, chartUrlType }) {
     async function handleConfirmChart() {
         const response = await authFetch(
             session,
-            process.env.NEXT_PUBLIC_CHART_UPLOAD_URL.replace(":chartType", chartUrlType),
+            process.env.NEXT_PUBLIC_CHART_UPLOAD_URL.replace(
+                ":chartType",
+                chartUrlType
+            ),
             {
                 method: "POST",
                 headers: {
@@ -71,7 +91,10 @@ export default function CreateChart({ chartType, chartName, chartUrlType }) {
             <p>Create a '{chartName}' chart</p>
             <div hidden={!chartVisible}>
                 <br />
-                <HighchartsReact highcharts={Highcharts} options={chartOptions} />
+                <HighchartsReact
+                    highcharts={Highcharts}
+                    options={chartOptions}
+                />
                 <div className="flex justify-center mt-4">
                     <button
                         onClick={handleConfirmChart}
@@ -87,7 +110,10 @@ export default function CreateChart({ chartType, chartName, chartUrlType }) {
                 onSubmit={handleFormSubmit}
             >
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="file">
+                    <label
+                        className="block text-gray-700 text-sm font-bold mb-2"
+                        htmlFor="file"
+                    >
                         Select CSV File
                     </label>
                     <input

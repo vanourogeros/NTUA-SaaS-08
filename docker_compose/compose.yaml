@@ -83,13 +83,13 @@ services:
         ports:
             - "80:80"
 
-    frontend:
-        container_name: frontend
-        build: ../frontend
-        restart: on-failure
-        # environment must be set inside frontend's dockerfile!
-        ports:
-            - "3000:3000"
+    #    frontend:
+    #        container_name: frontend
+    #        build: ../frontend
+    #        restart: on-failure
+    #        # environment must be set inside frontend's dockerfile!
+    #        ports:
+    #            - "3000:3000"
 
     user_authentication:
         container_name: user_authentication_ms

@@ -35,8 +35,14 @@ export default function Dashboard() {
         authFetch(session, process.env.NEXT_PUBLIC_USER_CREATION_URL, {
             method: "POST",
         })
-            .then((response) => response.json())
-            .then((body) => router.reload(window.location.pathname));
+            .then((response) => {
+                if (response.status === 201) {
+                    return router.reload(window.location.pathname);
+                } else {
+                    console.debug("could not create user");
+                }
+            })
+            .catch((err) => console.debug("Error creating user", err));
     }
 
     return (
@@ -64,11 +70,26 @@ export default function Dashboard() {
                 }}
             >
                 <p style={{ fontSize: "1.2rem", margin: "1rem 0" }}>
-                    {userData && `Total Charts: ${userData?.totalCharts || "<error>"}`}
+                    {userData &&
+                        `Total Charts: ${
+                            userData?.totalCharts != null
+                                ? userData?.totalCharts
+                                : "<error>"
+                        }`}
                     <br />
-                    {userData && `Total Tokens: ${userData?.totalTokens || "<error>"}`}
+                    {userData &&
+                        `Total Tokens: ${
+                            userData?.totalTokens != null
+                                ? userData?.totalTokens
+                                : "<error>"
+                        }`}
                     <br />
-                    {userData && `Last Sign In: ${userData?.lastSignIn || "<error>"}`}
+                    {userData &&
+                        `Last Sign In: ${
+                            userData?.lastSignIn != null
+                                ? userData?.lastSignIn
+                                : "<error>"
+                        }`}
                 </p>
             </div>
         </div>
