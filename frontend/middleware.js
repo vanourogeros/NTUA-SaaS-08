@@ -5,7 +5,9 @@ export async function middleware(req) {
     const token = await getToken({ req });
 
     if (token?.justLoggedIn) {
+        console.log("Just logged in");
         try {
+            console.log("Trying to create user");
             const response = await fetch(process.env.NEXT_PUBLIC_USER_CREATION_URL, {
                 method: "POST",
                 headers: {
@@ -20,6 +22,7 @@ export async function middleware(req) {
                     headers: { "Content-Type": "application/json" },
                 });
             } else {
+                token.justLoggedIn = false;
                 console.debug("Created user (or user already existed)");
                 try {
                     await fetch(
@@ -38,7 +41,6 @@ export async function middleware(req) {
                 } catch {
                     // we don't really mind if the last login does not get updated
                 }
-                token.justLoggedIn = false;
             }
         } catch (err) {
             console.error("User creation failed:\n", err);
