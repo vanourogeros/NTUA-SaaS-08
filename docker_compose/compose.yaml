@@ -156,6 +156,7 @@ services:
       HTTP_HOST: "0.0.0.0"
       HTTP_PORT: "7000"
       CHART_TYPE: "basic_column"
+      DATA_TYPE: "svg"
       MONGO_ATLAS_URL: "mongodb+srv://saas08:saas08@cluster0.zuzcca6.mongodb.net/?retryWrites=true&w=majority"
       MONGO_ATLAS_DB_NAME: "diagrams_line_basic"
       MONGO_ATLAS_DB_COLLECTION: "diagram"
