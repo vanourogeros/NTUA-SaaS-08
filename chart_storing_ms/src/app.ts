@@ -56,23 +56,28 @@ try {
         await consumer.run({
             eachMessage: async ({ message }) => {
                 try {
+
+                    console.log(message.value?.toString());
+
                     // upload the diagram to the database
-                    const { id, userId, data } = JSON.parse(
+                    const {userId, svgData} = JSON.parse(
                         message.value?.toString() ?? "{}"
                     );
 
                     const chart = await Chart.create({
                         type: env.DATA_TYPE,
-                        id,
                         userId,
-                        data,
+                        id: Math.random().toString(36).substring(2, 15),
+                        data: svgData,
                     });
+
+                    Chart.create(chart);
 
                     console.log(
                         `A document was inserted with the _id: ${chart._id}`
                     );
                 } catch (err) {
-                    console.log("Chart insertion failed");
+                    console.log("Chart insertion failed: " + err);
                 }
             },
         });
