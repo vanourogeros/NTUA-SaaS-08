@@ -25,45 +25,47 @@ consumer.on("consumer.disconnect", () => console.log("Kafka consumer disconnecte
 
 async function startConsumer() {
     try {
+        await producer.connect();
         await consumer.connect();
         await consumer.subscribe({ topic: env.KAFKA_CONSUMER_TOPIC });
         console.debug("Consumer starting");
         await consumer.run({
             eachMessage: async ({ topic, message }) => {
-                console.debug(`Received message in topic '${topic}'`);
-                if (message.value == null) {
-                    console.error(`Received empty message in topic '${topic}'`);
-                    return;
-                }
+                try {
+                    console.debug(`Received message in topic '${topic}'`);
+                    if (message.value == null) {
+                        console.error(`Received empty message in topic '${topic}'`);
+                        return;
+                    }
 
-                const { userId, chartOptions } = JSON.parse(message.value.toString());
-                const data = await createData(chartOptions);
-                const chartId = v1();
+                    const { userId, chartOptions } = JSON.parse(message.value.toString());
+                    const data = await createData(chartOptions);
+                    const chartId = v1();
 
-                for (let i = 0; i < fileFormats.length; ++i) {
-                    console.debug(
-                        `Sending message to topic '${env.KAFKA_PRODUCER_TOPIC_BASE}_${fileFormats[i]}'`
-                    );
-                    await producer.send({
-                        topic: `${env.KAFKA_PRODUCER_TOPIC_BASE}_${fileFormats[i]}`,
-                        messages: [
-                            {
-                                value: JSON.stringify({
-                                    chartId,
-                                    userId,
-                                    data: data[i],
-                                }),
-                            },
-                        ],
+                    const allMessages = data.map((d, i) => {
+                        return {
+                            topic: `${env.KAFKA_PRODUCER_TOPIC_BASE}_${fileFormats[i]}`,
+                            messages: [
+                                {
+                                    value: JSON.stringify({
+                                        chartId,
+                                        userId,
+                                        data: d,
+                                    }),
+                                },
+                            ],
+                        };
                     });
+                    console.debug("Sending message to all topics");
+                    console.debug(allMessages);
+                    await producer.sendBatch({ topicMessages: allMessages });
+                } catch (err) {
+                    console.error("Error in run():", err);
                 }
             },
         });
     } catch (err) {
-        console.error(
-            `Error in consumer of group [${env.KAFKA_CONSUMER_GROUP_ID}] ${e.meesage}`,
-            e
-        );
+        console.error("SOMETHING WENT TERRIBLY WRONG:", err.message);
     }
 }
 
