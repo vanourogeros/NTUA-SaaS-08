@@ -3,6 +3,24 @@ import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 import { access, constants } from "fs/promises";
 
+// a very basic html page, we really only care about the div tag
+const html = `<!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>Chart</title>
+        </head>
+        <body>
+            <div id="chart-container"></div>
+        </body>
+    </html>`;
+
+// create a browser
+const browser = await launch({
+    headless: "new",
+    args: ["--no-sandbox"],
+});
+
 async function findNodeModulesPath(currentPath) {
     try {
         const nodeModulesPath = join(currentPath, "node_modules");
@@ -59,24 +77,6 @@ async function getSources(online = false) {
 // createData should return the formats in this order as well
 export const fileFormats = ["svg", "html", "pdf", "png"];
 export async function createData(chartOptions, useOnline = false) {
-    // a very basic html page, we really only care about the div tag
-    const html = `<!DOCTYPE html>
-        <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <title>Chart</title>
-            </head>
-            <body>
-                <div id="chart-container"></div>
-            </body>
-        </html>`;
-
-    // create a browser
-    const browser = await launch({
-        headless: "new",
-        args: ["--no-sandbox"],
-    });
-
     // create a page in the browser
     const page = await browser.newPage();
     page.on("console", (msg) => console.log(`Page Console: ${msg.text()}`));
@@ -105,6 +105,8 @@ export async function createData(chartOptions, useOnline = false) {
     // await page.waitForNetworkIdle();
 
     const svgData = await saveChart();
+    await page.close();
+
     const htmlData = `<!DOCTYPE html>
         <html lang="en">
             <head>
@@ -115,8 +117,6 @@ export async function createData(chartOptions, useOnline = false) {
                 ${svgData}
             </body>
         </html>`;
-
-    await page.close();
 
     const finalPage = await browser.newPage();
     const finalLoaded = finalPage.waitForNavigation({
@@ -132,11 +132,11 @@ export async function createData(chartOptions, useOnline = false) {
     const pngData = await finalPage.screenshot();
 
     await finalPage.close();
-    await browser.close();
+
     return [svgData, htmlData, pdfData.toString("binary"), pngData.toString("base64")];
 }
 
-//const { htmlData, svgData, pdfData, pngData } = await createSVG({
+//const [svgData, htmlData, pdfData, pngData] = await createSVG({
 //    title: {
 //        text: "U.S Solar Employment Growth",
 //        align: "left",
@@ -243,4 +243,3 @@ export async function createData(chartOptions, useOnline = false) {
 //writeFileSync("img.svg", svgData);
 //writeFileSync("img.png", pngData, "base64");
 //writeFileSync("img.pdf", pdfData, "binary");
-//
