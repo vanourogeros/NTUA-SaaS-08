@@ -3,11 +3,12 @@ import { useSession } from "next-auth/react";
 import { authFetch } from "lib/generalUtils";
 
 export default function IndexPage() {
-    const { data: session } = useSession();
+    const { data: session, status } = useSession();
     const [userData, setUserData] = useState(null);
 
     useEffect(() => {
         authFetch(
+            session,
             `${process.env.NEXT_PUBLIC_GET_USER_INFO_URL?.replace(
                 ":userId",
                 session?.userId || "12345"
@@ -18,8 +19,13 @@ export default function IndexPage() {
                     return response.json();
                 }
             })
-            .then((body) => setUserData(body));
-    }, []);
+            .then((body) => {
+                console.log(body);
+                setUserData(body);
+            });
+    }, [session]);
+
+    if (status === "loading") return <div>Loading...</div>;
 
     return (
         <div

@@ -19,8 +19,10 @@ export default function CreateChart({ chartType, chartName, chartUrlType }) {
     const [chartVisible, setChartVisible] = useState(false);
     const [feedback, setFeedback] = useState("");
     const [chartOptions, setChartOptions] = useState(null);
-    const { data: session } = useSession();
+    const { data: session, status } = useSession();
     const router = useRouter();
+
+    if (status === "loading") return <div>Loading...</div>;
 
     async function handleFormSubmit(event) {
         event.preventDefault();
@@ -59,6 +61,7 @@ export default function CreateChart({ chartType, chartName, chartUrlType }) {
             setChartVisible(false);
             setFeedback(response.message);
         } else {
+            await new Promise((r) => setTimeout(r, 1000));
             router.push("/charts");
         }
     }

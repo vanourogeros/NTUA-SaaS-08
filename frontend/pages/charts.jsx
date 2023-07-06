@@ -31,7 +31,9 @@ export default function Charts() {
                 })
                 .catch((err) => console.error("Error fetching charts:\n", err));
         }
-    }, []);
+    }, [session]);
+
+    if (status === "loading") return <div>Loading...</div>;
 
     const handleDownload = async (chartId, chartData, format) => {
         let blob;

@@ -8,6 +8,8 @@ const PurchaseTokensPage = () => {
     const [feedback, setFeedback] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
+    if (status === "loading") return <div>Loading...</div>;
+
     const purchaseTokens = async () => {
         setIsLoading(true);
 
