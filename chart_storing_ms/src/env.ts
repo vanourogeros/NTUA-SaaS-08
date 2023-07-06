@@ -4,9 +4,7 @@ if (process.env.NODE_ENV === "production") {
     console.info("Environment variables are expected to already be defined");
 } else {
     console.info("Environment: development");
-    console.info(
-        "Environment variables are expected to be defined inside a .env file"
-    );
+    console.info("Environment variables are expected to be defined inside a .env file");
     await import("dotenv/config");
 }
 
@@ -21,10 +19,8 @@ const env = {
     MONGO_ATLAS_DB_COLLECTION: process.env.MONGO_ATLAS_DB_COLLECTION,
     KAFKA_CLIENT_ID: process.env.KAFKA_CLIENT_ID,
     KAFKA_CONSUMER_GROUP_ID: process.env.KAFKA_CONSUMER_GROUP_ID,
-    KAFKA_CONSUMER_TOPIC: process.env.KAFKA_CONSUMER_TOPIC,
-    KAFKA_BROKERS: process.env.KAFKA_BROKERS?.split(",").map((b) =>
-        b.trim()
-    ) as unknown as string, // trust me
+    KAFKA_CONSUMER_TOPIC_BASE: process.env.KAFKA_CONSUMER_TOPIC_BASE,
+    KAFKA_BROKERS: process.env.KAFKA_BROKERS?.split(",").map((b) => b.trim()) as unknown as string, // trust me
 };
 
 // ensure all variables exist

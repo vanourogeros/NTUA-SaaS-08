@@ -33,12 +33,8 @@ try {
         }
     });
 
-    mongoose.connection.on("connected", () =>
-        console.log("Reconnected to the database")
-    );
-    mongoose.connection.on("disconnected", () =>
-        console.log("Disconnected from the database")
-    );
+    mongoose.connection.on("connected", () => console.log("Reconnected to the database"));
+    mongoose.connection.on("disconnected", () => console.log("Disconnected from the database"));
 
     const app = express();
 
@@ -49,33 +45,32 @@ try {
         brokers: env.KAFKA_BROKERS as unknown as string[], // i said trust me
     });
 
+    const consumerTopic = `${env.KAFKA_CONSUMER_TOPIC_BASE}_${env.DATA_TYPE}`;
+    console.debug(consumerTopic);
     const consumer = kafka.consumer({ groupId: env.KAFKA_CONSUMER_GROUP_ID });
     async function startConsumer() {
         await consumer.connect();
-        await consumer.subscribe({ topic: env.KAFKA_CONSUMER_TOPIC }); // svg topic
+        await consumer.subscribe({ topic: consumerTopic });
         await consumer.run({
             eachMessage: async ({ message }) => {
                 try {
+                    console.log(`Received a message in ${consumerTopic}`);
+                    if (message.value == null || message.value.toString() == "") {
+                        console.error(`Received empty message in topic '${consumerTopic}'`);
+                        return;
+                    }
 
-                    console.log(message.value?.toString());
+                    // upload the chart to the database
+                    const { userId, chartId, data } = JSON.parse(message.value.toString());
 
-                    // upload the diagram to the database
-                    const {userId, svgData} = JSON.parse(
-                        message.value?.toString() ?? "{}"
-                    );
-
-                    const chart = await Chart.create({
+                    await Chart.create({
                         type: env.DATA_TYPE,
                         userId,
-                        id: Math.random().toString(36).substring(2, 15),
-                        data: svgData,
+                        id: chartId,
+                        data,
                     });
 
-                    Chart.create(chart);
-
-                    console.log(
-                        `A document was inserted with the _id: ${chart._id}`
-                    );
+                    console.log(`A document was inserted with id: ${chartId}`);
                 } catch (err) {
                     console.log("Chart insertion failed: " + err);
                 }
