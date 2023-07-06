@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import Chart from "../models/chart.js";
 import { codes } from "../app.js";
+import { inspect } from "util";
 
 export async function getCharts(req: Request, res: Response, next: NextFunction) {
     const userId: string = req.params.userId;
@@ -12,6 +13,7 @@ export async function getCharts(req: Request, res: Response, next: NextFunction)
 
     try {
         const charts = await Chart.find({ userId }).lean();
+        console.debug(inspect(charts));
         return res.status(codes.OK).json({
             charts: charts.map((c) => {
                 return {

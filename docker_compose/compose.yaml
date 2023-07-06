@@ -1,3 +1,14 @@
+# Unused topics
+
+# "basic_line_svg"
+# "dependency_wheel_svg"
+# "line_with_annotations_svg"
+# "network_graph_svg"
+# "organization_svg"
+# "pie_svg"
+# "polar_svg"
+# "word_cloud_svg"
+
 services:
   zookeeper:
     container_name: zookeeper
@@ -6,10 +17,10 @@ services:
       - "2181"
     healthcheck:
       test: nc -z localhost 2181 || exit -1
-      start_period: 10s
-      retries: 3
-      interval: 10s
+      start_period: 15s
+      interval: 5s
       timeout: 5s
+      retries: 5
 
   kafka:
     container_name: kafka_broker
@@ -23,6 +34,7 @@ services:
       KAFKA_ADVERTISED_HOST_NAME: "kafka_broker"
       KAFKA_ADVERTISED_PORT: "9092"
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_CREATE_TOPICS_SEPARATOR: "$$'\n'"
       KAFKA_CREATE_TOPICS: |
         "basic_column_opts"
@@ -35,79 +47,108 @@ services:
         "polar_opts"
         "word_cloud_opts"
         "basic_column_svg"
-        "basic_line_svg"
-        "dependency_wheel_svg"
-        "line_with_annotations_svg"
-        "network_graph_svg"
-        "organization_svg"
-        "pie_svg"
-        "polar_svg"
-        "word_cloud_svg"
+        "basic_column_html"
+        "basic_column_pdf"
+        "basic_column_png"
     healthcheck:
       test: nc -z localhost 9092 || exit -1
-      start_period: 25s
-      retries: 10
-      interval: 10s
-      timeout: 12s
+      start_period: 30s
+      interval: 15s
+      timeout: 15s
+      retries: 5
 
   nginx:
     container_name: nginx_gateway
     build: ../gateway
+    restart: on-failure
     depends_on:
       user_authentication:
         condition: service_healthy
+      user_management:
+        condition: service_healthy
       data_uploading:
         condition: service_healthy
-      basic_column_storing:
+      basic_column_storing_svg:
+        condition: service_healthy
+      basic_column_storing_html:
+        condition: service_healthy
+      basic_column_storing_pdf:
+        condition: service_healthy
+      basic_column_storing_png:
         condition: service_healthy
     ports:
       - "80:80"
 
-  frontend:
-    container_name: frontend
-    build: ../frontend
-    env_file: ../frontend/.env
-    environment:
-      PORT: "3000"
-      GOOGLE_CLIENT_ID: 303659298491-1khljhlgg9i80v4fcj7qtalgj4c9pcpj.apps.googleusercontent.com
-      GOOGLE_CLIENT_SECRET: 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
-      NEXTAUTH_SECRET: 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
-      NEXTAUTH_URL: "http://localhost:3000"
-      NEXT_PUBLIC_CHART_UPLOAD_URL: "http://localhost/api/chart/:chartType/create"
-      NEXT_PUBLIC_CHART_FETCH_URL: "http://localhost/api/charts/:userId"
-    ports:
-      - "3000:3000"
+  #frontend:
+  #  container_name: frontend
+  #  build: ../frontend
+  #  env_file: ../frontend/.env
+  #  environment:
+  #    PORT: "3000"
+  #    GOOGLE_CLIENT_ID: 303659298491-1khljhlgg9i80v4fcj7qtalgj4c9pcpj.apps.googleusercontent.com
+  #    GOOGLE_CLIENT_SECRET: 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
+  #    NEXTAUTH_SECRET: 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
+  #    NEXTAUTH_URL: "http://localhost:3000"
+  #    NEXT_PUBLIC_CHART_UPLOAD_URL: "http://localhost/api/chart/:chartType/create"
+  #    NEXT_PUBLIC_CHART_FETCH_URL: "http://localhost/api/charts/:userId"
+  #    NEXT_PUBLIC_USER_CREATION_URL: "http://localhost/api/user/new"
+  #    NEXT_PUBLIC_ADD_TOKENS_URL: "http://localhost/api/user/tokens/:userId/:newTokens"
+  #  ports:
+  #    - "3000:3000"
 
   user_authentication:
     container_name: user_authentication_ms
     build: ../user_authentication_ms
+    restart: on-failure
     env_file: ../user_authentication_ms/.env
     environment:
       NODE_ENV: "production"
       HTTP_HOST: "0.0.0.0"
-      HTTP_PORT: "5000"
+      HTTP_PORT: "4000"
       GOOGLE_CLIENT_ID: "303659298491-1khljhlgg9i80v4fcj7qtalgj4c9pcpj.apps.googleusercontent.com"
+    expose:
+      - "4000"
+    healthcheck:
+      test: nc -z localhost 4000 || exit -1
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  user_management:
+    container_name: user_management_ms
+    build: ../user_management_ms
+    restart: on-failure
+    env_file: ../user_management_ms/.env
+    environment:
+      NODE_ENV: "production"
+      HTTP_HOST: "0.0.0.0"
+      HTTP_PORT: "5000"
+      MONGO_ATLAS_URL: "mongodb+srv://saas08:saas08@cluster0.zuzcca6.mongodb.net/?retryWrites=true&w=majority"
+      MONGO_ATLAS_DB_NAME: "myCharts_user"
+      MONGO_ATLAS_DB_COLLECTION: "user"
     expose:
       - "5000"
     healthcheck:
       test: nc -z localhost 5000 || exit -1
-      start_period: 5s
-      retries: 3
-      interval: 10s
+      start_period: 10s
+      interval: 5s
       timeout: 5s
+      retries: 3
 
   data_uploading:
     container_name: data_uploading_ms
     build: ../data_uploading_ms
+    restart: on-failure
     depends_on:
       kafka:
         condition: service_healthy
-    restart: on-failure
     env_file: ../data_uploading_ms/.env
     environment:
       NODE_ENV: "production"
       HTTP_HOST: "0.0.0.0"
       HTTP_PORT: "6000"
+      USER_MANAGEMENT_BASE_URL: "http://user_management:5000"
       KAFKA_CLIENT_ID: "data_uploading_ms"
       KAFKA_BASIC_COLUMN_TOPIC: "basic_column_opts"
       KAFKA_BASIC_LINE_TOPIC: "basic_line_opts"
@@ -123,36 +164,34 @@ services:
       - "6000"
     healthcheck:
       test: nc -z localhost 6000 || exit -1
-      start_period: 5s
-      retries: 3
-      interval: 10s
+      start_period: 10s
+      interval: 5s
       timeout: 5s
+      retries: 3
 
   basic_column_creation:
     container_name: basic_column_creation_ms
     build: ../chart_creation_ms
+    restart: on-failure
     depends_on:
       kafka:
         condition: service_healthy
-    restart: on-failure
     environment:
       NODE_ENV: "production"
       CHART_TYPE: "basic_column"
       KAFKA_CLIENT_ID: "basic_column_creation_ms"
       KAFKA_CONSUMER_GROUP_ID: "basic_column_opts_group"
       KAFKA_CONSUMER_TOPIC: "basic_column_opts"
-      KAFKA_PRODUCER_TOPIC: "basic_column_svg"
+      KAFKA_PRODUCER_TOPIC_BASE: "basic_column"
       KAFKA_BROKERS: "kafka_broker:9092"
 
-  basic_column_storing:
-    container_name: basic_column_storing_ms
+  basic_column_storing_svg:
+    container_name: basic_column_storing_svg_ms
     build: ../chart_storing_ms
     depends_on:
       kafka:
         condition: service_healthy
     restart: on-failure
-    ports: 
-      - "7000:7000"
     environment:
       NODE_ENV: "production"
       HTTP_HOST: "0.0.0.0"
@@ -160,28 +199,110 @@ services:
       CHART_TYPE: "basic_column"
       DATA_TYPE: "svg"
       MONGO_ATLAS_URL: "mongodb+srv://saas08:saas08@cluster0.zuzcca6.mongodb.net/?retryWrites=true&w=majority"
-      MONGO_ATLAS_DB_NAME: "diagram_basic_column"
-      MONGO_ATLAS_DB_COLLECTION: "diagram_basic_column"
-      KAFKA_CLIENT_ID: "basic_column_storing_ms"
-      KAFKA_CONSUMER_GROUP_ID: "basic_column_storing_group"
-      KAFKA_CONSUMER_TOPIC: "basic_column_svg"
+      MONGO_ATLAS_DB_NAME: "chart_basic_column_svg"
+      MONGO_ATLAS_DB_COLLECTION: "chart_basic_column_svg"
+      KAFKA_CLIENT_ID: "basic_column_storing_svg_ms"
+      KAFKA_CONSUMER_GROUP_ID: "basic_column_storing_svg_group"
+      KAFKA_CONSUMER_TOPIC_BASE: "basic_column"
       KAFKA_BROKERS: "kafka_broker:9092"
     healthcheck:
       test: nc -z localhost 7000 || exit -1
-      start_period: 5s
-      retries: 3
-      interval: 10s
+      start_period: 10s
+      interval: 5s
       timeout: 5s
+      retries: 3
+
+  basic_column_storing_html:
+    container_name: basic_column_storing_html_ms
+    build: ../chart_storing_ms
+    depends_on:
+      kafka:
+        condition: service_healthy
+    restart: on-failure
+    environment:
+      NODE_ENV: "production"
+      HTTP_HOST: "0.0.0.0"
+      HTTP_PORT: "8000"
+      CHART_TYPE: "basic_column"
+      DATA_TYPE: "html"
+      MONGO_ATLAS_URL: "mongodb+srv://saas08:saas08@cluster0.zuzcca6.mongodb.net/?retryWrites=true&w=majority"
+      MONGO_ATLAS_DB_NAME: "chart_basic_column_html"
+      MONGO_ATLAS_DB_COLLECTION: "chart_basic_column_html"
+      KAFKA_CLIENT_ID: "basic_column_storing_html_ms"
+      KAFKA_CONSUMER_GROUP_ID: "basic_column_storing_html_group"
+      KAFKA_CONSUMER_TOPIC_BASE: "basic_column"
+      KAFKA_BROKERS: "kafka_broker:9092"
+    healthcheck:
+      test: nc -z localhost 8000 || exit -1
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  basic_column_storing_pdf:
+    container_name: basic_column_storing_pdf_ms
+    build: ../chart_storing_ms
+    depends_on:
+      kafka:
+        condition: service_healthy
+    restart: on-failure
+    environment:
+      NODE_ENV: "production"
+      HTTP_HOST: "0.0.0.0"
+      HTTP_PORT: "9000"
+      CHART_TYPE: "basic_column"
+      DATA_TYPE: "pdf"
+      MONGO_ATLAS_URL: "mongodb+srv://saas08:saas08@cluster0.zuzcca6.mongodb.net/?retryWrites=true&w=majority"
+      MONGO_ATLAS_DB_NAME: "chart_basic_column_pdf"
+      MONGO_ATLAS_DB_COLLECTION: "chart_basic_column_pdf"
+      KAFKA_CLIENT_ID: "basic_column_storing_pdf_ms"
+      KAFKA_CONSUMER_GROUP_ID: "basic_column_storing_pdf_group"
+      KAFKA_CONSUMER_TOPIC_BASE: "basic_column"
+      KAFKA_BROKERS: "kafka_broker:9092"
+    healthcheck:
+      test: nc -z localhost 9000 || exit -1
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  basic_column_storing_png:
+    container_name: basic_column_storing_png_ms
+    build: ../chart_storing_ms
+    depends_on:
+      kafka:
+        condition: service_healthy
+    restart: on-failure
+    environment:
+      NODE_ENV: "production"
+      HTTP_HOST: "0.0.0.0"
+      HTTP_PORT: "10000"
+      CHART_TYPE: "basic_column"
+      DATA_TYPE: "png"
+      MONGO_ATLAS_URL: "mongodb+srv://saas08:saas08@cluster0.zuzcca6.mongodb.net/?retryWrites=true&w=majority"
+      MONGO_ATLAS_DB_NAME: "chart_basic_column_png"
+      MONGO_ATLAS_DB_COLLECTION: "chart_basic_column_png"
+      KAFKA_CLIENT_ID: "basic_column_storing_png_ms"
+      KAFKA_CONSUMER_GROUP_ID: "basic_column_storing_png_group"
+      KAFKA_CONSUMER_TOPIC_BASE: "basic_column"
+      KAFKA_BROKERS: "kafka_broker:9092"
+    healthcheck:
+      test: nc -z localhost 10000 || exit -1
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 3
 
   chart_aggregation:
     container_name: chart_aggregation_ms
     build: ../chart_aggregation_ms
+    restart: on-failure
     env_file: ../chart_aggregation_ms/.env
     environment:
       NODE_ENV: production
       HTTP_HOST: "0.0.0.0"
-      HTTP_PORT: "3030"
-      BASIC_COLUMN_BASE_URL: "http://basic_column_storing:7000"
+      HTTP_PORT: "11000"
+      BASIC_COLUMN_BASE_URL: "http://basic_column_storing_svg:7000"
       BASIC_LINE_BASE_URL: "http://basic_line_storing:7001"
       DEPENDENCY_WHEEL_BASE_URL: "http://dependency_wheel_storing:7002"
       LINE_WITH_ANNOTATIONS_BASE_URL: "http://line_with_annotations_storing:7003"
@@ -190,20 +311,8 @@ services:
       PIE_BASE_URL: "http://pie_storing:7006"
       POLAR_BASE_URL: "http://polar_storing:7007"
       WORD_CLOUD_BASE_URL: "http://word_cloud_storing:7008"
-    ports:
-      - "3030:3030"
+      SVG_FETCH_URL: "/api/charts/svg/:userId"
 
-#  user_management:
-#    container_name: user_management_ms
-#    build: ../user_management_ms
-#    env_file: ../user_management_ms/.env
-#    environment:
-#      NODE_ENV: production
-#      HTTP_HOST: "0.0.0.0"
-#      HTTP_PORT: "3001"
-#    expose:
-#      - "3001"
-#
 #  # This "container" is a workaround to pre-create topics
 #  kafka-setup:
 #    image: confluentinc/cp-kafka:5.1.1
