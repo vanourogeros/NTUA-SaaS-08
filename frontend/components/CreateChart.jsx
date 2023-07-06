@@ -20,6 +20,7 @@ export default function CreateChart({ chartType, chartName, chartUrlType }) {
     const [feedback, setFeedback] = useState("");
     const [chartOptions, setChartOptions] = useState(null);
     const { data: session } = useSession();
+    const router = useRouter();
 
     async function handleFormSubmit(event) {
         event.preventDefault();
@@ -42,7 +43,7 @@ export default function CreateChart({ chartType, chartName, chartUrlType }) {
     async function handleConfirmChart() {
         const response = await authFetch(
             session,
-            process.env.NEXT_PUBLIC_CHART_UPLOAD_URL.replace(":chartType", chartUrlType)+'?userId='+session.userId,
+            process.env.NEXT_PUBLIC_CHART_UPLOAD_URL.replace(":chartType", chartUrlType),
             {
                 method: "POST",
                 headers: {
@@ -52,12 +53,13 @@ export default function CreateChart({ chartType, chartName, chartUrlType }) {
             }
         );
 
+        console.debug(response?.message);
+
         if (!response.ok) {
             setChartVisible(false);
             setFeedback(response.message);
         } else {
-            const router = useRouter();
-            router.push("/my_charts");
+            router.push("/charts");
         }
     }
 
