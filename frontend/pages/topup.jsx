@@ -1,21 +1,46 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import { authFetch } from "lib/generalUtils";
 
 const PurchaseTokensPage = () => {
     const { data: session, status } = useSession();
+    const [tokens, setTokens] = useState(1);
+    const [feedback, setFeedback] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
-    const purchaseToken = async () => {
+    const purchaseTokens = async () => {
         setIsLoading(true);
-        const response = await fetch("/api/purchase-token", {
-            method: "POST",
-        });
+
+        if (!/^[0-9]+$/.test(tokens)) {
+            setFeedback("Enter a valid positive number!!");
+            setIsLoading(false);
+            return;
+        } else {
+            setFeedback("");
+        }
+
+        if (tokens == 0) {
+            setIsLoading(false);
+            return;
+        }
+
+        const response = await authFetch(
+            session,
+            process.env.NEXT_PUBLIC_ADD_TOKENS_URL?.replace(
+                ":userId",
+                session?.userId || "12345"
+            ).replace(":newTokens", tokens),
+            {
+                method: "POST",
+            }
+        );
 
         if (response.ok) {
-            alert("Token purchased successfully!");
+            setFeedback("Tokens purchased successfully!");
         } else {
-            alert("Failed to purchase token");
+            setFeedback("Failed to purchase tokens");
         }
+
         setIsLoading(false);
     };
 
@@ -38,16 +63,26 @@ const PurchaseTokensPage = () => {
                     Purchase Tokens (eidiki prosfora: -100% se 1 (ena) token gia apofoitous
                     Ionideiou)
                 </h1>
-
                 <h3 className="block text-red-700 text-sm font-bold mb-2">
                     patwntas auto to koumpi dhlwnete ypeuthina me nomikes euthines antistoixes
                     ypeuthinis dhlwshs (ar8ro 8 N. 1599 / 1986) oti eiste pragmati apofoitos
                     Ionideiou
                 </h3>
+                <br />
+                <div>
+                    <input
+                        type="number"
+                        onChange={(e) => setTokens(e.target.value)}
+                        placeholder="How many tokens?"
+                    />
+                </div>
+                <br />
+                <div hidden={feedback == null}>{feedback}</div>
+                <br />
                 <button
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     type="button"
-                    onClick={purchaseToken}
+                    onClick={purchaseTokens}
                     disabled={isLoading}
                 >
                     {isLoading ? "Purchasing..." : "Purchase Token"}
