@@ -12,6 +12,7 @@ if (process.env.NODE_ENV === "production") {
 const env = {
     HTTP_HOST: process.env.HTTP_HOST,
     HTTP_PORT: process.env.HTTP_PORT,
+
     BASIC_COLUMN_BASE_URL: process.env.BASIC_COLUMN_BASE_URL,
     BASIC_LINE_BASE_URL: process.env.BASIC_LINE_BASE_URL,
     DEPENDENCY_WHEEL_BASE_URL: process.env.DEPENDENCY_WHEEL_BASE_URL,
@@ -21,6 +22,7 @@ const env = {
     PIE_BASE_URL: process.env.PIE_BASE_URL,
     POLAR_BASE_URL: process.env.POLAR_BASE_URL,
     WORD_CLOUD_BASE_URL: process.env.WORD_CLOUD_BASE_URL,
+
     SVG_FETCH_URL: process.env.SVG_FETCH_URL,
 };
 

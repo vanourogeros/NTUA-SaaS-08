@@ -1,6 +1,5 @@
 import express from "express";
 import env from "./env.js";
-import { inspect } from "util";
 
 const codes = {
     OK: 200,
@@ -30,8 +29,7 @@ app.get("/api/charts/:userId", async (req, res) => {
 
     try {
         const requests = services.map((service) => {
-            console.debug(`${service?.replace(":userId", userId)}`);
-            return fetch(`${service?.replace(":userId", userId)}`, {
+            return fetch(`${service.replace(":userId", userId)}`, {
                 method: "GET",
                 headers: {
                     "X-User-ID": req.get("X-User-ID"),
@@ -50,9 +48,7 @@ app.get("/api/charts/:userId", async (req, res) => {
 
         const charts = responseBodies
             .map((promise) => {
-                console.debug(inspect(promise));
                 if (promise.status === "fulfilled") {
-                    console.debug(inspect(promise.value));
                     if (promise?.value?.charts) {
                         return promise.value.charts.filter((c) => {
                             return c && Object.keys(c).length > 0;
@@ -64,9 +60,8 @@ app.get("/api/charts/:userId", async (req, res) => {
                     console.error(promise.reason);
                 }
             })
-            .flat()
-            .filter((c) => !!c); // flatten the array of arrays
-        console.debug(inspect(charts));
+            .flat() // flatten the array of arrays
+            .filter((c) => !!c); // remove null/undefined
         return res.status(codes.OK).json({ userId, charts });
     } catch (err) {
         console.error(err);
