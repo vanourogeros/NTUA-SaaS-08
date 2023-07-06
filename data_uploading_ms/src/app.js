@@ -1,6 +1,6 @@
 import express from "express";
 import { Kafka } from "kafkajs";
-import env from "./env.js"; // environment variables
+import env from "./env.js";
 
 const codes = {
     NO_CONTENT: 204,
