@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { authFetch } from "lib/generalUtils";
-import { jsPDF } from 'jspdf';
-import { Canvg } from 'canvg';
-const { createCanvas } = require('canvas');
+import { jsPDF } from "jspdf";
+import { Canvg } from "canvg";
+import { createCanvas } from "canvas";
 
 export default function Charts() {
     const { data: session, status } = useSession();
@@ -33,35 +33,32 @@ export default function Charts() {
         }
     }, []);
 
-    const handleDownload = async (diagramData, format) => {
+    const handleDownload = async (chartId, chartData, format) => {
         let blob;
         switch (format) {
-            case 'svg':
-                // For SVG, we can directly create a blob from the data
-                blob = new Blob([diagramData], { type: 'image/svg+xml;charset=utf-8' });
+            case "svg":
+            case "html":
+                // For SVG and HTML, we can directly create a blob from the data
+                blob = new Blob([chartData], { type: "image/svg+xml;charset=utf-8" });
                 break;
-            case 'html':
-                // For SVG, we can directly create a blob from the data
-                blob = new Blob([diagramData], { type: 'image/svg+xml;charset=utf-8' });
-                break;
-            case 'png':
+            case "png":
                 // For PNG, we need to use a canvas and canvg
                 const canvas = createCanvas(800, 600);
-                const ctx = canvas.getContext('2d');
-                const v = await Canvg.fromString(ctx, diagramData);
+                const ctx = canvas.getContext("2d");
+                const v = await Canvg.fromString(ctx, chartData);
                 v.start();
-                blob = await new Promise(resolve => canvas.toBlob(resolve));
+                blob = await new Promise((resolve) => canvas.toBlob(resolve));
                 break;
-            case 'pdf':
+            case "pdf":
                 // For PDF, we need to use jsPDF and canvg to convert SVG to canvas
                 const pdf = new jsPDF();
-                const pdfCanvas = document.createElement('canvas');
-                const pdfCtx = pdfCanvas.getContext('2d');
-                const pdfV = await Canvg.fromString(pdfCtx, diagramData);
+                const pdfCanvas = document.createElement("canvas");
+                const pdfCtx = pdfCanvas.getContext("2d");
+                const pdfV = await Canvg.fromString(pdfCtx, chartData);
                 pdfV.start();
-                const imgData = pdfCanvas.toDataURL('image/png');
-                pdf.addImage(imgData, 'PNG', 0, 0);
-                blob = pdf.output('blob');
+                const imgData = pdfCanvas.toDataURL("image/png");
+                pdf.addImage(imgData, "PNG", 0, 0);
+                blob = pdf.output("blob");
                 break;
             default:
                 console.error(`Unsupported format: ${format}`);
@@ -72,13 +69,13 @@ export default function Charts() {
         const url = URL.createObjectURL(blob);
 
         // Create a new <a> element
-        const link = document.createElement('a');
+        const link = document.createElement("a");
 
         // Set the href to the Blob URL
         link.href = url;
 
         // Set the download attribute to specify the filename
-        link.download = `diagram.${format}`;
+        link.download = `${chartId}.${format}`;
 
         // Append the link to the body
         document.body.appendChild(link);
@@ -89,8 +86,6 @@ export default function Charts() {
         // Remove the link from the body
         document.body.removeChild(link);
     };
-
-
 
     if (status === "loading") {
         return <p>Loading...</p>;
@@ -119,7 +114,7 @@ export default function Charts() {
                             <option value="pdf">PDF</option>
                             <option value="png">PNG</option>
                         </select>
-                        <button onClick={() => handleDownload(data, filetype)}>Download</button>
+                        <button onClick={() => handleDownload(id, data, filetype)}>Download</button>
                     </div>
                 ))}
             <div hidden={charts && charts.length > 0}>No charts to show</div>
