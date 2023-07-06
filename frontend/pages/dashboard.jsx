@@ -28,7 +28,12 @@ export default function IndexPage() {
                 }}
             />
             {buttonTexts.map((text, i) => (
-                <Link href={buttonLinks[i]} style={{ marginBottom: "10px" }} className="button">
+                <Link
+                    href={buttonLinks[i]}
+                    style={{ marginBottom: "10px" }}
+                    className="button"
+                    key={i}
+                >
                     {text}
                 </Link>
             ))}

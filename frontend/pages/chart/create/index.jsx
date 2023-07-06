@@ -39,6 +39,7 @@ export default function CreateIndex() {
                     href={`/chart/create/${chartType}`}
                     style={{ marginBottom: "10px" }}
                     className="button"
+                    key={i}
                 >
                     {chartNames[i]}
                 </Link>

@@ -16,6 +16,7 @@ export const authOptions = {
         async jwt({ token, account }) {
             if (account) {
                 token.accessToken = account.id_token;
+                token.justLoggedIn = true;
             }
 
             return token;
