@@ -7,15 +7,11 @@ import { createCanvas } from "canvas";
 
 export default function Charts() {
     const { data: session, status } = useSession();
+    const [fetchedCharts, setFetchedCharts] = useState(false);
     const [charts, setCharts] = useState(null);
     const [filetype, setFiletype] = useState("svg");
 
-    useEffect(() => {
-        if (status === "loading") return;
-        if (!session) {
-            console.debug("Session does not exist");
-            return;
-        }
+    function fetchCharts() {
         authFetch(
             session,
             process.env.NEXT_PUBLIC_CHART_FETCH_URL?.replace(":userId", session?.userId || "12345")
@@ -24,11 +20,22 @@ export default function Charts() {
             .then((body) => {
                 console.debug("Received response body:", body);
                 setCharts(body?.charts?.filter((c) => c));
+                setFetchedCharts(true);
             })
             .catch((err) => console.error("Error fetching charts:\n", err));
-    }, [session]);
+    }
 
     if (status === "loading") return <div>Loading...</div>;
+
+    if (!fetchedCharts) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen py-2">
+                <button className="button" onClick={fetchCharts}>
+                    View Your Charts
+                </button>
+            </div>
+        );
+    }
 
     async function handleDownload(chartId, chartData, format) {
         let blob;
