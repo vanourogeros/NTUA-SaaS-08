@@ -1,5 +1,5 @@
 FROM --platform=linux/amd64 node:20.2
-WORKDIR /home/node/app
+WORKDIR /app
 COPY ./package*.json ./
 RUN npm --omit=dev install
 COPY ./ ./
@@ -20,6 +20,4 @@ ENV NEXT_PUBLIC_GET_USER_INFO_URL="http://localhost/api/user/:userId"
 
 RUN npm run build
 RUN npx next telemetry disable
-RUN chown -R node:node /home/node/app
-USER node
 ENTRYPOINT ["npx", "next", "start"]
