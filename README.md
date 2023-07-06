@@ -5,8 +5,9 @@ A SaaS app that runs in Docker Containers with an architecture based on microser
 ## HOW TO RUN:
 
 1) You need to have docker installed on your machine. Go to the docker_compose directory, and run:
-•docker build -t puppeteer
-•docker-compose -f compose.yaml up
+
+* docker build -t puppeteer
+* docker-compose -f compose.yaml up
 
 That's it. There are no other steps. Visit http://localhost:3000 to access the frontend.
 
