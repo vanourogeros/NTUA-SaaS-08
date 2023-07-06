@@ -440,8 +440,8 @@ services:
             timeout: 5s
             retries: 3
 
-    organization_storing_storing_svg:
-        container_name: organization_storing_storing_svg_ms
+    organization_storing_svg:
+        container_name: organization_storing_svg_ms
         build: ../chart_storing_ms
         depends_on:
             kafka:
@@ -451,14 +451,14 @@ services:
             NODE_ENV: "production"
             HTTP_HOST: "0.0.0.0"
             HTTP_PORT: "7005"
-            CHART_TYPE: "organization_storing"
+            CHART_TYPE: "organization"
             DATA_TYPE: "svg"
             MONGO_ATLAS_URL: "mongodb+srv://saas08:saas08@cluster0.zuzcca6.mongodb.net/?retryWrites=true&w=majority"
-            MONGO_ATLAS_DB_NAME: "chart_organization_storing_svg"
-            MONGO_ATLAS_DB_COLLECTION: "chart_organization_storing_svg"
-            KAFKA_CLIENT_ID: "organization_storing_storing_svg_ms"
-            KAFKA_CONSUMER_GROUP_ID: "organization_storing_storing_svg_group"
-            KAFKA_CONSUMER_TOPIC_BASE: "organization_storing"
+            MONGO_ATLAS_DB_NAME: "chart_organization_svg"
+            MONGO_ATLAS_DB_COLLECTION: "chart_organization_svg"
+            KAFKA_CLIENT_ID: "organization_storing_svg_ms"
+            KAFKA_CONSUMER_GROUP_ID: "organization_storing_svg_group"
+            KAFKA_CONSUMER_TOPIC_BASE: "organization"
             KAFKA_BROKERS: "kafka_broker:9092"
         healthcheck:
             test: nc -z localhost 7005 || exit -1
