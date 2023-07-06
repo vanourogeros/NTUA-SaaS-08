@@ -1,4 +1,4 @@
-import { codes } from "../setEnv.js";
+import { codes } from "../app.js";
 import type { Request, Response, NextFunction } from "express";
 
 export function extractUserId(req: Request, res: Response, next: NextFunction) {

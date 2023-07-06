@@ -1,14 +1,23 @@
 import express from "express";
 import mongoose from "mongoose";
+import env from "./env.js";
 import { connectToDB } from "./lib/dbUtils.js";
 import { extractUserId } from "./middleware/auth.js";
 import { errorHandler } from "./middleware/error.js";
 import userRouter from "./routes/user.js";
-import { env } from "./setEnv.js";
+
+export const codes = {
+    OK: 200,
+    CREATED: 201,
+    BAD_REQUEST: 400,
+    UNAUTHORIZED: 401,
+    CONFLICT: 409,
+    INTERNAL_SERVER_ERROR: 500,
+};
 
 try {
     // connect to the database and retry up to 3 times if it fails
-    await connectToDB(env.MONGO_LINK, env.MONGO_DATABASE, 2);
+    await connectToDB(env.MONGO_ATLAS_URL, env.MONGO_ATLAS_DB_NAME, 2);
 
     console.log("Connected to the database");
 
@@ -24,17 +33,12 @@ try {
         }
     });
 
-    mongoose.connection.on("disconnected", () =>
-        console.log("Disconnected from the database")
-    );
-
-    mongoose.connection.on("connected", () =>
-        console.log("Reconnected to the database")
-    );
+    mongoose.connection.on("connected", () => console.log("Reconnected to the database"));
+    mongoose.connection.on("disconnected", () => console.log("Disconnected from the database"));
 
     // create and set up the express app
     const app = express();
-    app.use("/api/user", extractUserId, userRouter, errorHandler);
+    app.use(extractUserId, userRouter, errorHandler);
 
     // start listening for incoming requests
     app.listen(parseInt(env.HTTP_PORT), env.HTTP_HOST, () => {

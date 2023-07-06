@@ -1,4 +1,4 @@
-import { codes } from "../setEnv.js";
+import { codes } from "../app.js";
 import User from "../models/user.js";
 
 import type { Request, Response, NextFunction } from "express";
@@ -150,17 +150,19 @@ export async function postDeletedChart(req: Request, res: Response, next: NextFu
 
 export async function updateLastSignin(req: Request, res: Response, next: NextFunction) {
     const userId = req.params.userId;
+    console.debug("Update Last Log In: userId:", userId);
     if (userId == undefined) {
         // if this error is thrown, something fundamental is wrong with the app
         throw new Error("Extracted 'userId' is missing");
     }
 
     try {
-        const usr = User.findOneAndUpdate(
+        const usr = await User.findOneAndUpdate(
             { id: userId },
-            { $set: { lastSignIn: Date.now() } },
+            { $set: { lastSignIn: new Date() } },
             { new: true }
         ).lean();
+
         if (usr === null) {
             return res.status(codes.BAD_REQUEST).json({ message: "Could not access this user" });
         } else {
