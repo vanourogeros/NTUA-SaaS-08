@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { authFetch } from "lib/generalUtils";
 
-const PurchaseTokensPage = () => {
+export default function TopUp() {
     const { data: session, status } = useSession();
     const [tokens, setTokens] = useState(1);
     const [feedback, setFeedback] = useState("");
@@ -10,7 +10,7 @@ const PurchaseTokensPage = () => {
 
     if (status === "loading") return <div>Loading...</div>;
 
-    const purchaseTokens = async () => {
+    async function purchaseTokens() {
         setIsLoading(true);
 
         if (!/^[0-9]+$/.test(tokens)) {
@@ -44,18 +44,6 @@ const PurchaseTokensPage = () => {
         }
 
         setIsLoading(false);
-    };
-
-    if (status === "loading") {
-        return <p>Loading...</p>;
-    }
-
-    if (!session) {
-        return (
-            <div>
-                <p>Please sign in to purchase a token</p>
-            </div>
-        );
     }
 
     return (
@@ -92,6 +80,4 @@ const PurchaseTokensPage = () => {
             </div>
         </div>
     );
-};
-
-export default PurchaseTokensPage;
+}

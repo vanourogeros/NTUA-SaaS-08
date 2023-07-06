@@ -1,6 +1,6 @@
 import { signIn } from "next-auth/react";
 
-export default function IndexPage() {
+export default function Welcome() {
     return (
         <div
             style={{

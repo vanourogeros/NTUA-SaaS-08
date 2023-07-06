@@ -2,11 +2,17 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { authFetch } from "lib/generalUtils";
 
-export default function IndexPage() {
+export default function Dashboard() {
     const { data: session, status } = useSession();
     const [userData, setUserData] = useState(null);
 
     useEffect(() => {
+        if (status === "loading") return;
+        if (!session) {
+            console.debug("Session does not exist");
+            return;
+        }
+
         authFetch(
             session,
             `${process.env.NEXT_PUBLIC_GET_USER_INFO_URL?.replace(
@@ -14,25 +20,16 @@ export default function IndexPage() {
                 session?.userId || "12345"
             )}`
         )
-            .then((response) => {
-                if (response.status != 404) {
-                    return response.json();
-                }
-            })
+            .then((response) => response.json())
             .then((body) => {
                 console.log(body);
                 setUserData(body);
-            });
+            })
+            .catch((err) => console.error("Error fetching user data:\n", err));
     }, [session]);
 
     if (status === "loading") return <div>Loading...</div>;
 
-    console.log(process.env.NEXT_PUBLIC_CHART_UPLOAD_URL);
-    console.log(process.env.NEXT_PUBLIC_CHART_FETCH_URL);
-    console.log(process.env.NEXT_PUBLIC_USER_CREATION_URL);
-    console.log(process.env.NEXT_PUBLIC_UPDATE_LAST_LOGIN_URL);
-    console.log(process.env.NEXT_PUBLIC_ADD_TOKENS_URL);
-    console.log(process.env.NEXT_PUBLIC_GET_USER_INFO_URL);
     return (
         <div
             style={{

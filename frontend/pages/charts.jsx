@@ -11,31 +11,26 @@ export default function Charts() {
     const [filetype, setFiletype] = useState("svg");
 
     useEffect(() => {
-        console.debug("Session: " + session);
-        if (session) {
-            authFetch(
-                session,
-                process.env.NEXT_PUBLIC_CHART_FETCH_URL?.replace(
-                    ":userId",
-                    session?.userId || "12345"
-                )
-            )
-                .then((response) => {
-                    if (response.status != 404) {
-                        return response.json();
-                    }
-                })
-                .then((body) => {
-                    console.debug("Received response body:", body);
-                    setCharts(body?.charts?.filter((c) => c));
-                })
-                .catch((err) => console.error("Error fetching charts:\n", err));
+        if (status === "loading") return;
+        if (!session) {
+            console.debug("Session does not exist");
+            return;
         }
+        authFetch(
+            session,
+            process.env.NEXT_PUBLIC_CHART_FETCH_URL?.replace(":userId", session?.userId || "12345")
+        )
+            .then((response) => response.json())
+            .then((body) => {
+                console.debug("Received response body:", body);
+                setCharts(body?.charts?.filter((c) => c));
+            })
+            .catch((err) => console.error("Error fetching charts:\n", err));
     }, [session]);
 
     if (status === "loading") return <div>Loading...</div>;
 
-    const handleDownload = async (chartId, chartData, format) => {
+    async function handleDownload(chartId, chartData, format) {
         let blob;
         switch (format) {
             case "svg":
@@ -87,18 +82,6 @@ export default function Charts() {
 
         // Remove the link from the body
         document.body.removeChild(link);
-    };
-
-    if (status === "loading") {
-        return <p>Loading...</p>;
-    }
-
-    if (!session) {
-        return (
-            <div>
-                <p>Please sign in to view your charts</p>
-            </div>
-        );
     }
 
     return (
