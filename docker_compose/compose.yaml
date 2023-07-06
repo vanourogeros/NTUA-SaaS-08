@@ -325,6 +325,8 @@ services:
             KAFKA_CONSUMER_GROUP_ID: "basic_column_storing_svg_group"
             KAFKA_CONSUMER_TOPIC_BASE: "basic_column"
             KAFKA_BROKERS: "kafka_broker:9092"
+        expose:
+            - "7000"
         healthcheck:
             test: nc -z localhost 7000 || exit -1
             start_period: 10s
@@ -352,6 +354,8 @@ services:
             KAFKA_CONSUMER_GROUP_ID: "basic_line_storing_svg_group"
             KAFKA_CONSUMER_TOPIC_BASE: "basic_line"
             KAFKA_BROKERS: "kafka_broker:9092"
+        expose:
+            - "7001"
         healthcheck:
             test: nc -z localhost 7001 || exit -1
             start_period: 10s
@@ -379,6 +383,8 @@ services:
             KAFKA_CONSUMER_GROUP_ID: "dependency_wheel_storing_svg_group"
             KAFKA_CONSUMER_TOPIC_BASE: "dependency_wheel"
             KAFKA_BROKERS: "kafka_broker:9092"
+        expose:
+            - "7002"
         healthcheck:
             test: nc -z localhost 7002 || exit -1
             start_period: 10s
@@ -406,6 +412,8 @@ services:
             KAFKA_CONSUMER_GROUP_ID: "line_with_annotations_storing_svg_group"
             KAFKA_CONSUMER_TOPIC_BASE: "line_with_annotations"
             KAFKA_BROKERS: "kafka_broker:9092"
+        expose:
+            - "7003"
         healthcheck:
             test: nc -z localhost 7003 || exit -1
             start_period: 10s
@@ -433,6 +441,8 @@ services:
             KAFKA_CONSUMER_GROUP_ID: "network_graph_storing_svg_group"
             KAFKA_CONSUMER_TOPIC_BASE: "network_graph"
             KAFKA_BROKERS: "kafka_broker:9092"
+        expose:
+            - "7004"
         healthcheck:
             test: nc -z localhost 7004 || exit -1
             start_period: 10s
@@ -460,6 +470,8 @@ services:
             KAFKA_CONSUMER_GROUP_ID: "organization_storing_svg_group"
             KAFKA_CONSUMER_TOPIC_BASE: "organization"
             KAFKA_BROKERS: "kafka_broker:9092"
+        expose:
+            - "7005"
         healthcheck:
             test: nc -z localhost 7005 || exit -1
             start_period: 10s
@@ -487,6 +499,8 @@ services:
             KAFKA_CONSUMER_GROUP_ID: "pie_storing_svg_group"
             KAFKA_CONSUMER_TOPIC_BASE: "pie"
             KAFKA_BROKERS: "kafka_broker:9092"
+        expose:
+            - "7006"
         healthcheck:
             test: nc -z localhost 7006 || exit -1
             start_period: 10s
@@ -514,6 +528,8 @@ services:
             KAFKA_CONSUMER_GROUP_ID: "polar_storing_svg_group"
             KAFKA_CONSUMER_TOPIC_BASE: "polar"
             KAFKA_BROKERS: "kafka_broker:9092"
+        expose:
+            - "7007"
         healthcheck:
             test: nc -z localhost 7007 || exit -1
             start_period: 10s
@@ -541,6 +557,8 @@ services:
             KAFKA_CONSUMER_GROUP_ID: "word_cloud_storing_svg_group"
             KAFKA_CONSUMER_TOPIC_BASE: "word_cloud"
             KAFKA_BROKERS: "kafka_broker:9092"
+        expose:
+            - "7008"
         healthcheck:
             test: nc -z localhost 7008 || exit -1
             start_period: 10s
