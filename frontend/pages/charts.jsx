@@ -40,7 +40,7 @@ export default function Charts() {
 
         if (response.ok) {
             const data = (await response.json()).data;
-            const blob = new Blob([data], { type: "application/octet-stream" });
+            const blob = new Blob([data], { type: "text/html; charset=utf-8" });
             const url = URL.createObjectURL(blob);
 
             const link = document.createElement("a");
@@ -72,7 +72,7 @@ export default function Charts() {
                     <div key={id}>
                         <div dangerouslySetInnerHTML={{ __html: data }} />
                         <select onChange={(e) => setFiletype(e.target.value)}>
-                            <option value="svg" selected>
+                            <option value="svg" defaultValue>
                                 SVG
                             </option>
                             <option value="html">HTML</option>
