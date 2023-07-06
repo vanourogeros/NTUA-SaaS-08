@@ -38,12 +38,9 @@ app.use(express.json());
 app.post("/api/chart/:type/create", async (req, res) => {
     console.debug(`Request received: ${req.path}`);
 
-    const userId = req.query.userId;
+    const userId = req.get("X-User-ID");
     const type = req.params.type;
     const chartOptions = req.body?.chartOptions;
-
-    console.log(userId);
-    console.log(type);
 
     if (userId == undefined) {
         console.debug("User is anauthorized");
@@ -51,7 +48,7 @@ app.post("/api/chart/:type/create", async (req, res) => {
     }
 
     if (!Object.keys(kafkaTopicsMap).includes(type)) {
-        console.debug("Chart type not supported");
+        console.debug(`Chart type not supported ('${type}')`);
         return res.status(codes.BAD_REQUEST).send("Invalid chart type");
     }
 
@@ -63,46 +60,49 @@ app.post("/api/chart/:type/create", async (req, res) => {
     try {
         console.debug("Received options:\n", chartOptions);
 
-        try {
-            const validTokens = await fetch(`/api/user/${userId}/tokens/-1`, {
-                method: "post",
-            });
-
-            if (!validTokens.ok) {
-                return res.status(validTokens.status).json({
-                    message: "Failed to create your chart",
-                });
+        const validTokens = await fetch(
+            `${env.USER_MANAGEMENT_BASE_URL}/api/user/tokens/${userId}/-1`,
+            {
+                method: "POST",
+                headers: {
+                    "X-User-ID": req.get("X-User-ID"),
+                },
             }
-        } catch (err) {
-            console.log("Dwrean diagrammata gia olous! " + err);
+        );
+
+        if (!validTokens.ok) {
+            return res.status(validTokens.status).json({
+                message: "You do not have enough tokens",
+            });
         }
 
-        try {
-            const chartAdded = await fetch(`/api/user/charts/${userId}/created`, {
+        const chartAdded = await fetch(
+            `${env.USER_MANAGEMENT_BASE_URL}/api/user/charts/${userId}/created`,
+            {
                 method: "POST",
-            });
-            if (!chartAdded.ok) {
-                // add the removed token back in. In case of failure
-                await fetch(`/api/user/tokens/${userId}/1`, {
-                    method: "POST",
-                });
-                return res.status(chartAdded.status).json({
-                    message:
-                        "Failed to access user information and update total chart count. Will not accept new chart request",
-                });
+                headers: {
+                    "X-User-ID": req.get("X-User-ID"),
+                },
             }
-        } catch (err) {
-            console.log("proste8hke to chart? de tha ma8oume pote!: " + err);
+        );
+
+        if (!chartAdded.ok) {
+            // add the removed token back in. In case of failure
+            await fetch(`${env.USER_MANAGEMENT_BASE_URL}/api/user/tokens/${userId}/1`, {
+                method: "POST",
+                headers: {
+                    "X-User-ID": req.get("X-User-ID"),
+                },
+            });
+
+            return res.status(chartAdded.status).json({
+                message:
+                    "Failed to access user information and update total chart count. \
+                        Will not accept new chart request",
+            });
         }
 
         console.debug(`Sending message to '${kafkaTopicsMap[type]}' topic`);
-        console.debug(
-            "Message: " +
-                JSON.stringify({
-                    userId,
-                    chartOptions,
-                })
-        );
 
         await producer.send({
             topic: kafkaTopicsMap[type],

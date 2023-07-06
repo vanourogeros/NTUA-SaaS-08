@@ -12,6 +12,7 @@ if (process.env.NODE_ENV === "production") {
 const env = {
     HTTP_HOST: process.env.HTTP_HOST,
     HTTP_PORT: process.env.HTTP_PORT,
+    USER_MANAGEMENT_BASE_URL: process.env.USER_MANAGEMENT_BASE_URL,
     KAFKA_CLIENT_ID: process.env.KAFKA_CLIENT_ID,
     KAFKA_BASIC_COLUMN_TOPIC: process.env.KAFKA_BASIC_COLUMN_TOPIC,
     KAFKA_BASIC_LINE_TOPIC: process.env.KAFKA_BASIC_LINE_TOPIC,
