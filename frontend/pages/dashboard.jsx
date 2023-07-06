@@ -27,6 +27,12 @@ export default function IndexPage() {
 
     if (status === "loading") return <div>Loading...</div>;
 
+    console.log(process.env.NEXT_PUBLIC_CHART_UPLOAD_URL);
+    console.log(process.env.NEXT_PUBLIC_CHART_FETCH_URL);
+    console.log(process.env.NEXT_PUBLIC_USER_CREATION_URL);
+    console.log(process.env.NEXT_PUBLIC_UPDATE_LAST_LOGIN_URL);
+    console.log(process.env.NEXT_PUBLIC_ADD_TOKENS_URL);
+    console.log(process.env.NEXT_PUBLIC_GET_USER_INFO_URL);
     return (
         <div
             style={{
