@@ -1,11 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import env from "../env.js";
 import Chart from "../models/chart.js";
 import { codes } from "../app.js";
 import { inspect } from "util";
 
 export async function getCharts(req: Request, res: Response, next: NextFunction) {
-    const userId: string = req.params.userId;
+    const userId: string = req.get("X-User-ID")!;
 
     if (userId == undefined) {
         // if this error is thrown, something fundamental is wrong with the app
@@ -13,6 +12,7 @@ export async function getCharts(req: Request, res: Response, next: NextFunction)
     }
 
     try {
+        console.log("Querying for charts");
         const charts = await Chart.find({ userId }).lean();
         console.debug(inspect(charts));
         return res.status(codes.OK).json({
@@ -30,7 +30,7 @@ export async function getCharts(req: Request, res: Response, next: NextFunction)
 }
 
 export async function postDeleteChart(req: Request, res: Response, next: NextFunction) {
-    const id: string = req.params.id;
+    const id: string = req.get("X-User-ID")!;
 
     if (id == undefined) {
         // if this error is thrown, something fundamental is wrong with the app
@@ -53,7 +53,7 @@ export async function postDeleteChart(req: Request, res: Response, next: NextFun
 }
 
 export async function getChart(req: Request, res: Response, next: NextFunction) {
-    const id = req.params.id;
+    const id = req.get("X-User-ID")!;
 
     if (id == undefined) {
         // if this error is thrown, something fundamental is wrong with the app
@@ -61,6 +61,7 @@ export async function getChart(req: Request, res: Response, next: NextFunction) 
     }
 
     try {
+        console.log("Querying for charts");
         const result = await Chart.findOne({ id }).lean();
 
         if (result === null) {
