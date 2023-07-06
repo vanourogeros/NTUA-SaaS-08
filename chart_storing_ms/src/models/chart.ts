@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 import env from "../env.js";
 
-// type is "svg", "html", "pdf", "png"
+// type means 'chart type' not 'format type'
 interface Chart {
     type: string;
     id: string;
@@ -21,8 +21,4 @@ const chartSchema = new Schema<Chart>(
     { timestamps: true } // mongoose creates 'createdAt', 'updatedAt'
 );
 
-export default model<Chart>(
-    "Chart",
-    chartSchema,
-    env.MONGO_ATLAS_DB_COLLECTION
-);
+export default model<Chart>("Chart", chartSchema, env.MONGO_ATLAS_DB_COLLECTION);

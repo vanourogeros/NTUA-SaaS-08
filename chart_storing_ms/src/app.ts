@@ -64,7 +64,7 @@ try {
                     const { userId, chartId, data } = JSON.parse(message.value.toString());
 
                     await Chart.create({
-                        type: env.DATA_TYPE,
+                        type: env.CHART_TYPE,
                         userId,
                         id: chartId,
                         data,
