@@ -1,6 +1,6 @@
 import express from "express";
-import axios from "axios";
 import env from "./env.js";
+import { inspect } from "util";
 
 const codes = {
     OK: 200,
@@ -10,42 +10,63 @@ const codes = {
 
 const app = express();
 app.get("/api/charts/:userId", async (req, res) => {
-
-    const userId = req.params.userId;
+    const userId = req.get("X-User-ID");
 
     if (userId == undefined) {
         return res.status(codes.UNAUTHORIZED).send("Please log in first");
     }
 
     const services = [
-        "http://basic_column_storing:7000",
-        env.BASIC_LINE_BASE_URL,
-        env.DEPENDENCY_WHEEL_BASE_URL,
-        env.LINE_WITH_ANNOTATIONS_BASE_URL,
-        env.NETWORK_GRAPH_BASE_URL,
-        env.ORGANIZATION_BASE_URL,
-        env.PIE_BASE_URL,
-        env.POLAR_BASE_URL,
-        env.WORD_CLOUD_BASE_URL,
+        env.BASIC_COLUMN_BASE_URL + env.SVG_FETCH_URL,
+        env.BASIC_LINE_BASE_URL + env.SVG_FETCH_URL,
+        env.DEPENDENCY_WHEEL_BASE_URL + env.SVG_FETCH_URL,
+        env.LINE_WITH_ANNOTATIONS_BASE_URL + env.SVG_FETCH_URL,
+        env.NETWORK_GRAPH_BASE_URL + env.SVG_FETCH_URL,
+        env.ORGANIZATION_BASE_URL + env.SVG_FETCH_URL,
+        env.PIE_BASE_URL + env.SVG_FETCH_URL,
+        env.POLAR_BASE_URL + env.SVG_FETCH_URL,
+        env.WORD_CLOUD_BASE_URL + env.SVG_FETCH_URL,
     ];
 
     try {
-        const requests = services.map((service) => 
-        {   console.log(`${service}/api/charts/svg/${userId}`);
-            return axios.get(`${service}/api/charts/svg/${userId}`);
-            }
-        );
+        const requests = services.map((service) => {
+            console.debug(`${service?.replace(":userId", userId)}`);
+            return fetch(`${service?.replace(":userId", userId)}`, {
+                method: "GET",
+                headers: {
+                    "X-User-ID": req.get("X-User-ID"),
+                },
+            });
+        });
+
         const responses = await Promise.allSettled(requests);
-        const charts = responses
-            .map((response) => {
-                //console.log(response);
-                // even if some of the microservices are down, we still want
-                // the rest to be returned to the user
-                if (response.status === "fulfilled" && response.value !== undefined) {
-                    return response.value.data.charts;
+        const responseBodies = await Promise.allSettled(
+            responses.map((promise) => {
+                if (promise.status === "fulfilled") {
+                    return promise.value.json();
                 }
             })
-            .flat(); // flatten the array of arrays
+        );
+
+        const charts = responseBodies
+            .map((promise) => {
+                console.debug(inspect(promise));
+                if (promise.status === "fulfilled") {
+                    console.debug(inspect(promise.value));
+                    if (promise?.value?.charts) {
+                        return promise.value.charts.filter((c) => {
+                            return c && Object.keys(c).length > 0;
+                        });
+                    } else {
+                        console.error("promise.value.charts missing from response");
+                    }
+                } else {
+                    console.error(promise.reason);
+                }
+            })
+            .flat()
+            .filter((c) => !!c); // flatten the array of arrays
+        console.debug(inspect(charts));
         return res.status(codes.OK).json({ userId, charts });
     } catch (err) {
         console.error(err);
