@@ -25,7 +25,15 @@ export default function Charts() {
     }, [fetchCharts]);
 
     function fetchCharts() {
-        setFetchedCharts(true);
+        authFetch(session, "/api/getcharts", {
+            headers: { "X-User-ID": session?.userId || "12345" },
+        })
+            .then((response) => response.json())
+            .then((body) => {
+                if (body?.error) console.log(body.error);
+                else setCharts(body?.charts);
+                setFetchedCharts(true);
+            });
     }
 
     if (status === "loading") return <div>Loading...</div>;
