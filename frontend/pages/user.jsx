@@ -1,17 +1,25 @@
+import { authFetch } from "lib/generalUtils";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 const UserPage = () => {
     const { data: session } = useSession();
-    const [userData, setUserData] = useState({ diagrams: 0, credits: 0 });
+    const [userData, setUserData] = useState(null);
 
     useEffect(() => {
-        // Fetch user data when component mounts
-        console.debug(session?.user.id)
-        fetch(`/api/userData?userId=${session?.userId}`)
-            .then((response) => response.json())
-            .then((data) => setUserData(data));
-    }, [session]);
+        authFetch(
+            `${process.env.NEXT_PUBLIC_GET_USER_INFO_URL?.replace(
+                ":userId",
+                session?.userId || "12345"
+            )}`
+        )
+            .then((response) => {
+                if (response.status != 404) {
+                    return response.json();
+                }
+            })
+            .then((body) => setUserData(body));
+    }, []);
 
     return (
         <div
@@ -26,7 +34,6 @@ const UserPage = () => {
                 fontFamily: "Arial, sans-serif",
             }}
         >
-            <h1 style={{ marginBottom: "1rem" }}>{session?.user.name}&apos;s User Page</h1>
             <div
                 style={{
                     backgroundColor: "#fff",
@@ -39,9 +46,12 @@ const UserPage = () => {
                 }}
             >
                 <p style={{ fontSize: "1.2rem", margin: "1rem 0" }}>
-                    Diagrams: {userData.diagrams}
+                    {userData && `Total Charts: ${userData?.totalCharts || "<error>"}`}
+                    <br />
+                    {userData && `Total Tokens: ${userData?.totalTokens || "<error>"}`}
+                    <br />
+                    {userData && `Last Sign In: ${userData?.lastSignIn || "<error>"}`}
                 </p>
-                <p style={{ fontSize: "1.2rem", margin: "1rem 0" }}>Credits: {userData.credits}</p>
             </div>
         </div>
     );

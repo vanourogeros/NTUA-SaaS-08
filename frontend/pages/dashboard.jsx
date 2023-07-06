@@ -1,11 +1,25 @@
-import Image from "next/image";
-import Link from "next/link";
-import { signOut, useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { authFetch } from "lib/generalUtils";
 
 export default function IndexPage() {
-    const buttonTexts = ["Create Chart", "View Your Charts", "Purchase Tokens"];
-    const buttonLinks = ["/chart/create", "/charts", "/topup"];
     const { data: session } = useSession();
+    const [userData, setUserData] = useState(null);
+
+    useEffect(() => {
+        authFetch(
+            `${process.env.NEXT_PUBLIC_GET_USER_INFO_URL?.replace(
+                ":userId",
+                session?.userId || "12345"
+            )}`
+        )
+            .then((response) => {
+                if (response.status != 404) {
+                    return response.json();
+                }
+            })
+            .then((body) => setUserData(body));
+    }, []);
 
     return (
         <div
@@ -14,32 +28,31 @@ export default function IndexPage() {
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
+                minHeight: "100vh",
+                backgroundColor: "#f0f0f0",
+                color: "#333",
+                fontFamily: "Arial, sans-serif",
             }}
         >
-            <h1>Welcome back, {session?.user.name}!</h1>
-            <Image
-                src={session?.user.image}
-                width={80}
-                height={80}
-                alt={"google profile pic"}
+            <div
                 style={{
-                    borderRadius: "50%",
-                    clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)",
+                    backgroundColor: "#fff",
+                    boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+                    padding: "2rem",
+                    borderRadius: "1rem",
+                    textAlign: "center",
+                    width: "80%",
+                    maxWidth: "400px",
                 }}
-            />
-            {buttonTexts.map((text, i) => (
-                <Link
-                    href={buttonLinks[i]}
-                    style={{ marginBottom: "10px" }}
-                    className="button"
-                    key={i}
-                >
-                    {text}
-                </Link>
-            ))}
-            <button style={{ marginBottom: "10px" }} className="button" onClick={signOut}>
-                Sign Out
-            </button>
+            >
+                <p style={{ fontSize: "1.2rem", margin: "1rem 0" }}>
+                    {userData && `Total Charts: ${userData?.totalCharts || "<error>"}`}
+                    <br />
+                    {userData && `Total Tokens: ${userData?.totalTokens || "<error>"}`}
+                    <br />
+                    {userData && `Last Sign In: ${userData?.lastSignIn || "<error>"}`}
+                </p>
+            </div>
         </div>
     );
 }

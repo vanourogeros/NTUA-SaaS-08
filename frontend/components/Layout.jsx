@@ -19,34 +19,29 @@ export default function Layout({ children }) {
                 <div className="flex items-center space-x-4">
                     {status === "authenticated" ? (
                         <>
-                            <span className="cursor-pointer" onClick={() => router.push("/")}>
+                            <span
+                                className="cursor-pointer"
+                                onClick={() => router.push("/dashboard")}
+                            >
                                 Dashboard
                             </span>
-                            <span className="cursor-pointer" onClick={() => router.push("/upload")}>
+                            <span
+                                className="cursor-pointer"
+                                onClick={() => router.push("/chart/create")}
+                            >
                                 Create Chart
                             </span>
-                            <span className="cursor-pointer" onClick={() => router.push("/user")}>
-                                User Info
+                            <span className="cursor-pointer" onClick={() => router.push("/charts")}>
+                                Your Charts
                             </span>
-                            <span
-                                className="cursor-pointer"
-                                onClick={() => router.push("/my_charts")}
-                            >
-                                My Charts
-                            </span>
-                            <span
-                                className="cursor-pointer"
-                                onClick={() => router.push("/purchase_tokens")}
-                            >
+                            <span className="cursor-pointer" onClick={() => router.push("/topup")}>
                                 Purchase Tokens
                             </span>
                         </>
                     ) : (
-                        <>
-                            <span className="cursor-pointer" onClick={() => router.push("/")}>
-                                Home
-                            </span>
-                        </>
+                        <span className="cursor-pointer" onClick={() => router.push("/")}>
+                            Index
+                        </span>
                     )}
                 </div>
                 <div className="flex items-center space-x-4">
@@ -80,7 +75,6 @@ export default function Layout({ children }) {
                     )}
                 </div>
             </nav>
-            <aside>{/* Sidebar content goes here */}</aside>
             <main className={inter.className}>{children}</main>
         </div>
     );

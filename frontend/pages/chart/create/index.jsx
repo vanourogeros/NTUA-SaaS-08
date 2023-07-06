@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 export default function CreateIndex() {
     const chartTypes = [
@@ -25,6 +26,8 @@ export default function CreateIndex() {
         "Word Cloud",
     ];
 
+    const router = useRouter();
+
     return (
         <div
             style={{
@@ -35,14 +38,14 @@ export default function CreateIndex() {
             }}
         >
             {chartTypes.map((chartType, i) => (
-                <Link
-                    href={`/chart/create/${chartType}`}
+                <button
                     style={{ marginBottom: "10px" }}
                     className="button"
+                    onClick={() => router.push(`/chart/create/${chartType}`)}
                     key={i}
                 >
                     {chartNames[i]}
-                </Link>
+                </button>
             ))}
         </div>
     );
