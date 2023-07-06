@@ -1,6 +1,0 @@
-**/.env*
-!**/.env.sample
-**/.idea
-**/.vscode
-**/.DS_Store
-**/node_modules
