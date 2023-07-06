@@ -1,0 +1,28 @@
+services:
+    zookeeper:
+        image: wurstmeister/zookeeper
+        ports:
+            - "2181:2181"
+        restart: always
+
+    kafka:
+        image: wurstmeister/kafka
+        ports:
+            - "9092:9092"
+        hostname: kafka
+        links:
+            - zookeeper
+
+        environment:
+            KAFKA_ADVERTISED_HOST_NAME: kafka
+            KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+            KAFKA_ADVERTISED_PORT: "9092"
+            KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+            KAFKA_DELETE_TOPIC_ENABLE: "true"
+            KAFKA_CREATE_TOPICS: "chart-creation-pending:1:1,chart-created:1:1,chart-saved:1:1"
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+
+networks:
+    default:
+        name: kafka_broker_network
