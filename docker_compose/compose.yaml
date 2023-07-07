@@ -54,7 +54,7 @@ services:
     nginx:
         container_name: nginx_gateway
         build: ../gateway
-        restart: on-failure
+        restart: always
         depends_on:
             user_authentication:
                 condition: service_healthy
@@ -88,7 +88,7 @@ services:
             - frontend
         container_name: frontend
         build: ../frontend
-        restart: on-failure
+        restart: always
         # environment must be set inside frontend's dockerfile!
         ports:
             - "3000:3000"
@@ -96,7 +96,7 @@ services:
     user_authentication:
         container_name: user_authentication_ms
         build: ../user_authentication_ms
-        restart: on-failure
+        restart: always
         environment:
             NODE_ENV: "production"
             HTTP_HOST: "0.0.0.0"
@@ -114,7 +114,7 @@ services:
     user_management:
         container_name: user_management_ms
         build: ../user_management_ms
-        restart: on-failure
+        restart: always
         environment:
             NODE_ENV: "production"
             HTTP_HOST: "0.0.0.0"
@@ -134,7 +134,7 @@ services:
     data_uploading:
         container_name: data_uploading_ms
         build: ../data_uploading_ms
-        restart: on-failure
+        restart: always
         depends_on:
             kafka:
                 condition: service_healthy
@@ -166,7 +166,7 @@ services:
     basic_column_creation:
         container_name: basic_column_creation_ms
         build: ../chart_creation_ms
-        restart: on-failure
+        restart: always
         depends_on:
             kafka:
                 condition: service_healthy
@@ -182,7 +182,7 @@ services:
     basic_line_creation:
         container_name: basic_line_creation_ms
         build: ../chart_creation_ms
-        restart: on-failure
+        restart: always
         depends_on:
             kafka:
                 condition: service_healthy
@@ -198,7 +198,7 @@ services:
     dependency_wheel_creation:
         container_name: dependency_wheel_creation_ms
         build: ../chart_creation_ms
-        restart: on-failure
+        restart: always
         depends_on:
             kafka:
                 condition: service_healthy
@@ -214,7 +214,7 @@ services:
     line_with_annotations_creation:
         container_name: line_with_annotations_creation_ms
         build: ../chart_creation_ms
-        restart: on-failure
+        restart: always
         depends_on:
             kafka:
                 condition: service_healthy
@@ -230,7 +230,7 @@ services:
     network_graph_creation:
         container_name: network_graph_creation_ms
         build: ../chart_creation_ms
-        restart: on-failure
+        restart: always
         depends_on:
             kafka:
                 condition: service_healthy
@@ -246,7 +246,7 @@ services:
     organization_creation:
         container_name: organization_creation_ms
         build: ../chart_creation_ms
-        restart: on-failure
+        restart: always
         depends_on:
             kafka:
                 condition: service_healthy
@@ -262,7 +262,7 @@ services:
     pie_creation:
         container_name: pie_creation_ms
         build: ../chart_creation_ms
-        restart: on-failure
+        restart: always
         depends_on:
             kafka:
                 condition: service_healthy
@@ -278,7 +278,7 @@ services:
     polar_creation:
         container_name: polar_creation_ms
         build: ../chart_creation_ms
-        restart: on-failure
+        restart: always
         depends_on:
             kafka:
                 condition: service_healthy
@@ -294,7 +294,7 @@ services:
     word_cloud_creation:
         container_name: word_cloud_creation_ms
         build: ../chart_creation_ms
-        restart: on-failure
+        restart: always
         depends_on:
             kafka:
                 condition: service_healthy
@@ -313,7 +313,7 @@ services:
         depends_on:
             kafka:
                 condition: service_healthy
-        restart: on-failure
+        restart: always
         environment:
             NODE_ENV: "production"
             HTTP_HOST: "0.0.0.0"
@@ -342,7 +342,7 @@ services:
         depends_on:
             kafka:
                 condition: service_healthy
-        restart: on-failure
+        restart: always
         environment:
             NODE_ENV: "production"
             HTTP_HOST: "0.0.0.0"
@@ -371,7 +371,7 @@ services:
         depends_on:
             kafka:
                 condition: service_healthy
-        restart: on-failure
+        restart: always
         environment:
             NODE_ENV: "production"
             HTTP_HOST: "0.0.0.0"
@@ -400,7 +400,7 @@ services:
         depends_on:
             kafka:
                 condition: service_healthy
-        restart: on-failure
+        restart: always
         environment:
             NODE_ENV: "production"
             HTTP_HOST: "0.0.0.0"
@@ -429,7 +429,7 @@ services:
         depends_on:
             kafka:
                 condition: service_healthy
-        restart: on-failure
+        restart: always
         environment:
             NODE_ENV: "production"
             HTTP_HOST: "0.0.0.0"
@@ -458,7 +458,7 @@ services:
         depends_on:
             kafka:
                 condition: service_healthy
-        restart: on-failure
+        restart: always
         environment:
             NODE_ENV: "production"
             HTTP_HOST: "0.0.0.0"
@@ -487,7 +487,7 @@ services:
         depends_on:
             kafka:
                 condition: service_healthy
-        restart: on-failure
+        restart: always
         environment:
             NODE_ENV: "production"
             HTTP_HOST: "0.0.0.0"
@@ -516,7 +516,7 @@ services:
         depends_on:
             kafka:
                 condition: service_healthy
-        restart: on-failure
+        restart: always
         environment:
             NODE_ENV: "production"
             HTTP_HOST: "0.0.0.0"
@@ -545,7 +545,7 @@ services:
         depends_on:
             kafka:
                 condition: service_healthy
-        restart: on-failure
+        restart: always
         environment:
             NODE_ENV: "production"
             HTTP_HOST: "0.0.0.0"
@@ -571,7 +571,7 @@ services:
     chart_aggregation:
         container_name: chart_aggregation_ms
         build: ../chart_aggregation_ms
-        restart: on-failure
+        restart: always
         environment:
             NODE_ENV: production
             HTTP_HOST: "0.0.0.0"
