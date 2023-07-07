@@ -84,6 +84,8 @@ services:
             - "80:80"
 
     frontend:
+        profiles:
+            - frontend
         container_name: frontend
         build: ../frontend
         restart: on-failure
