@@ -1,6 +1,6 @@
 # NTUA ECE SaaS 2023 Project (Team 8)
 
-A SaaS app that runs in Docker Containers with an architecture based on microservices, that allows users to create and store charts. The architecture of the information system is shown below in the form of a UML Component Diagram, which can be accessed in architecture/myCharts_team08.vpp along with UML Deployment and Sequence Diagrams that document this system.
+A SaaS app that runs in Docker Containers with an architecture based on microservices, that allows users to create and store charts. The architecture of the information system is shown below in the form of a UML Component Diagram, which can be accessed in architecture/myCharts_team08.vpp along with UML Deployment and Sequence Diagrams that document this system. Microservices are divided per task and diagram type where applicable, for 9 total diagram types.
 
 ![image](https://github.com/vanourogeros/NTUA-SaaS-08/assets/61976410/90bcfbfa-c898-4852-a392-6ce42dd712bd)
 
