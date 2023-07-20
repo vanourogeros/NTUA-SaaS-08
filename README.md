@@ -1,6 +1,9 @@
 # NTUA ECE SaaS 2023 Project (Team 8)
 
-A SaaS app that runs in Docker Containers with an architecture based on microservices, that allows users to create and store charts.
+A SaaS app that runs in Docker Containers with an architecture based on microservices, that allows users to create and store charts. The architecture of the information system is shown below in the form of a UML Component Diagram, which can be accessed in architecture/myCharts_team08.vpp along with UML Deployment and Sequence Diagrams that document this system.
+
+![image](https://github.com/vanourogeros/NTUA-SaaS-08/assets/61976410/90bcfbfa-c898-4852-a392-6ce42dd712bd)
+
 
 ## How To Run:
 
@@ -31,10 +34,8 @@ Tools used: `Node.js`, `Next.js`, `Docker`, `Apache Kafka`, `MongoDB (Atlas)`, `
 Special thanks to the creator(s) of the `wurstmeister/zookeeper` and `wurstmeister/kafka` docker images.
 
 ## Team Members:
+I want to thank my team members Dimitrios Georgousis and Georgios-Alexios Kapetanakis for their collaboration and the immense work they put into this project which greatly helped in its completion and the understanding of the underlying technologies. Our commits can be identified, mainly in the `main` and `dev-restructure` branches, by our `ntua-el19XXX` handles.
 
-* Evaggelos Froudakis, el19108
-* Dimitrios Georgousis, el19005
-* Georgios-Alexios Kapetanakis, el19062
-* Ioannis Protogeros, el19008
-* Kostantinos Siskos, el19887
-* Nikolaos Sfakianakis, el19130
+* Dimitrios Georgousis, [ntua-el19005](https://github.com/ntua-el19005)
+* Georgios-Alexios Kapetanakis, [ntua-el19062](https://github.com/ntua-el19062)
+* Ioannis Protogeros, [ntua-el19008](https://github.com/ntua-el19008), [vanourogeros](https://github.com/vanourogeros)
